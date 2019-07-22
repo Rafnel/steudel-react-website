@@ -1,0 +1,9 @@
+.Appcontainer .navButton{
+    background-color: black;
+    height: 75px;
+    min-width: 75px;
+}
+
+.Appcontainer .navBar{
+    min-width: 25%;
+}

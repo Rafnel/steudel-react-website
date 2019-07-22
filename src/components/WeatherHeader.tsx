@@ -15,7 +15,6 @@ export class WeatherHeader extends React.Component<WeatherHeaderProps>{
     render(){
         return(
             <div className = "weatherHeader">
-                <h1 className = "header">Rafnel</h1>
                 <p className = "helperText">Enter a city to see the weather:</p>
 
                 &nbsp;&nbsp;
@@ -50,7 +49,7 @@ export class WeatherHeader extends React.Component<WeatherHeaderProps>{
     }
 
     getWeather(city: string, callback: Function){
-        unirest.get("https://community-open-weather-map.p.rapidapi.com/weather?id=2172797&units=%22metric%22+or+%22imperial%22&mode=xml%2C+html&q=" + city)
+        unirest.get("https://community-open-weather-map.p.rapidapi.com/weather?&units=%22metric%22+or+%22imperial%22&mode=xml%2C+html&q=" + city)
         .header("X-RapidAPI-Host", "community-open-weather-map.p.rapidapi.com")
         .header("X-RapidAPI-Key", "94079240b5msh6143d0960824ebbp18b9fdjsn4344bcdb5cd0")
         .end((response: any) =>{

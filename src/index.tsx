@@ -5,7 +5,7 @@ import App from './App';
 import Amplify from "aws-amplify";
 import config from "./config";
 import * as serviceWorker from './serviceWorker';
-import { BrowserRouter as Router } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 
 Amplify.configure({
     Auth: {
@@ -32,9 +32,9 @@ Amplify.configure({
   });  
 
 ReactDOM.render(
-    <Router>
+    <BrowserRouter>
       <App />
-    </Router>,
+    </BrowserRouter>,
     document.getElementById("root")
 );
   
