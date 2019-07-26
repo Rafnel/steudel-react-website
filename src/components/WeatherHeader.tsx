@@ -1,9 +1,8 @@
 import React from "react";
-import { InputText } from "primereact/inputtext";
-import { Button } from "primereact/button";
 import { WeatherStore } from "../containers/WeatherPage";
 import { observer } from "mobx-react";
 import "./WeatherHeader.css";
+import { TextField, Typography, Button, Grid } from "@material-ui/core";
 let unirest = require("unirest");
 
 export interface WeatherHeaderProps{
@@ -15,34 +14,45 @@ export class WeatherHeader extends React.Component<WeatherHeaderProps>{
     render(){
         return(
             <div className = "weatherHeader">
-                <p className = "helperText">Enter a city to see the weather:</p>
+                <Typography variant = "h6">
+                    <p className = "helperText">Enter a city to see the weather:</p>
+                </Typography>
 
                 &nbsp;&nbsp;
 
-                <div className = "inputStuff">
-                <span className="p-float-label">
-                    <InputText className = "input"
-                        value = {this.props.weatherStore.city} 
-                        onChange = {event => this.props.weatherStore.city = (event.target as HTMLInputElement).value}
-                    >
-                    </InputText>            
-                    <label htmlFor="float-input">City</label>
-
-                    &nbsp;&nbsp;&nbsp;
+                <Grid className = "inputStuff" container direction = "row" justify = "center" alignItems = "center">
+                    <Grid item >
+                        <TextField className = "input"
+                            value = {this.props.weatherStore.city} 
+                            onChange = {event => this.props.weatherStore.city = (event.target as HTMLInputElement).value}
+                            name = "city"
+                            type = "city"
+                            margin = "dense"
+                            variant = "outlined"
+                            label = "City"
+                        >
+                        </TextField>          
+                    </Grid>
                     
-                    <Button 
-                        label = "Submit" 
-                        className = "p-button-raised"
-                        onClick = {event => {
-                            this.props.weatherStore.errorMessage = "";
-                            this.props.weatherStore.submitted = true;
-                            this.props.weatherStore.loading = true;
-                            this.getWeather(this.props.weatherStore.city, this.setWeatherData.bind(this))
-                        }}
-                    >
-                    </Button>
-                </span>
-                </div>
+                    &nbsp;&nbsp;&nbsp;
+                    <Grid item >
+                        <Button 
+                            className = "submitButton"
+                            color = "primary"
+                            variant = "contained" 
+                            onClick = {event => {
+                                if(this.props.weatherStore.city.length !== 0){
+                                    this.props.weatherStore.errorMessage = "";
+                                    this.props.weatherStore.submitted = true;
+                                    this.props.weatherStore.loading = true;
+                                    this.getWeather(this.props.weatherStore.city, this.setWeatherData.bind(this))
+                                }
+                            }}
+                        >
+                            Submit
+                        </Button>
+                    </Grid>
+                </Grid>
             </div>
             
         )
