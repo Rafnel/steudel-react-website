@@ -6,6 +6,10 @@ import Amplify from "aws-amplify";
 import config from "./config";
 import * as serviceWorker from './serviceWorker';
 import { BrowserRouter } from "react-router-dom";
+import AppStateStore from './stateStores/appState';
+import { createMuiTheme } from '@material-ui/core';
+import { green } from '@material-ui/core/colors';
+import { ThemeProvider } from '@material-ui/styles';
 
 Amplify.configure({
     Auth: {
@@ -15,27 +19,30 @@ Amplify.configure({
       identityPoolId: config.cognito.IDENTITY_POOL_ID,
       userPoolWebClientId: config.cognito.APP_CLIENT_ID
     },
-    Storage: {
-      region: config.s3.REGION,
-      bucket: config.s3.BUCKET,
-      identityPoolId: config.cognito.IDENTITY_POOL_ID
+});
+
+export const PRIMARY = green[700];
+export const SECONDARY = "#8e3a38"
+
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: PRIMARY
     },
-    API: {
-      endpoints: [
-        {
-          name: "notes",
-          endpoint: config.apiGateway.URL,
-          region: config.apiGateway.REGION
-        },
-      ]
-    }
-  });  
+    secondary: {
+      main: SECONDARY
+    },
+  }
+});
 
 ReactDOM.render(
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>,
-    document.getElementById("root")
+  <BrowserRouter>
+    <ThemeProvider theme = {theme}>
+      <App appState = {new AppStateStore()}/>
+    </ThemeProvider>
+  </BrowserRouter>,
+  document.getElementById("root")
+    
 );
   
 

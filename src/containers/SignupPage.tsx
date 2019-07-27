@@ -1,82 +1,112 @@
-import { Typography, Grid, TextField, Button, CircularProgress, Paper, Snackbar } from "@material-ui/core";
+import { Typography, Grid, TextField, Button, CircularProgress, Paper, Snackbar, IconButton } from "@material-ui/core";
 import React from "react";
-import { observable } from "mobx";
-import { observer } from "mobx-react";
+import CloseIcon from '@material-ui/icons/Close';
 import { Auth } from "aws-amplify";
-import { mainStore } from "../App";
-import { RouteComponentProps } from "react-router-dom";
-import { Theme, createStyles, makeStyles } from '@material-ui/core/styles';
-import { spacing } from '@material-ui/system';
+import { RouteComponentProps, withRouter } from "react-router-dom";
+import { Message } from "primereact/components/message/Message";
+import AppStateStore from "../stateStores/appState";
+import { observer } from "mobx-react";
 
-export class SignUpPageStore{
-    @observable username: string = "";
-    @observable password: string = "";
-    @observable confirmPassword: string = "";
-    @observable email: string = "";
-    @observable name: string = "";
-    @observable signedUp: boolean = false;
-    @observable verificationCode: string = "";
-    @observable isLoading: boolean = false;
-    @observable errorMessage: string = "";
-}
-
-interface SignUpPageState{
-    signUpPageStore: SignUpPageStore;
+export interface SignUpPageProps extends RouteComponentProps<any>{
+    appState: AppStateStore;
 }
 
 @observer
-export class SignupPage extends React.Component<RouteComponentProps, SignUpPageState>{
-    constructor(props: RouteComponentProps){
-        super(props);
-
-        this.state = {
-            signUpPageStore: new SignUpPageStore()
-        }
-    }
+class SignupPage extends React.Component<SignUpPageProps>{
+    password: string = "";
+    confirmPassword: string = "";
 
     validateSignUp(): boolean{
-        return (
-            this.state.signUpPageStore.email.length > 0 &&
-            this.state.signUpPageStore.password.length > 0 &&
-            this.state.signUpPageStore.name.length > 0 &&
-            this.state.signUpPageStore.username.length > 0 &&
-            this.state.signUpPageStore.password === this.state.signUpPageStore.confirmPassword
-        );
+        if(this.props.appState.username.includes(" ")){
+            this.props.appState.signUpPageErrorMessage = "Username cannot contain a space.";
+            return false;
+        }
+        if(this.password !== this.confirmPassword){
+            this.props.appState.signUpPageErrorMessage = "Passwords must match.";
+            return false;
+        }
+        if(this.password.length < 8){
+            this.props.appState.signUpPageErrorMessage = "Password must be 8 characters or greater.";
+            return false;
+        }
+        if(this.props.appState.username.length === 0 || this.props.appState.name.length === 0
+           || this.props.appState.email.length === 0){
+            this.props.appState.signUpPageErrorMessage = "You left a field blank.";
+            return false;
+        }
+
+        return true;
     }
 
     async handleSignUp(){
         try{
             const newUser = await Auth.signUp({
-                username: this.state.signUpPageStore.username,
-                password: this.state.signUpPageStore.password,
+                username: this.props.appState.username,
+                password: this.password,
                 attributes: {
-                    name: this.state.signUpPageStore.name,
-                    email: this.state.signUpPageStore.email
+                    name: this.props.appState.name,
+                    email: this.props.appState.email
                 }
             });
 
-            this.state.signUpPageStore.signedUp = true;
+            this.props.appState.signedUp = true;
         }
         catch(e){
-            alert(e.message);
+            this.props.appState.signUpPageErrorMessage = e.message;
         }
-        this.state.signUpPageStore.isLoading = false;
+        this.props.appState.isLoading = false;
     }
 
     async handleConfirmation(){
         try{
-            console.log(":: Authenticating user with email " + this.state.signUpPageStore.email + " and code " + this.state.signUpPageStore.verificationCode);
+            console.log(":: Authenticating user with email " + this.props.appState.email + " and code " + this.props.appState.verificationCode);
 
-            await Auth.confirmSignUp(this.state.signUpPageStore.username, this.state.signUpPageStore.verificationCode);
-            await Auth.signIn(this.state.signUpPageStore.email, this.state.signUpPageStore.password);
+            await Auth.confirmSignUp(this.props.appState.username, this.props.appState.verificationCode);
+            await Auth.signIn(this.props.appState.email, this.password);
 
-            mainStore.isLoggedIn = true;
+            this.props.appState.isLoggedIn = true;
             this.props.history.push("/");
+            this.props.appState.successMessage = "Account created and logged in successfully.";
         }
         catch(e){
-            alert(e.message);
-            this.state.signUpPageStore.isLoading = false;
+            this.props.appState.signUpPageErrorMessage = e.message;
         }
+
+        this.props.appState.isLoading = false;
+    }
+
+    showErrorMessage(){
+        if(this.props.appState.signUpPageErrorMessage.length != 0){            
+            return <Message severity = "error" text = {this.props.appState.signUpPageErrorMessage}/>
+        }
+        return null;
+    }
+
+    showResendMessage(){
+        if(this.props.appState.resentCode){
+            return <Snackbar 
+                open = {true} 
+                autoHideDuration = {8000} 
+                color = "primary"
+                message = "Resent email confirmation." 
+                action = {<IconButton 
+                                color="inherit" 
+                                key = "close" 
+                                aria-label = "close" 
+                                onClick = {() => this.props.appState.resentCode = false}
+                            > 
+                                <CloseIcon/>
+                          </IconButton>}
+                />
+        }
+        return null;
+    }
+
+    async handleResend(){
+        console.log("Resending confirmation code for email: " + this.props.appState.email);
+        this.props.appState.resentCode = true;
+        await Auth.resendSignUp(this.props.appState.username);
+        this.props.appState.isLoading = false;
     }
 
     renderSignUpForm(){
@@ -95,7 +125,7 @@ export class SignupPage extends React.Component<RouteComponentProps, SignUpPageS
                         <Grid container justify = "center">
                             <TextField
                                 style = {{width: "300px"}}
-                                onChange = {event => {this.state.signUpPageStore.username = (event.target as HTMLInputElement).value}}
+                                onChange = {event => {this.props.appState.username = (event.target as HTMLInputElement).value}}
                                 name = "username"
                                 type = "username"
                                 margin = "dense"
@@ -120,7 +150,7 @@ export class SignupPage extends React.Component<RouteComponentProps, SignUpPageS
 
                         <Grid container justify = "center">
                             <TextField
-                                onChange = {event => this.state.signUpPageStore.name = (event.target as HTMLInputElement).value}
+                                onChange = {event => this.props.appState.name = (event.target as HTMLInputElement).value}
                                 name = "name"
                                 type = "name"
                                 margin = "dense"
@@ -134,13 +164,13 @@ export class SignupPage extends React.Component<RouteComponentProps, SignUpPageS
 
                         <Typography variant = "body1" component = "p">
                             <br/><b>Email:</b><br/> 
-                            You will be sent a confirmation code to this Email.<br/> 
+                            You will be sent a confirmation code.<br/> 
                             Not visible to other users.
                         </Typography>
 
                         <Grid container justify = "center">
                             <TextField
-                                onChange = {event => {this.state.signUpPageStore.email = (event.target as HTMLInputElement).value}}
+                                onChange = {event => {this.props.appState.email = (event.target as HTMLInputElement).value}}
                                 name = "email"
                                 type = "email"
                                 margin = "dense"
@@ -158,7 +188,7 @@ export class SignupPage extends React.Component<RouteComponentProps, SignUpPageS
 
                         <Grid container justify = "center">
                             <TextField
-                                onChange = {event => this.state.signUpPageStore.password = (event.target as HTMLInputElement).value}
+                                onChange = {event => this.password = (event.target as HTMLInputElement).value}
                                 name = "password"
                                 type = "password"
                                 autoComplete = "current-password"
@@ -173,7 +203,7 @@ export class SignupPage extends React.Component<RouteComponentProps, SignUpPageS
 
                         <Grid container justify = "center">
                             <TextField
-                                onChange = {event => this.state.signUpPageStore.confirmPassword = (event.target as HTMLInputElement).value}
+                                onChange = {event => this.confirmPassword = (event.target as HTMLInputElement).value}
                                 name = "password"
                                 type = "password"
                                 autoComplete = "current-password"
@@ -204,11 +234,11 @@ export class SignupPage extends React.Component<RouteComponentProps, SignUpPageS
                 <Grid item>
                     <Button 
                         variant = "contained" 
-                        disabled = {this.state.signUpPageStore.isLoading}
+                        disabled = {this.props.appState.isLoading}
                         color = "primary"
                         onClick = {() => {
                             if(this.validateSignUp()){
-                                this.state.signUpPageStore.isLoading = true;
+                                this.props.appState.isLoading = true;
                                 this.handleSignUp();
                             }
                         }}
@@ -218,19 +248,11 @@ export class SignupPage extends React.Component<RouteComponentProps, SignUpPageS
                 </Grid>
 
                 <Grid item>
-                    {() => this.state.signUpPageStore.isLoading ? <CircularProgress/> : null}
+                    {this.props.appState.isLoading && <CircularProgress/>}
                 </Grid>
 
                 <Grid item>
-                    {() => this.state.signUpPageStore.errorMessage.length !== 0 ? 
-                        <Snackbar
-                            style = {{backgroundColor: "darkred"}}
-                            open = {true}
-                            message = {this.state.signUpPageStore.errorMessage}
-                            onClose = {() => this.state.signUpPageStore.errorMessage = ""}
-                        />
-                        : 
-                        null}
+                    {this.showErrorMessage()}
                 </Grid>
             </Grid>
         )
@@ -243,10 +265,24 @@ export class SignupPage extends React.Component<RouteComponentProps, SignUpPageS
                         Check your Email for the verification code.
                     </Typography>
                 </Grid>
+
+                <Grid item>
+                    <Button 
+                        variant = "contained" 
+                        color = "default"
+                        disabled = {this.props.appState.isLoading}
+                        onClick = {() => {
+                            this.props.appState.isLoading = true;
+                            this.handleResend();
+                        }}
+                    >
+                        Resend confirmation code
+                    </Button>
+                </Grid>
                 
                 <Grid item>
                     <TextField
-                        onChange = {event => this.state.signUpPageStore.verificationCode = (event.target as HTMLInputElement).value}
+                        onChange = {event => this.props.appState.verificationCode = (event.target as HTMLInputElement).value}
                         name = "verificationCode"
                         type = "verificationCode"
                         margin = "dense"
@@ -260,23 +296,39 @@ export class SignupPage extends React.Component<RouteComponentProps, SignUpPageS
                     <Button 
                         variant = "contained" 
                         color = "primary"
+                        disabled = {this.props.appState.isLoading}
                         onClick = {() => {
-                            this.state.signUpPageStore.isLoading = true;
+                            this.props.appState.isLoading = true;
                             this.handleConfirmation();
                         }}
                     >
                         Verify
                     </Button>
                 </Grid>
+
+                <Grid item>
+                    {this.showResendMessage()}
+                </Grid>
+
+                <Grid item>
+                    {this.props.appState.isLoading && <CircularProgress/>}
+                </Grid>
             </Grid>
         )
     }
     render(){
-        if(this.state.signUpPageStore.signedUp){
+        if(this.props.appState.signedUp){
             return this.renderConfirmation();
         }
         else{
             return this.renderSignUpForm();
         }
     }
+
+    componentWillUnmount(){
+        this.props.appState.signUpPageErrorMessage = "";
+        this.props.appState.signedUp = false;
+    }
 }
+
+export default withRouter<SignUpPageProps, any>(SignupPage);

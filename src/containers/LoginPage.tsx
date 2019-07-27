@@ -1,48 +1,42 @@
-import { Typography, Grid, TextField, Button, CircularProgress, Paper } from "@material-ui/core";
+import { Typography, Grid, TextField, Button, CircularProgress, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails } from "@material-ui/core";
 import React from "react";
 import { observer } from "mobx-react";
-import { observable } from "mobx";
-import { RouteComponentProps } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Auth } from "aws-amplify";
-import { mainStore } from "../App";
+import AppStateStore from "../stateStores/appState";
+import EmailVerification from "../components/EmailVerification";
+import { Message } from "primereact/components/message/Message";
 
 
-export class LoginPageStore{
-    @observable email: string = "";
-    @observable password: string = "";
-    @observable isLoading: boolean = false;
+export interface LoginPageProps extends RouteComponentProps<any>{
+    appState: AppStateStore;
 }
-interface LoginPageState{
-    loginPageStore: LoginPageStore;
-}
-
 
 @observer
-export class LoginPage extends React.Component<RouteComponentProps, LoginPageState>{
-    constructor(props: RouteComponentProps){
-        super(props);
-
-        this.state = {
-            loginPageStore: new LoginPageStore()
-        }
-    }
-
+class LoginPage extends React.Component<LoginPageProps>{
+    password: string = "";
     handleLogin = async (event: any) =>{
-        this.state.loginPageStore.isLoading = true;
+        this.props.appState.isLoading = true;
         event.preventDefault();
 
-        try{
-            await Auth.signIn(this.state.loginPageStore.email, this.state.loginPageStore.password);
-            this.state.loginPageStore.isLoading = false;
-            alert("Logged in");
-            this.props.history.push("/");
-            mainStore.isLoggedIn = true;
+        if(this.props.appState.email.length === 0){
+            this.props.appState.loginPageErrorMessage = "Please enter your Email or username.";
         }
-        catch(e){
-            this.state.loginPageStore.isLoading = false;
-            alert(e.message);
-            
+        else if(this.password.length === 0){
+            this.props.appState.loginPageErrorMessage = "Please enter a password.";
         }
+        else{
+            try{
+                await Auth.signIn(this.props.appState.email, this.password);
+                this.props.appState.successMessage = "Successfully logged in.";
+                this.props.history.push("/");
+                this.props.appState.isLoggedIn = true;
+            }
+            catch(e){
+                this.props.appState.loginPageErrorMessage = e.message;
+            }
+        }
+        this.props.appState.isLoading = false;
     }
 
     render(){
@@ -51,16 +45,16 @@ export class LoginPage extends React.Component<RouteComponentProps, LoginPageSta
                 <Grid item>
                     <Typography variant = "h2">Rafnel Login</Typography>
                 </Grid>
-
+                {this.props.appState.loginPageErrorMessage.length != 0 && <Message severity = "error" text = {this.props.appState.loginPageErrorMessage}/>}
                 <Grid container direction = "row" spacing = {1} justify = "center" alignItems = "center">
                     <Grid item>
                         <TextField
-                            onChange = {event => {this.state.loginPageStore.email = (event.target as HTMLInputElement).value}}
+                            onChange = {event => {this.props.appState.email = (event.target as HTMLInputElement).value}}
                             name = "email"
                             type = "email"
                             margin = "dense"
                             variant = "outlined"
-                            label = "Email"
+                            label = "Email / Username"
                         >
                         </TextField>  
                     </Grid>
@@ -68,7 +62,7 @@ export class LoginPage extends React.Component<RouteComponentProps, LoginPageSta
 
                     <Grid item>
                         <TextField
-                            onChange = {event => this.state.loginPageStore.password = (event.target as HTMLInputElement).value}
+                            onChange = {event => this.password = (event.target as HTMLInputElement).value}
                             name = "password"
                             type = "password"
                             autoComplete = "current-password"
@@ -85,16 +79,27 @@ export class LoginPage extends React.Component<RouteComponentProps, LoginPageSta
                         variant = "contained" 
                         color = "primary"
                         onClick = {this.handleLogin}
-                        disabled = {this.state.loginPageStore.isLoading}
+                        disabled = {this.props.appState.isLoading}
                     >
                         Login
                     </Button>
                 </Grid>
 
                 <Grid item>
-                    {this.state.loginPageStore.isLoading ? <CircularProgress/> : null}
+                    {this.props.appState.isLoading ? <CircularProgress/> : null}
                 </Grid>
+
+                <Grid item>
+                    <EmailVerification appState = {this.props.appState}/>
+                </Grid>
+
             </Grid>
         )
     }
+
+    componentWillUnmount(){
+        this.props.appState.loginPageErrorMessage = "";
+    }
 }
+
+export default withRouter<LoginPageProps, any>(LoginPage);
