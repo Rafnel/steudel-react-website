@@ -28,7 +28,10 @@ class LoginPage extends React.Component<LoginPageProps>{
         else{
             try{
                 await Auth.signIn(this.props.appState.email, this.password);
-                this.props.appState.successMessage = "Successfully logged in.";
+                const currentUserInfo = await Auth.currentUserInfo();
+                
+                this.props.appState.username = currentUserInfo.username;
+                this.props.appState.successMessage = "Successfully logged in. Welcome back " + this.props.appState.username + "!";
                 this.props.history.push("/");
                 this.props.appState.isLoggedIn = true;
             }
