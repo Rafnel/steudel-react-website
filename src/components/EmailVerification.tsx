@@ -5,6 +5,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { Auth } from "aws-amplify";
 import { Message } from "primereact/components/message/Message";
 import { observer } from "mobx-react";
+import winston from "../logging";
 
 export interface EmailVerificationProps{
     appState: AppStateStore;
@@ -43,6 +44,7 @@ export default class EmailVerification extends React.Component<EmailVerification
             try{
                 this.props.appState.isLoading = true;
                 await Auth.confirmSignUp(this.props.appState.username, this.props.appState.verificationCode);
+                winston.info("User " + this.props.appState.username + " has confirmed their email at " + new Date().toLocaleString("en-US", {timeZone: "America/Denver"}));
                 this.props.appState.isLoading = false;
             }
             catch(e){

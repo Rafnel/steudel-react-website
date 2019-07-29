@@ -6,7 +6,7 @@ import { Auth } from "aws-amplify";
 import AppStateStore from "../stateStores/appState";
 import EmailVerification from "../components/EmailVerification";
 import { Message } from "primereact/components/message/Message";
-
+import winston from "../logging";
 
 export interface LoginPageProps extends RouteComponentProps<any>{
     appState: AppStateStore;
@@ -29,8 +29,9 @@ class LoginPage extends React.Component<LoginPageProps>{
             try{
                 await Auth.signIn(this.props.appState.email, this.password);
                 const currentUserInfo = await Auth.currentUserInfo();
-                
+        
                 this.props.appState.username = currentUserInfo.username;
+                winston.info("User " + this.props.appState.username + " has logged in at " + new Date().toLocaleString("en-US", {timeZone: "America/Denver"}));
                 this.props.appState.successMessage = "Successfully logged in. Welcome back " + this.props.appState.username + "!";
                 this.props.history.push("/");
                 this.props.appState.isLoggedIn = true;
@@ -57,6 +58,11 @@ class LoginPage extends React.Component<LoginPageProps>{
                             type = "email"
                             margin = "dense"
                             variant = "outlined"
+                            onKeyPress = {(event) => {
+                                if(event.key === "Enter"){
+                                    this.handleLogin(event);
+                                }
+                            }}
                             label = "Email / Username"
                         >
                         </TextField>  
@@ -71,6 +77,11 @@ class LoginPage extends React.Component<LoginPageProps>{
                             autoComplete = "current-password"
                             margin = "dense"
                             variant = "outlined"
+                            onKeyPress = {(event) => {
+                                if(event.key === "Enter"){
+                                    this.handleLogin(event);
+                                }
+                            }}
                             label = "Password"
                         >
                         </TextField>  

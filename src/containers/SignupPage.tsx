@@ -6,6 +6,7 @@ import { RouteComponentProps, withRouter } from "react-router-dom";
 import { Message } from "primereact/components/message/Message";
 import AppStateStore from "../stateStores/appState";
 import { observer } from "mobx-react";
+import winston from "../logging";
 
 export interface SignUpPageProps extends RouteComponentProps<any>{
     appState: AppStateStore;
@@ -50,6 +51,7 @@ class SignupPage extends React.Component<SignUpPageProps>{
             });
 
             this.props.appState.signedUp = true;
+            winston.info("User " + this.props.appState.username + " has signed up at " + new Date().toLocaleString("en-US", {timeZone: "America/Denver"}));
         }
         catch(e){
             this.props.appState.signUpPageErrorMessage = e.message;
@@ -67,6 +69,7 @@ class SignupPage extends React.Component<SignUpPageProps>{
             this.props.appState.isLoggedIn = true;
             this.props.history.push("/");
             this.props.appState.successMessage = "Account created and logged in successfully.";
+            winston.info("User " + this.props.appState.username + " has confirmed their email at " + new Date().toLocaleString("en-US", {timeZone: "America/Denver"}));
         }
         catch(e){
             this.props.appState.signUpPageErrorMessage = e.message;
@@ -129,6 +132,14 @@ class SignupPage extends React.Component<SignUpPageProps>{
                                 name = "username"
                                 type = "username"
                                 margin = "dense"
+                                onKeyPress = {(event) => {
+                                    if(event.key === "Enter"){
+                                        if(this.validateSignUp()){
+                                            this.props.appState.isLoading = true;
+                                            this.handleSignUp();
+                                        }
+                                    }
+                                }}
                                 variant = "outlined"
                                 label = "UserName"
                                 required
@@ -153,6 +164,14 @@ class SignupPage extends React.Component<SignUpPageProps>{
                                 onChange = {event => this.props.appState.name = (event.target as HTMLInputElement).value}
                                 name = "name"
                                 type = "name"
+                                onKeyPress = {(event) => {
+                                    if(event.key === "Enter"){
+                                        if(this.validateSignUp()){
+                                            this.props.appState.isLoading = true;
+                                            this.handleSignUp();
+                                        }
+                                    }
+                                }}
                                 margin = "dense"
                                 variant = "outlined"
                                 label = "Name"
@@ -173,6 +192,14 @@ class SignupPage extends React.Component<SignUpPageProps>{
                                 onChange = {event => {this.props.appState.email = (event.target as HTMLInputElement).value}}
                                 name = "email"
                                 type = "email"
+                                onKeyPress = {(event) => {
+                                    if(event.key === "Enter"){
+                                        if(this.validateSignUp()){
+                                            this.props.appState.isLoading = true;
+                                            this.handleSignUp();
+                                        }
+                                    }
+                                }}
                                 margin = "dense"
                                 variant = "outlined"
                                 label = "Email"
@@ -191,6 +218,14 @@ class SignupPage extends React.Component<SignUpPageProps>{
                                 onChange = {event => this.password = (event.target as HTMLInputElement).value}
                                 name = "password"
                                 type = "password"
+                                onKeyPress = {(event) => {
+                                    if(event.key === "Enter"){
+                                        if(this.validateSignUp()){
+                                            this.props.appState.isLoading = true;
+                                            this.handleSignUp();
+                                        }
+                                    }
+                                }}
                                 autoComplete = "current-password"
                                 margin = "dense"
                                 variant = "outlined"
@@ -206,6 +241,14 @@ class SignupPage extends React.Component<SignUpPageProps>{
                                 onChange = {event => this.confirmPassword = (event.target as HTMLInputElement).value}
                                 name = "password"
                                 type = "password"
+                                onKeyPress = {(event) => {
+                                    if(event.key === "Enter"){
+                                        if(this.validateSignUp()){
+                                            this.props.appState.isLoading = true;
+                                            this.handleSignUp();
+                                        }
+                                    }
+                                }}
                                 autoComplete = "current-password"
                                 margin = "dense"
                                 variant = "outlined"
@@ -286,6 +329,12 @@ class SignupPage extends React.Component<SignUpPageProps>{
                         name = "verificationCode"
                         type = "verificationCode"
                         margin = "dense"
+                        onKeyPress = {(event) => {
+                            if(event.key === "Enter"){
+                                this.props.appState.isLoading = true;
+                                this.handleConfirmation();
+                            }
+                        }}
                         variant = "outlined"
                         label = "Verification Code"
                     >
@@ -308,6 +357,10 @@ class SignupPage extends React.Component<SignUpPageProps>{
 
                 <Grid item>
                     {this.showResendMessage()}
+                </Grid>
+
+                <Grid item>
+                    {this.showErrorMessage()}
                 </Grid>
 
                 <Grid item>
