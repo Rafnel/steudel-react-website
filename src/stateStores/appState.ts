@@ -23,4 +23,27 @@ export default class AppStateStore{
     @observable loginPageErrorMessage: string = "";
 
     @observable signUpPageErrorMessage: string = "";
+    @observable currentComponent: SwimComponent = {
+        username: "",
+        set: "",
+        component_body: "",
+        component_id: "",
+        date_created: "",
+        intervals: [],
+        tags: [],
+        yardage: 0,
+        difficulty: ""
+    };
+}
+
+export interface SwimComponent{
+    username: string;
+    set: string;
+    component_body: string;
+    component_id: string;
+    date_created: string;
+    intervals: string[];
+    tags: string[];
+    yardage: number;
+    difficulty: string;
 }
