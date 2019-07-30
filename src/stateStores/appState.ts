@@ -23,6 +23,7 @@ export default class AppStateStore{
     @observable loginPageErrorMessage: string = "";
 
     @observable signUpPageErrorMessage: string = "";
+    
     @observable currentComponent: SwimComponent = {
         username: "",
         set: "",

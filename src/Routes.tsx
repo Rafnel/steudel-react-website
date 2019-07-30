@@ -14,7 +14,7 @@ export default class Routes extends React.Component<RoutesProps>{
   render(){
     return(
       <Switch>
-        <Route path="/" exact component={HomePage} />
+        <Route path="/" exact render = {() => <HomePage appState = {this.props.appState}/>} />
         {!this.props.appState.isLoggedIn 
           && 
           <Route path="/login" exact render = {() => <LoginPage appState = {this.props.appState}/>}/>}
