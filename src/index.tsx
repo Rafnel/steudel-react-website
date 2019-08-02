@@ -8,7 +8,7 @@ import * as serviceWorker from './serviceWorker';
 import { BrowserRouter } from "react-router-dom";
 import AppStateStore from './stateStores/appState';
 import { createMuiTheme } from '@material-ui/core';
-import { green } from '@material-ui/core/colors';
+import { green, grey } from '@material-ui/core/colors';
 import { ThemeProvider } from '@material-ui/styles';
 
 Amplify.configure({
@@ -31,7 +31,7 @@ Amplify.configure({
 });
 
 export const PRIMARY = green[700];
-export const SECONDARY = "#8e3a38"
+export const SECONDARY = grey[50];
 
 const theme = createMuiTheme({
   palette: {

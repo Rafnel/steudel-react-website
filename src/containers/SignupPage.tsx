@@ -286,7 +286,7 @@ class SignupPage extends React.Component<SignUpPageProps>{
                             }
                         }}
                     >
-                        Signup
+                        Sign up
                     </Button>
                 </Grid>
 
@@ -332,6 +332,7 @@ class SignupPage extends React.Component<SignUpPageProps>{
                         onKeyPress = {(event) => {
                             if(event.key === "Enter"){
                                 this.props.appState.isLoading = true;
+                                this.props.appState.signUpPageErrorMessage = "";
                                 this.handleConfirmation();
                             }
                         }}
@@ -348,6 +349,7 @@ class SignupPage extends React.Component<SignUpPageProps>{
                         disabled = {this.props.appState.isLoading}
                         onClick = {() => {
                             this.props.appState.isLoading = true;
+                            this.props.appState.signUpPageErrorMessage = "";
                             this.handleConfirmation();
                         }}
                     >

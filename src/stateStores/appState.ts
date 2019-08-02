@@ -23,7 +23,7 @@ export default class AppStateStore{
     @observable loginPageErrorMessage: string = "";
 
     @observable signUpPageErrorMessage: string = "";
-    
+
     @observable currentComponent: SwimComponent = {
         username: "",
         set: "",
@@ -35,6 +35,10 @@ export default class AppStateStore{
         yardage: 0,
         difficulty: ""
     };
+
+    @observable forgotPasswordErrorMessage: string = "";
+    @observable forgotPasswordUsernameEntered: boolean = false;
+    @observable loadingForgotPassword: boolean = false;
 }
 
 export interface SwimComponent{

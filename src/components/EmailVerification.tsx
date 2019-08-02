@@ -74,7 +74,7 @@ export default class EmailVerification extends React.Component<EmailVerification
                                 type = "username"
                                 margin = "dense"
                                 variant = "outlined"
-                                label = "UserName"
+                                label = "Username"
                             >
                             </TextField> 
                         </Grid>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography, Button, Grid } from "@material-ui/core";
+import { Typography, Button, Grid, CircularProgress } from "@material-ui/core";
 import AppStateStore from "../stateStores/appState";
 import getRandomComponent from "../api/randomComponent";
 import SwimComponentCard from "../components/SwimComponentCard";
@@ -34,6 +34,7 @@ export class HomePage extends React.Component<HomePageProps>{
                         color = "primary"
                         variant = "contained" 
                         onClick = {event => {
+                            this.props.appState.isLoading = true;
                             getRandomComponent(this.props.appState);
                         }}
                     >
@@ -42,11 +43,13 @@ export class HomePage extends React.Component<HomePageProps>{
                  </Grid>
                 }
 
-                {this.props.appState.currentComponent.username.length !== 0
+                {this.props.appState.currentComponent.username.length !== 0 && this.props.appState.isLoggedIn
                  &&
                  <Grid item>
                      <SwimComponentCard appState = {this.props.appState}/>
                  </Grid>}
+
+                {this.props.appState.isLoading && <CircularProgress/>}
             </Grid>
         )
     }

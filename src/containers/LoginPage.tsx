@@ -7,6 +7,7 @@ import AppStateStore from "../stateStores/appState";
 import EmailVerification from "../components/EmailVerification";
 import { Message } from "primereact/components/message/Message";
 import winston from "../logging";
+import ForgotPassword from "../components/ForgotPassword";
 
 export interface LoginPageProps extends RouteComponentProps<any>{
     appState: AppStateStore;
@@ -95,7 +96,7 @@ class LoginPage extends React.Component<LoginPageProps>{
                         onClick = {this.handleLogin}
                         disabled = {this.props.appState.isLoading}
                     >
-                        Login
+                        Log in
                     </Button>
                 </Grid>
 
@@ -105,6 +106,10 @@ class LoginPage extends React.Component<LoginPageProps>{
 
                 <Grid item>
                     <EmailVerification appState = {this.props.appState}/>
+                </Grid>
+
+                <Grid item>
+                    <ForgotPassword appState = {this.props.appState}/>
                 </Grid>
 
             </Grid>
