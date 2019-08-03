@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 import { observer } from "mobx-react";
-import AppStateStore from "../stateStores/appState";
+import AppStateStore, { appState } from "../stateStores/appState";
 import { ExpansionPanel, ExpansionPanelSummary, Typography, ExpansionPanelDetails, Grid, Button, TextField, CircularProgress } from "@material-ui/core";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { Auth } from 'aws-amplify';
@@ -8,62 +8,53 @@ import { Message } from "primereact/components/message/Message";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import winston from "../logging";
 
-
-export interface ForgotPasswordProps extends RouteComponentProps<any>{
-    appState: AppStateStore;
-}
-
-function forgotPasswordSpacing(){
-    return <Fragment>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            </Fragment>
-}
-
 @observer
-class ForgotPassword extends React.Component<ForgotPasswordProps>{
+class ForgotPassword extends React.Component<RouteComponentProps<any>>{
     password: string = "";
     confirmPassword: string = "";
     emailOrUsername: string = "";
 
     async sendForgotEmail(){
-        this.props.appState.loadingForgotPassword = true;
+        appState.forgotPasswordErrorMessage = "";
+        appState.loadingForgotPassword = true;
         try{
             await Auth.forgotPassword(this.emailOrUsername);
-            this.props.appState.successMessage = "Password reset email was sent successfully.";
-            this.props.appState.forgotPasswordUsernameEntered = true;
-            this.props.appState.forgotPasswordErrorMessage = "";
+            appState.successMessage = "Password reset email was sent successfully.";
+            appState.forgotPasswordUsernameEntered = true;
+            appState.forgotPasswordErrorMessage = "";
         }
         catch(e){
             let message: string = e.message;
             message = message.replace("client id", "email");
-            this.props.appState.forgotPasswordErrorMessage = e.message;
+            appState.forgotPasswordErrorMessage = e.message;
         }
-        this.props.appState.loadingForgotPassword = false;
+        appState.loadingForgotPassword = false;
     }
 
     async verifyReset(){
-        this.props.appState.loadingForgotPassword = true;
+        appState.forgotPasswordErrorMessage = "";
+        appState.loadingForgotPassword = true;
         try{
-            await Auth.forgotPasswordSubmit(this.emailOrUsername, this.props.appState.verificationCode, this.password);
+            await Auth.forgotPasswordSubmit(this.emailOrUsername, appState.verificationCode, this.password);
             await Auth.signIn(this.emailOrUsername, this.password);
 
             const currentUserInfo = await Auth.currentUserInfo();
-            this.props.appState.username = currentUserInfo.username;
-            this.props.appState.successMessage = "Password reset successful. Welcome back " + this.props.appState.username + "!";
+            appState.username = currentUserInfo.username;
+            appState.successMessage = "Password reset successful. Welcome back " + appState.username + "!";
 
-            this.props.appState.isLoggedIn = true;
+            appState.isLoggedIn = true;
             this.props.history.push("/");
-            winston.info("User " + this.props.appState.username + " reset their password and logged in at " + new Date().toLocaleString("en-US", {timeZone: "America/Denver"}));
+            winston.info("User " + appState.username + " reset their password and logged in at " + new Date().toLocaleString("en-US", {timeZone: "America/Denver"}));
         }
         catch(e){
-            this.props.appState.forgotPasswordErrorMessage = e.message;
+            appState.forgotPasswordErrorMessage = e.message;
         }
-        this.props.appState.loadingForgotPassword = false;
+        appState.loadingForgotPassword = false;
     }
 
     validateUsername(): boolean{
         if(this.emailOrUsername.length === 0){
-            this.props.appState.forgotPasswordErrorMessage = "Email / username field must not be empty.";
+            appState.forgotPasswordErrorMessage = "Email / username field must not be empty.";
             return false;
         }
 
@@ -71,23 +62,23 @@ class ForgotPassword extends React.Component<ForgotPasswordProps>{
     }
 
     validatePasswordReset(): boolean{
-        if(this.props.appState.verificationCode.length === 0){
-            this.props.appState.forgotPasswordErrorMessage = "Verification code field must not be empty.";
+        if(appState.verificationCode.length === 0){
+            appState.forgotPasswordErrorMessage = "Verification code field must not be empty.";
             return false;
         }
 
         if(this.password.length === 0 || this.confirmPassword.length === 0){
-            this.props.appState.forgotPasswordErrorMessage = "Password fields must not be empty.";
+            appState.forgotPasswordErrorMessage = "Password fields must not be empty.";
             return false;
         }
         
         if(this.password !== this.confirmPassword){
-            this.props.appState.forgotPasswordErrorMessage = "Passwords must match.";
+            appState.forgotPasswordErrorMessage = "Passwords must match.";
             return false;
         }
 
         if(this.password.length < 8){
-            this.props.appState.forgotPasswordErrorMessage = "Password must be 8 characters or greater.";
+            appState.forgotPasswordErrorMessage = "Password must be 8 characters or greater.";
             return false;
         }
 
@@ -99,7 +90,7 @@ class ForgotPassword extends React.Component<ForgotPasswordProps>{
             <Fragment>
                 <Grid item>
                     <TextField
-                        onChange = {event => this.props.appState.verificationCode = (event.target as HTMLInputElement).value}
+                        onChange = {event => appState.verificationCode = (event.target as HTMLInputElement).value}
                         name = "verificationCode"
                         type = "verificationCode"
                         margin = "dense"
@@ -124,7 +115,7 @@ class ForgotPassword extends React.Component<ForgotPasswordProps>{
                         autoComplete = "current-password"
                         margin = "dense"
                         variant = "outlined"
-                        label = "Password"
+                        label = "New Password"
                         onKeyPress = {(event) => {
                             if(event.key === "Enter"){
                                 if(this.validatePasswordReset()){
@@ -144,7 +135,7 @@ class ForgotPassword extends React.Component<ForgotPasswordProps>{
                         autoComplete = "current-password"
                         margin = "dense"
                         variant = "outlined"
-                        label = "Confirm Password"
+                        label = "Confirm New Password"
                         onKeyPress = {(event) => {
                             if(event.key === "Enter"){
                                 if(this.validatePasswordReset()){
@@ -160,7 +151,7 @@ class ForgotPassword extends React.Component<ForgotPasswordProps>{
                     <Button 
                         variant = "contained" 
                         color = "primary"
-                        disabled = {this.props.appState.loadingForgotPassword}
+                        disabled = {appState.loadingForgotPassword}
                         onClick = {() => {
                             if(this.validatePasswordReset()){
                                 this.verifyReset();
@@ -178,12 +169,12 @@ class ForgotPassword extends React.Component<ForgotPasswordProps>{
         return(
             <ExpansionPanel>
                 <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography variant = "h6">{forgotPasswordSpacing()}I forgot my password{forgotPasswordSpacing()}</Typography>
+                    <Typography variant = "h6">I forgot my password</Typography>
                 </ExpansionPanelSummary>
 
                 <ExpansionPanelDetails>
                     <Grid container spacing = {2} direction = "column" justify = "center" alignItems = "center">
-                        {this.props.appState.forgotPasswordErrorMessage.length !== 0 && <Message severity = "error" text = {this.props.appState.forgotPasswordErrorMessage}/>}
+                        {appState.forgotPasswordErrorMessage.length !== 0 && <Message severity = "error" text = {appState.forgotPasswordErrorMessage}/>}
                         <Grid item>
                             <TextField
                                 onChange = {event => this.emailOrUsername = (event.target as HTMLInputElement).value}
@@ -207,7 +198,7 @@ class ForgotPassword extends React.Component<ForgotPasswordProps>{
                             <Button 
                                 variant = "contained" 
                                 color = "default"
-                                disabled = {this.props.appState.loadingForgotPassword}
+                                disabled = {appState.loadingForgotPassword}
                                 onClick = {() => {
                                     if(this.validateUsername()){
                                         this.sendForgotEmail();
@@ -218,10 +209,10 @@ class ForgotPassword extends React.Component<ForgotPasswordProps>{
                             </Button>
                         </Grid>
 
-                        {this.props.appState.forgotPasswordUsernameEntered && this.renderPasswordReset()}
+                        {appState.forgotPasswordUsernameEntered && this.renderPasswordReset()}
 
                         <Grid item>
-                            {this.props.appState.loadingForgotPassword ? <CircularProgress/> : null}
+                            {appState.loadingForgotPassword ? <CircularProgress/> : null}
                         </Grid>
 
                     </Grid>
@@ -231,9 +222,9 @@ class ForgotPassword extends React.Component<ForgotPasswordProps>{
     }
 
     componentWillUnmount(){
-        this.props.appState.forgotPasswordErrorMessage = "";
-        this.props.appState.forgotPasswordUsernameEntered = false;
+        appState.forgotPasswordErrorMessage = "";
+        appState.forgotPasswordUsernameEntered = false;
     }
 }
 
-export default withRouter<ForgotPasswordProps, any>(ForgotPassword);
+export default withRouter<RouteComponentProps<any>, any>(ForgotPassword);

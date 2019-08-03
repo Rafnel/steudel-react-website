@@ -4,30 +4,25 @@ import { observer } from 'mobx-react';
 import 'primereact/resources/themes/nova-light/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
-import { IconButton, Button, Typography, Drawer, Snackbar, SnackbarContent } from '@material-ui/core';
-import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Auth } from 'aws-amplify';
-import AppStateStore from './stateStores/appState';
+import { appState } from './stateStores/appState';
 import SuccessMessage from './components/SuccessMessage';
 import MenuBar from './components/MenuBar';
 import HeaderBar from './components/HeaderBar';
 
-interface AppProps extends RouteComponentProps<any>{
-  appState: AppStateStore;
-}
-
 @observer
-class App extends React.Component<AppProps>{
+class App extends React.Component<RouteComponentProps<any>>{
   render() {
     return (
-      !this.props.appState.isAuthenticating &&
+      !appState.isAuthenticating &&
       <div className="Appcontainer">
-        <HeaderBar appState = {this.props.appState}/>
-        <MenuBar appState = {this.props.appState}/>
+        <HeaderBar/>
+        <MenuBar/>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        {this.props.appState.successMessage.length !== 0 && <SuccessMessage appState = {this.props.appState}/>}
+        {appState.successMessage.length !== 0 && <SuccessMessage/>}
 
-        <Routes appState = {this.props.appState}/>
+        <Routes/>
       </div>
     );
   }
@@ -35,7 +30,7 @@ class App extends React.Component<AppProps>{
   async componentDidMount(){
     try{
       await Auth.currentSession();
-      this.props.appState.isLoggedIn = true;
+      appState.isLoggedIn = true;
     }
     catch(e){
       if(e !== "No current user"){
@@ -43,8 +38,8 @@ class App extends React.Component<AppProps>{
       }
     }
 
-    this.props.appState.isAuthenticating = false;
+    appState.isAuthenticating = false;
   }
 }
 
-export default withRouter<AppProps, any>(App);
+export default withRouter<RouteComponentProps<any>, any>(App);

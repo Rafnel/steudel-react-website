@@ -1,4 +1,4 @@
-import AppStateStore from "../stateStores/appState";
+import AppStateStore, { appState } from "../stateStores/appState";
 import React from "react";
 import { ExpansionPanel, ExpansionPanelSummary, Typography, ExpansionPanelDetails, Grid, Button, TextField } from "@material-ui/core";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -7,51 +7,47 @@ import { Message } from "primereact/components/message/Message";
 import { observer } from "mobx-react";
 import winston from "../logging";
 
-export interface EmailVerificationProps{
-    appState: AppStateStore;
-}
-
 @observer
-export default class EmailVerification extends React.Component<EmailVerificationProps>{
+export default class EmailVerification extends React.Component{
     async handleResend(){
-        if(this.props.appState.username.length === 0){
-            this.props.appState.emailVerificationErrorMessage = "Please enter a username to resend the confirmation code.";
+        if(appState.username.length === 0){
+            appState.emailVerificationErrorMessage = "Please enter a username to resend the confirmation code.";
         }
         else{
-            console.log("Resending confirmation code for username: " + this.props.appState.username);
-            this.props.appState.resentCode = true;
+            console.log("Resending confirmation code for username: " + appState.username);
+            appState.resentCode = true;
             try{
-                this.props.appState.isLoading = true;
-                await Auth.resendSignUp(this.props.appState.username);
-                this.props.appState.isLoading = false;
+                appState.isLoading = true;
+                await Auth.resendSignUp(appState.username);
+                appState.isLoading = false;
             }
             catch(e){
-                this.props.appState.emailVerificationErrorMessage = e.message;
-                this.props.appState.isLoading = false;
+                appState.emailVerificationErrorMessage = e.message;
+                appState.isLoading = false;
             }
         }   
     }
 
     async handleConfirmation(){
-        if(this.props.appState.username.length === 0){
-            console.log(this.props.appState.emailVerificationErrorMessage.length);
-            this.props.appState.emailVerificationErrorMessage = "Please enter a username to confirm your account.";
+        if(appState.username.length === 0){
+            console.log(appState.emailVerificationErrorMessage.length);
+            appState.emailVerificationErrorMessage = "Please enter a username to confirm your account.";
         }
-        else if(this.props.appState.verificationCode.length === 0){
-            this.props.appState.emailVerificationErrorMessage = "Please enter the code from your Email.";
+        else if(appState.verificationCode.length === 0){
+            appState.emailVerificationErrorMessage = "Please enter the code from your Email.";
         }
         else{
             try{
-                this.props.appState.isLoading = true;
-                await Auth.confirmSignUp(this.props.appState.username, this.props.appState.verificationCode);
-                winston.info("User " + this.props.appState.username + " has confirmed their email at " + new Date().toLocaleString("en-US", {timeZone: "America/Denver"}));
-                this.props.appState.isLoading = false;
+                appState.isLoading = true;
+                await Auth.confirmSignUp(appState.username, appState.verificationCode);
+                winston.info("User " + appState.username + " has confirmed their email at " + new Date().toLocaleString("en-US", {timeZone: "America/Denver"}));
+                appState.isLoading = false;
             }
             catch(e){
-                this.props.appState.emailVerificationErrorMessage = e.message;
-                this.props.appState.isLoading = false;
+                appState.emailVerificationErrorMessage = e.message;
+                appState.isLoading = false;
                 if(e.message.includes("cannot be confirm.")){
-                    this.props.appState.emailVerificationErrorMessage = "User is already confirmed.";
+                    appState.emailVerificationErrorMessage = "User is already confirmed.";
                 }
             }
         }
@@ -66,10 +62,10 @@ export default class EmailVerification extends React.Component<EmailVerification
 
                 <ExpansionPanelDetails>
                     <Grid container spacing = {2} direction = "column" justify = "center" alignItems = "center">
-                        {this.props.appState.emailVerificationErrorMessage.length !== 0 && <Message severity = "error" text = {this.props.appState.emailVerificationErrorMessage}/>}
+                        {appState.emailVerificationErrorMessage.length !== 0 && <Message severity = "error" text = {appState.emailVerificationErrorMessage}/>}
                         <Grid item>
                             <TextField
-                                onChange = {event => this.props.appState.username = (event.target as HTMLInputElement).value}
+                                onChange = {event => appState.username = (event.target as HTMLInputElement).value}
                                 name = "username"
                                 type = "username"
                                 margin = "dense"
@@ -83,7 +79,7 @@ export default class EmailVerification extends React.Component<EmailVerification
                             <Button 
                                 variant = "contained" 
                                 color = "default"
-                                disabled = {this.props.appState.isLoading}
+                                disabled = {appState.isLoading}
                                 onClick = {() => {
                                     this.handleResend();
                                 }}
@@ -94,7 +90,7 @@ export default class EmailVerification extends React.Component<EmailVerification
                         
                         <Grid item>
                             <TextField
-                                onChange = {event => this.props.appState.verificationCode = (event.target as HTMLInputElement).value}
+                                onChange = {event => appState.verificationCode = (event.target as HTMLInputElement).value}
                                 name = "verificationCode"
                                 type = "verificationCode"
                                 margin = "dense"
@@ -108,7 +104,7 @@ export default class EmailVerification extends React.Component<EmailVerification
                             <Button 
                                 variant = "contained" 
                                 color = "primary"
-                                disabled = {this.props.appState.isLoading}
+                                disabled = {appState.isLoading}
                                 onClick = {() => {
                                     this.handleConfirmation();
                                 }}
@@ -123,6 +119,6 @@ export default class EmailVerification extends React.Component<EmailVerification
     }
 
     componentWillUnmount(){
-        this.props.appState.emailVerificationErrorMessage = "";
+        appState.emailVerificationErrorMessage = "";
     }
 }

@@ -15,6 +15,7 @@
     "@types/react-router-dom": "^4.3.4",
     "aws-amplify": "^1.1.32",
     "classnames": "^2.2.6",
+    "material-ui-image": "^3.2.0",
     "mobx": "^5.13.0",
     "mobx-react": "^6.1.1",
     "primeicons": "^1.0.0",
@@ -27,7 +28,9 @@
     "react-transition-group": "^4.2.1",
     "typeface-roboto": "0.0.75",
     "typescript": "3.5.3",
-    "unirest": "^0.6.0"
+    "unirest": "^0.6.0",
+    "winston": "^3.2.1",
+    "winston-cloudwatch": "^2.0.6"
   },
   "scripts": {
     "start": "react-scripts start",

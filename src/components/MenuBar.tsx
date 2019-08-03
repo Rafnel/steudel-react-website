@@ -1,28 +1,25 @@
 import React, { Fragment } from "react";
-import { Drawer, Typography, Button } from "@material-ui/core";
-import AppStateStore from "../stateStores/appState";
+import { Drawer, Typography, Button, SwipeableDrawer } from "@material-ui/core";
+import AppStateStore, { appState } from "../stateStores/appState";
 import { Link, withRouter, RouteComponentProps } from "react-router-dom";
 import { Auth } from "aws-amplify";
 import { observer } from "mobx-react";
 
-export interface MenuBarProps extends RouteComponentProps<any>{
-    appState: AppStateStore;
-}
-
 @observer
-class MenuBar extends React.Component<MenuBarProps>{
+class MenuBar extends React.Component<RouteComponentProps<any>>{
     render(){
         return(
-            <Drawer
-                open = {this.props.appState.navBarVisible}
-                onClose = {() => this.props.appState.navBarVisible = false}
+            <SwipeableDrawer
+                open = {appState.navBarVisible}
+                onOpen = {() => appState.navBarVisible = true}
+                onClose = {() => appState.navBarVisible = false}
             >
-                <Typography variant = "h6" gutterBottom>
+                <Typography variant = "h6">
                     &nbsp;&nbsp;Rafnel Navigation&nbsp;&nbsp;
                 </Typography>
             
                 <Button size = "medium" component = {Link} to = "/" onClick = {() => {
-                this.props.appState.navBarVisible = false; 
+                appState.navBarVisible = false; 
                 }}>
                     <Typography variant = "button" display = "block">
                         Rafnel Home
@@ -30,16 +27,16 @@ class MenuBar extends React.Component<MenuBarProps>{
                 </Button>
 
                 <Button size = "medium" component = {Link} to = "/weather" onClick = {() => {
-                this.props.appState.navBarVisible = false; 
+                appState.navBarVisible = false; 
                 }}>
                     <Typography variant = "button" display = "block">
                         Weather
                     </Typography>
                     
                 </Button>
-            </Drawer>
+            </SwipeableDrawer>
         )
     }
 }
 
-export default withRouter<MenuBarProps, any>(MenuBar);
+export default withRouter<RouteComponentProps<any>, any>(MenuBar);

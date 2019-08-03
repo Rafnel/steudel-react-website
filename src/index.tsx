@@ -47,7 +47,7 @@ const theme = createMuiTheme({
 ReactDOM.render(
   <BrowserRouter>
     <ThemeProvider theme = {theme}>
-      <App appState = {new AppStateStore()}/>
+      <App/>
     </ThemeProvider>
   </BrowserRouter>,
   document.getElementById("root")

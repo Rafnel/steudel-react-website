@@ -4,35 +4,31 @@ import CloseIcon from '@material-ui/icons/Close';
 import { Auth } from "aws-amplify";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { Message } from "primereact/components/message/Message";
-import AppStateStore from "../stateStores/appState";
+import AppStateStore, { appState } from "../stateStores/appState";
 import { observer } from "mobx-react";
 import winston from "../logging";
 
-export interface SignUpPageProps extends RouteComponentProps<any>{
-    appState: AppStateStore;
-}
-
 @observer
-class SignupPage extends React.Component<SignUpPageProps>{
+class SignupPage extends React.Component<RouteComponentProps<any>>{
     password: string = "";
     confirmPassword: string = "";
 
     validateSignUp(): boolean{
-        if(this.props.appState.username.includes(" ")){
-            this.props.appState.signUpPageErrorMessage = "Username cannot contain a space.";
+        if(appState.username.includes(" ")){
+            appState.signUpPageErrorMessage = "Username cannot contain a space.";
             return false;
         }
         if(this.password !== this.confirmPassword){
-            this.props.appState.signUpPageErrorMessage = "Passwords must match.";
+            appState.signUpPageErrorMessage = "Passwords must match.";
             return false;
         }
         if(this.password.length < 8){
-            this.props.appState.signUpPageErrorMessage = "Password must be 8 characters or greater.";
+            appState.signUpPageErrorMessage = "Password must be 8 characters or greater.";
             return false;
         }
-        if(this.props.appState.username.length === 0 || this.props.appState.name.length === 0
-           || this.props.appState.email.length === 0){
-            this.props.appState.signUpPageErrorMessage = "You left a field blank.";
+        if(appState.username.length === 0 || appState.name.length === 0
+           || appState.email.length === 0){
+            appState.signUpPageErrorMessage = "You left a field blank.";
             return false;
         }
 
@@ -42,51 +38,51 @@ class SignupPage extends React.Component<SignUpPageProps>{
     async handleSignUp(){
         try{
             const newUser = await Auth.signUp({
-                username: this.props.appState.username,
+                username: appState.username,
                 password: this.password,
                 attributes: {
-                    name: this.props.appState.name,
-                    email: this.props.appState.email
+                    name: appState.name,
+                    email: appState.email
                 }
             });
 
-            this.props.appState.signedUp = true;
-            winston.info("User " + this.props.appState.username + " has signed up at " + new Date().toLocaleString("en-US", {timeZone: "America/Denver"}));
+            appState.signedUp = true;
+            winston.info("User " + appState.username + " has signed up at " + new Date().toLocaleString("en-US", {timeZone: "America/Denver"}));
         }
         catch(e){
-            this.props.appState.signUpPageErrorMessage = e.message;
+            appState.signUpPageErrorMessage = e.message;
         }
-        this.props.appState.isLoading = false;
+        appState.isLoading = false;
     }
 
     async handleConfirmation(){
         try{
-            console.log(":: Authenticating user with email " + this.props.appState.email + " and code " + this.props.appState.verificationCode);
+            console.log(":: Authenticating user with email " + appState.email + " and code " + appState.verificationCode);
 
-            await Auth.confirmSignUp(this.props.appState.username, this.props.appState.verificationCode);
-            await Auth.signIn(this.props.appState.email, this.password);
+            await Auth.confirmSignUp(appState.username, appState.verificationCode);
+            await Auth.signIn(appState.email, this.password);
 
-            this.props.appState.isLoggedIn = true;
+            appState.isLoggedIn = true;
             this.props.history.push("/");
-            this.props.appState.successMessage = "Account created and logged in successfully.";
-            winston.info("User " + this.props.appState.username + " has confirmed their email at " + new Date().toLocaleString("en-US", {timeZone: "America/Denver"}));
+            appState.successMessage = "Account created and logged in successfully.";
+            winston.info("User " + appState.username + " has confirmed their email at " + new Date().toLocaleString("en-US", {timeZone: "America/Denver"}));
         }
         catch(e){
-            this.props.appState.signUpPageErrorMessage = e.message;
+            appState.signUpPageErrorMessage = e.message;
         }
 
-        this.props.appState.isLoading = false;
+        appState.isLoading = false;
     }
 
     showErrorMessage(){
-        if(this.props.appState.signUpPageErrorMessage.length != 0){            
-            return <Message severity = "error" text = {this.props.appState.signUpPageErrorMessage}/>
+        if(appState.signUpPageErrorMessage.length != 0){            
+            return <Message severity = "error" text = {appState.signUpPageErrorMessage}/>
         }
         return null;
     }
 
     showResendMessage(){
-        if(this.props.appState.resentCode){
+        if(appState.resentCode){
             return <Snackbar 
                 open = {true} 
                 autoHideDuration = {8000} 
@@ -96,7 +92,7 @@ class SignupPage extends React.Component<SignUpPageProps>{
                                 color="inherit" 
                                 key = "close" 
                                 aria-label = "close" 
-                                onClick = {() => this.props.appState.resentCode = false}
+                                onClick = {() => appState.resentCode = false}
                             > 
                                 <CloseIcon/>
                           </IconButton>}
@@ -106,10 +102,10 @@ class SignupPage extends React.Component<SignUpPageProps>{
     }
 
     async handleResend(){
-        console.log("Resending confirmation code for email: " + this.props.appState.email);
-        this.props.appState.resentCode = true;
-        await Auth.resendSignUp(this.props.appState.username);
-        this.props.appState.isLoading = false;
+        console.log("Resending confirmation code for email: " + appState.email);
+        appState.resentCode = true;
+        await Auth.resendSignUp(appState.username);
+        appState.isLoading = false;
     }
 
     renderSignUpForm(){
@@ -128,14 +124,14 @@ class SignupPage extends React.Component<SignUpPageProps>{
                         <Grid container justify = "center">
                             <TextField
                                 style = {{width: "300px"}}
-                                onChange = {event => {this.props.appState.username = (event.target as HTMLInputElement).value}}
+                                onChange = {event => {appState.username = (event.target as HTMLInputElement).value}}
                                 name = "username"
                                 type = "username"
                                 margin = "dense"
                                 onKeyPress = {(event) => {
                                     if(event.key === "Enter"){
                                         if(this.validateSignUp()){
-                                            this.props.appState.isLoading = true;
+                                            appState.isLoading = true;
                                             this.handleSignUp();
                                         }
                                     }
@@ -161,13 +157,13 @@ class SignupPage extends React.Component<SignUpPageProps>{
 
                         <Grid container justify = "center">
                             <TextField
-                                onChange = {event => this.props.appState.name = (event.target as HTMLInputElement).value}
+                                onChange = {event => appState.name = (event.target as HTMLInputElement).value}
                                 name = "name"
                                 type = "name"
                                 onKeyPress = {(event) => {
                                     if(event.key === "Enter"){
                                         if(this.validateSignUp()){
-                                            this.props.appState.isLoading = true;
+                                            appState.isLoading = true;
                                             this.handleSignUp();
                                         }
                                     }
@@ -189,13 +185,13 @@ class SignupPage extends React.Component<SignUpPageProps>{
 
                         <Grid container justify = "center">
                             <TextField
-                                onChange = {event => {this.props.appState.email = (event.target as HTMLInputElement).value}}
+                                onChange = {event => {appState.email = (event.target as HTMLInputElement).value}}
                                 name = "email"
                                 type = "email"
                                 onKeyPress = {(event) => {
                                     if(event.key === "Enter"){
                                         if(this.validateSignUp()){
-                                            this.props.appState.isLoading = true;
+                                            appState.isLoading = true;
                                             this.handleSignUp();
                                         }
                                     }
@@ -221,7 +217,7 @@ class SignupPage extends React.Component<SignUpPageProps>{
                                 onKeyPress = {(event) => {
                                     if(event.key === "Enter"){
                                         if(this.validateSignUp()){
-                                            this.props.appState.isLoading = true;
+                                            appState.isLoading = true;
                                             this.handleSignUp();
                                         }
                                     }
@@ -244,7 +240,7 @@ class SignupPage extends React.Component<SignUpPageProps>{
                                 onKeyPress = {(event) => {
                                     if(event.key === "Enter"){
                                         if(this.validateSignUp()){
-                                            this.props.appState.isLoading = true;
+                                            appState.isLoading = true;
                                             this.handleSignUp();
                                         }
                                     }
@@ -277,11 +273,11 @@ class SignupPage extends React.Component<SignUpPageProps>{
                 <Grid item>
                     <Button 
                         variant = "contained" 
-                        disabled = {this.props.appState.isLoading}
+                        disabled = {appState.isLoading}
                         color = "primary"
                         onClick = {() => {
                             if(this.validateSignUp()){
-                                this.props.appState.isLoading = true;
+                                appState.isLoading = true;
                                 this.handleSignUp();
                             }
                         }}
@@ -291,7 +287,7 @@ class SignupPage extends React.Component<SignUpPageProps>{
                 </Grid>
 
                 <Grid item>
-                    {this.props.appState.isLoading && <CircularProgress/>}
+                    {appState.isLoading && <CircularProgress/>}
                 </Grid>
 
                 <Grid item>
@@ -313,9 +309,9 @@ class SignupPage extends React.Component<SignUpPageProps>{
                     <Button 
                         variant = "contained" 
                         color = "default"
-                        disabled = {this.props.appState.isLoading}
+                        disabled = {appState.isLoading}
                         onClick = {() => {
-                            this.props.appState.isLoading = true;
+                            appState.isLoading = true;
                             this.handleResend();
                         }}
                     >
@@ -325,14 +321,14 @@ class SignupPage extends React.Component<SignUpPageProps>{
                 
                 <Grid item>
                     <TextField
-                        onChange = {event => this.props.appState.verificationCode = (event.target as HTMLInputElement).value}
+                        onChange = {event => appState.verificationCode = (event.target as HTMLInputElement).value}
                         name = "verificationCode"
                         type = "verificationCode"
                         margin = "dense"
                         onKeyPress = {(event) => {
                             if(event.key === "Enter"){
-                                this.props.appState.isLoading = true;
-                                this.props.appState.signUpPageErrorMessage = "";
+                                appState.isLoading = true;
+                                appState.signUpPageErrorMessage = "";
                                 this.handleConfirmation();
                             }
                         }}
@@ -346,10 +342,10 @@ class SignupPage extends React.Component<SignUpPageProps>{
                     <Button 
                         variant = "contained" 
                         color = "primary"
-                        disabled = {this.props.appState.isLoading}
+                        disabled = {appState.isLoading}
                         onClick = {() => {
-                            this.props.appState.isLoading = true;
-                            this.props.appState.signUpPageErrorMessage = "";
+                            appState.isLoading = true;
+                            appState.signUpPageErrorMessage = "";
                             this.handleConfirmation();
                         }}
                     >
@@ -366,13 +362,13 @@ class SignupPage extends React.Component<SignUpPageProps>{
                 </Grid>
 
                 <Grid item>
-                    {this.props.appState.isLoading && <CircularProgress/>}
+                    {appState.isLoading && <CircularProgress/>}
                 </Grid>
             </Grid>
         )
     }
     render(){
-        if(this.props.appState.signedUp){
+        if(appState.signedUp){
             return this.renderConfirmation();
         }
         else{
@@ -381,9 +377,9 @@ class SignupPage extends React.Component<SignUpPageProps>{
     }
 
     componentWillUnmount(){
-        this.props.appState.signUpPageErrorMessage = "";
-        this.props.appState.signedUp = false;
+        appState.signUpPageErrorMessage = "";
+        appState.signedUp = false;
     }
 }
 
-export default withRouter<SignUpPageProps, any>(SignupPage);
+export default withRouter<RouteComponentProps<any>, any>(SignupPage);

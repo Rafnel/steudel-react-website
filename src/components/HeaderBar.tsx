@@ -1,23 +1,19 @@
 import React, { Fragment } from "react";
 import { AppBar, Toolbar, IconButton, Button, Typography } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
-import AppStateStore from "../stateStores/appState";
+import AppStateStore, { appState } from "../stateStores/appState";
 import { observer } from "mobx-react";
 import { Link, withRouter, RouteComponentProps } from "react-router-dom";
 import { Auth } from "aws-amplify";
 
-export interface HeaderBarProps extends RouteComponentProps<any>{
-    appState: AppStateStore;
-}
-
 @observer
-class HeaderBar extends React.Component<HeaderBarProps>{
+class HeaderBar extends React.Component<RouteComponentProps<any>>{
     handleLogout = async (event: any) => {
         await Auth.signOut();
     
-        this.props.appState.navBarVisible = false;
-        this.props.appState.isLoggedIn = false;
-        this.props.appState.successMessage = "Logged out successfully.";
+        appState.navBarVisible = false;
+        appState.isLoggedIn = false;
+        appState.successMessage = "Logged out successfully.";
         this.props.history.push("/login");
     }
     
@@ -27,12 +23,12 @@ class HeaderBar extends React.Component<HeaderBarProps>{
                 <Toolbar>
                     <IconButton
                         edge = "start"
-                        onClick = {() => this.props.appState.navBarVisible = true}
+                        onClick = {() => appState.navBarVisible = true}
                     >
                         <MenuIcon color = "secondary"/>
                     </IconButton>
 
-                    {this.props.appState.isLoggedIn 
+                    {appState.isLoggedIn 
                     ? 
                     <Button style = {{marginLeft: "auto"}} size = "medium" onClick = {this.handleLogout}>
                         <Typography color = "secondary" variant = "button" display = "block">
@@ -42,7 +38,7 @@ class HeaderBar extends React.Component<HeaderBarProps>{
                     :
                     <div style = {{marginLeft: "auto"}}>
                         <Button style = {{margin: "auto"}} size = "medium" component = {Link} to = "/signup" onClick = {() => {
-                            this.props.appState.navBarVisible = false; 
+                            appState.navBarVisible = false; 
                         }}>
                             <Typography color = "secondary" variant = "button" display = "block">
                                 Sign up
@@ -50,7 +46,7 @@ class HeaderBar extends React.Component<HeaderBarProps>{
                         </Button>
 
                         <Button style = {{margin: "auto"}} size = "medium" component = {Link} to = "/login" onClick = {() => {
-                            this.props.appState.navBarVisible = false; 
+                            appState.navBarVisible = false; 
                         }}>
                         <Typography color = "secondary" variant = "button" display = "block">
                             Log in
@@ -64,4 +60,4 @@ class HeaderBar extends React.Component<HeaderBarProps>{
     }
 }
 
-export default withRouter<HeaderBarProps, any>(HeaderBar);
+export default withRouter<RouteComponentProps<any>, any>(HeaderBar);

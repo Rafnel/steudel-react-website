@@ -1,4 +1,4 @@
-import { observable, action } from "mobx";
+import { observable } from "mobx";
 
 /*
  * Central storage location for the whole application's state. Using MobX,
@@ -40,6 +40,8 @@ export default class AppStateStore{
     @observable forgotPasswordUsernameEntered: boolean = false;
     @observable loadingForgotPassword: boolean = false;
 }
+
+export const appState: AppStateStore = new AppStateStore();
 
 export interface SwimComponent{
     username: string;
