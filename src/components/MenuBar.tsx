@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Drawer, Typography, Button, SwipeableDrawer } from "@material-ui/core";
+import { Drawer, Typography, Button, SwipeableDrawer, Divider, Grid } from "@material-ui/core";
 import AppStateStore, { appState } from "../stateStores/appState";
 import { Link, withRouter, RouteComponentProps } from "react-router-dom";
 import { Auth } from "aws-amplify";
@@ -15,8 +15,15 @@ class MenuBar extends React.Component<RouteComponentProps<any>>{
                 onClose = {() => appState.navBarVisible = false}
             >
                 <Typography variant = "h6">
-                    &nbsp;&nbsp;Rafnel Navigation&nbsp;&nbsp;
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rafnel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 </Typography>
+
+                <Grid container justify = "center">
+                    <Typography variant = "caption">
+                        Version 0.5
+                    </Typography>
+                </Grid>
+                <Divider/>
             
                 <Button size = "medium" component = {Link} to = "/" onClick = {() => {
                 appState.navBarVisible = false; 
