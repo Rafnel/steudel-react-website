@@ -1,7 +1,7 @@
 import { API } from "aws-amplify";
 import { globalState } from "../stateStores/appState";
-import winston from "../logging";
 
+//sets the currentUser in the appState variable.
 export default async function getUser(username: string){
     try{
         let jsonUser = await API.get("users", `/user/${username}`, null);
@@ -9,7 +9,6 @@ export default async function getUser(username: string){
     }
     catch(e){
         console.log(":: User " + username + " did not exist in db");
-        winston.info(":: User " + username + " did not exist in user_table, hopefully they will be added.");
         return null;
     }
 }

@@ -8,7 +8,6 @@ import addUser from "../api/addUser";
 import getUser from "../api/getUser";
 import EmailVerification from "../components/EmailVerification";
 import ForgotPassword from "../components/ForgotPassword";
-import winston from "../logging";
 import { globalState } from "../stateStores/appState";
 
 @observer
@@ -38,7 +37,6 @@ class LoginPage extends React.Component<RouteComponentProps<any>>{
                     await addUser(globalState.appState.username);
                     await getUser(globalState.appState.username);
                 }
-                winston.info("User " + globalState.appState.username + " has logged in at " + new Date().toLocaleString("en-US", {timeZone: "America/Denver"}));
                 globalState.appState.successMessage = "Successfully logged in. Welcome back " + globalState.appState.username + "!";
                 this.props.history.push("/");
                 globalState.appState.isLoggedIn = true;

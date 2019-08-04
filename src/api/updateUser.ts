@@ -1,6 +1,7 @@
 import { API } from "aws-amplify";
 import { User } from "../stateStores/appState";
 
+//updates the liked components / workouts for user.
 export default async function updateUser(user: User){
     try{
         console.log(":: Attempting to update user: " + user.username + " with liked components: " + user.liked_components);

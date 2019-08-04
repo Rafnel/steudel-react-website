@@ -5,7 +5,6 @@ import { Auth } from "aws-amplify";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { Message } from "primereact/components/message/Message";
 import { observer } from "mobx-react";
-import winston from "../logging";
 import addUser from "../api/addUser";
 import getUser from "../api/getUser";
 import { globalState } from "../stateStores/appState";
@@ -53,7 +52,6 @@ class SignupPage extends React.Component<RouteComponentProps<any>>{
             });
 
             globalState.appState.signedUp = true;
-            winston.info("User " + globalState.appState.username + " has signed up at " + new Date().toLocaleString("en-US", {timeZone: "America/Denver"}));
         }
         catch(e){
             globalState.appState.signUpPageErrorMessage = e.message;
@@ -74,7 +72,6 @@ class SignupPage extends React.Component<RouteComponentProps<any>>{
             globalState.appState.isLoggedIn = true;
             this.props.history.push("/");
             globalState.appState.successMessage = "Account created and logged in successfully.";
-            winston.info("User " + globalState.appState.username + " has confirmed their email at " + new Date().toLocaleString("en-US", {timeZone: "America/Denver"}));
         }
         catch(e){
             globalState.appState.signUpPageErrorMessage = e.message;

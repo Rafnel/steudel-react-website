@@ -4,8 +4,8 @@ import { Auth } from "aws-amplify";
 import { observer } from "mobx-react";
 import { Message } from "primereact/components/message/Message";
 import React from "react";
-import winston from "../logging";
 import { globalState } from "../stateStores/appState";
+
 
 
 @observer
@@ -20,6 +20,7 @@ export default class EmailVerification extends React.Component{
             try{
                 globalState.appState.isLoading = true;
                 await Auth.resendSignUp(globalState.appState.username);
+                globalState.appState.successMessage = "Verification code has been resent.";
                 globalState.appState.isLoading = false;
             }
             catch(e){
@@ -41,8 +42,8 @@ export default class EmailVerification extends React.Component{
             try{
                 globalState.appState.isLoading = true;
                 await Auth.confirmSignUp(globalState.appState.username, globalState.appState.verificationCode);
-                winston.info("User " + globalState.appState.username + " has confirmed their email at " + new Date().toLocaleString("en-US", {timeZone: "America/Denver"}));
                 globalState.appState.isLoading = false;
+                globalState.appState.successMessage = "Your account has been confirmed. You can now sign in.";
             }
             catch(e){
                 globalState.appState.emailVerificationErrorMessage = e.message;

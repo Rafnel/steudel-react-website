@@ -28,9 +28,7 @@
     "react-transition-group": "^4.2.1",
     "typeface-roboto": "0.0.75",
     "typescript": "3.5.3",
-    "unirest": "^0.6.0",
-    "winston": "^3.2.1",
-    "winston-cloudwatch": "^2.0.6"
+    "unirest": "^0.6.0"
   },
   "scripts": {
     "start": "react-scripts start",

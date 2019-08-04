@@ -20,7 +20,7 @@ class MenuBar extends React.Component<RouteComponentProps<any>>{
 
                 <Grid container justify = "center">
                     <Typography variant = "caption">
-                        Version 0.6
+                        Version 0.65
                     </Typography>
                 </Grid>
                 <Divider/>
