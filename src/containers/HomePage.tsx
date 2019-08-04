@@ -37,13 +37,13 @@ export class HomePage extends React.Component{
                  </Grid>
                 }
 
+                {globalState.appState.isLoading && <CircularProgress/>}
+
                 {globalState.appState.currentComponent.username.length !== 0 && globalState.appState.isLoggedIn
                  &&
                  <Grid item>
                      <SwimComponentCard/>
                  </Grid>}
-
-                {globalState.appState.isLoading && <CircularProgress/>}
             </Grid>
         )
     }

@@ -51,7 +51,7 @@ export default class SwimComponentCard extends React.Component{
                         onClick = {() => {
                             this.componentLiked = !this.componentLiked;
                             var value: number;
-                            let componentLikeString: string = globalState.appState.currentUser.username + "," + globalState.appState.currentComponent.component_id;
+                            let componentLikeString: string = globalState.appState.currentComponent.username + "," + globalState.appState.currentComponent.component_id;
                             if(!this.componentLiked){
                                 globalState.appState.currentComponent.likes -= 1;
                                 value = -1;

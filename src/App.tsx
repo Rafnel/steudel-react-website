@@ -11,6 +11,7 @@ import MenuBar from './components/MenuBar';
 import SuccessMessage from './components/SuccessMessage';
 import Routes from './Routes';
 import { globalState } from "./stateStores/appState";
+import addUser from './api/addUser';
 
 @observer
 class App extends React.Component<RouteComponentProps<any>>{
@@ -35,7 +36,12 @@ class App extends React.Component<RouteComponentProps<any>>{
       const currentUserInfo = await Auth.currentUserInfo();
 
       //get the logged-in user and apply their info to the currentUser object.
-      getUser(currentUserInfo.username);
+      await getUser(currentUserInfo.username);
+      if(globalState.appState.currentUser.username === ""){
+        //user doesn't exist in the db. Add them, then populate our currentUser value.
+        await addUser(currentUserInfo.username);
+        await getUser(currentUserInfo.username);
+      }
     }
     catch(e){
       if(e !== "No current user"){

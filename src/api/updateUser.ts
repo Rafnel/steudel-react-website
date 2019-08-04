@@ -12,9 +12,11 @@ export default async function updateUser(user: User){
                 liked_workouts: user.liked_workouts
             }
         });
+        console.log(":: user " + user.username + " updated successfully.");
     }
     catch(e){
         alert(e);
+        console.log(e.message);
         return null;
     }
 }
