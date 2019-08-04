@@ -1,11 +1,11 @@
 import { API } from "aws-amplify";
-import AppStateStore from "../stateStores/appState";
+import { globalState } from "../stateStores/appState";
 
-export default async function getRandomComponent(appState: AppStateStore){
+export default async function getRandomComponent(){
     try{
         let jsonComponent = await API.get("swimComponents", "/components/random", null);
-        appState.currentComponent = jsonComponent;
-        appState.isLoading = false;
+        globalState.appState.currentComponent = jsonComponent;
+        globalState.appState.isLoading = false;
     }
     catch(e){
         alert(e);

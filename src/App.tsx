@@ -1,26 +1,27 @@
-import React, { Fragment } from 'react';
-import Routes from './Routes';
-import { observer } from 'mobx-react';
-import 'primereact/resources/themes/nova-light/theme.css';
-import 'primereact/resources/primereact.min.css';
-import 'primeicons/primeicons.css';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { Auth } from 'aws-amplify';
-import { appState } from './stateStores/appState';
-import SuccessMessage from './components/SuccessMessage';
-import MenuBar from './components/MenuBar';
+import { observer } from 'mobx-react';
+import 'primeicons/primeicons.css';
+import 'primereact/resources/primereact.min.css';
+import 'primereact/resources/themes/nova-light/theme.css';
+import React from 'react';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
+import getUser from './api/getUser';
 import HeaderBar from './components/HeaderBar';
+import MenuBar from './components/MenuBar';
+import SuccessMessage from './components/SuccessMessage';
+import Routes from './Routes';
+import { globalState } from "./stateStores/appState";
 
 @observer
 class App extends React.Component<RouteComponentProps<any>>{
   render() {
     return (
-      !appState.isAuthenticating &&
+      !globalState.appState.isAuthenticating &&
       <div className="Appcontainer">
         <HeaderBar/>
         <MenuBar/>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        {appState.successMessage.length !== 0 && <SuccessMessage/>}
+        {globalState.appState.successMessage.length !== 0 && <SuccessMessage/>}
 
         <Routes/>
       </div>
@@ -30,7 +31,11 @@ class App extends React.Component<RouteComponentProps<any>>{
   async componentDidMount(){
     try{
       await Auth.currentSession();
-      appState.isLoggedIn = true;
+      globalState.appState.isLoggedIn = true;
+      const currentUserInfo = await Auth.currentUserInfo();
+
+      //get the logged-in user and apply their info to the currentUser object.
+      getUser(currentUserInfo.username);
     }
     catch(e){
       if(e !== "No current user"){
@@ -38,7 +43,7 @@ class App extends React.Component<RouteComponentProps<any>>{
       }
     }
 
-    appState.isAuthenticating = false;
+    globalState.appState.isAuthenticating = false;
   }
 }
 

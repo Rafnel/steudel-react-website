@@ -1,43 +1,53 @@
-import { Typography, Grid, TextField, Button, CircularProgress, ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails } from "@material-ui/core";
-import React from "react";
-import { observer } from "mobx-react";
-import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { Button, CircularProgress, Grid, TextField, Typography } from "@material-ui/core";
 import { Auth } from "aws-amplify";
-import AppStateStore, { appState } from "../stateStores/appState";
-import EmailVerification from "../components/EmailVerification";
+import { observer } from "mobx-react";
 import { Message } from "primereact/components/message/Message";
-import winston from "../logging";
+import React from "react";
+import { RouteComponentProps, withRouter } from 'react-router-dom';
+import addUser from "../api/addUser";
+import getUser from "../api/getUser";
+import EmailVerification from "../components/EmailVerification";
 import ForgotPassword from "../components/ForgotPassword";
+import winston from "../logging";
+import { globalState } from "../stateStores/appState";
 
 @observer
 class LoginPage extends React.Component<RouteComponentProps<any>>{
     password: string = "";
     handleLogin = async (event: any) =>{
-        appState.isLoading = true;
+        globalState.appState.isLoading = true;
         event.preventDefault();
 
-        if(appState.email.length === 0){
-            appState.loginPageErrorMessage = "Please enter your Email or username.";
+        if(globalState.appState.email.length === 0){
+            globalState.appState.loginPageErrorMessage = "Please enter your Email or username.";
         }
         else if(this.password.length === 0){
-            appState.loginPageErrorMessage = "Please enter a password.";
+            globalState.appState.loginPageErrorMessage = "Please enter a password.";
         }
         else{
             try{
-                await Auth.signIn(appState.email, this.password);
+                await Auth.signIn(globalState.appState.email, this.password);
                 const currentUserInfo = await Auth.currentUserInfo();
-        
-                appState.username = currentUserInfo.username;
-                winston.info("User " + appState.username + " has logged in at " + new Date().toLocaleString("en-US", {timeZone: "America/Denver"}));
-                appState.successMessage = "Successfully logged in. Welcome back " + appState.username + "!";
+
+                globalState.appState.username = currentUserInfo.username;
+                //check if user is in db, if not, they slipped through cracks and we must add them.
+                await getUser(globalState.appState.username);
+                console.log(":: User " + globalState.appState.currentUser.username + " logged in with liked components " + globalState.appState.currentUser.liked_components);
+                if(globalState.appState.currentUser.username === ""){
+                    //user doesn't exist in the db. Add them, then populate our currentUser value.
+                    await addUser(globalState.appState.username);
+                    await getUser(globalState.appState.username);
+                }
+                winston.info("User " + globalState.appState.username + " has logged in at " + new Date().toLocaleString("en-US", {timeZone: "America/Denver"}));
+                globalState.appState.successMessage = "Successfully logged in. Welcome back " + globalState.appState.username + "!";
                 this.props.history.push("/");
-                appState.isLoggedIn = true;
+                globalState.appState.isLoggedIn = true;
             }
             catch(e){
-                appState.loginPageErrorMessage = e.message;
+                globalState.appState.loginPageErrorMessage = e.message;
             }
         }
-        appState.isLoading = false;
+        globalState.appState.isLoading = false;
     }
 
     render(){
@@ -46,11 +56,11 @@ class LoginPage extends React.Component<RouteComponentProps<any>>{
                 <Grid item>
                     <Typography variant = "h2">Rafnel Login</Typography>
                 </Grid>
-                {appState.loginPageErrorMessage.length != 0 && <Message severity = "error" text = {appState.loginPageErrorMessage}/>}
+                {globalState.appState.loginPageErrorMessage.length !== 0 && <Message severity = "error" text = {globalState.appState.loginPageErrorMessage}/>}
                 <Grid container direction = "row" spacing = {1} justify = "center" alignItems = "center">
                     <Grid item>
                         <TextField
-                            onChange = {event => {appState.email = (event.target as HTMLInputElement).value}}
+                            onChange = {event => {globalState.appState.email = (event.target as HTMLInputElement).value}}
                             name = "email"
                             type = "email"
                             margin = "dense"
@@ -90,14 +100,14 @@ class LoginPage extends React.Component<RouteComponentProps<any>>{
                         variant = "contained" 
                         color = "primary"
                         onClick = {this.handleLogin}
-                        disabled = {appState.isLoading}
+                        disabled = {globalState.appState.isLoading}
                     >
                         Log in
                     </Button>
                 </Grid>
 
                 <Grid item>
-                    {appState.isLoading ? <CircularProgress/> : null}
+                    {globalState.appState.isLoading ? <CircularProgress/> : null}
                 </Grid>
 
                 <Grid item>
@@ -113,7 +123,7 @@ class LoginPage extends React.Component<RouteComponentProps<any>>{
     }
 
     componentWillUnmount(){
-        appState.loginPageErrorMessage = "";
+        globalState.appState.loginPageErrorMessage = "";
     }
 }
 

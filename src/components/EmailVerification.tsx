@@ -1,53 +1,54 @@
-import AppStateStore, { appState } from "../stateStores/appState";
-import React from "react";
-import { ExpansionPanel, ExpansionPanelSummary, Typography, ExpansionPanelDetails, Grid, Button, TextField } from "@material-ui/core";
+import { Button, ExpansionPanel, ExpansionPanelDetails, ExpansionPanelSummary, Grid, TextField, Typography } from "@material-ui/core";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { Auth } from "aws-amplify";
-import { Message } from "primereact/components/message/Message";
 import { observer } from "mobx-react";
+import { Message } from "primereact/components/message/Message";
+import React from "react";
 import winston from "../logging";
+import { globalState } from "../stateStores/appState";
+
 
 @observer
 export default class EmailVerification extends React.Component{
     async handleResend(){
-        if(appState.username.length === 0){
-            appState.emailVerificationErrorMessage = "Please enter a username to resend the confirmation code.";
+        if(globalState.appState.username.length === 0){
+            globalState.appState.emailVerificationErrorMessage = "Please enter a username to resend the confirmation code.";
         }
         else{
-            console.log("Resending confirmation code for username: " + appState.username);
-            appState.resentCode = true;
+            console.log("Resending confirmation code for username: " + globalState.appState.username);
+            globalState.appState.resentCode = true;
             try{
-                appState.isLoading = true;
-                await Auth.resendSignUp(appState.username);
-                appState.isLoading = false;
+                globalState.appState.isLoading = true;
+                await Auth.resendSignUp(globalState.appState.username);
+                globalState.appState.isLoading = false;
             }
             catch(e){
-                appState.emailVerificationErrorMessage = e.message;
-                appState.isLoading = false;
+                globalState.appState.emailVerificationErrorMessage = e.message;
+                globalState.appState.isLoading = false;
             }
         }   
     }
 
     async handleConfirmation(){
-        if(appState.username.length === 0){
-            console.log(appState.emailVerificationErrorMessage.length);
-            appState.emailVerificationErrorMessage = "Please enter a username to confirm your account.";
+        if(globalState.appState.username.length === 0){
+            console.log(globalState.appState.emailVerificationErrorMessage.length);
+            globalState.appState.emailVerificationErrorMessage = "Please enter a username to confirm your account.";
         }
-        else if(appState.verificationCode.length === 0){
-            appState.emailVerificationErrorMessage = "Please enter the code from your Email.";
+        else if(globalState.appState.verificationCode.length === 0){
+            globalState.appState.emailVerificationErrorMessage = "Please enter the code from your Email.";
         }
         else{
             try{
-                appState.isLoading = true;
-                await Auth.confirmSignUp(appState.username, appState.verificationCode);
-                winston.info("User " + appState.username + " has confirmed their email at " + new Date().toLocaleString("en-US", {timeZone: "America/Denver"}));
-                appState.isLoading = false;
+                globalState.appState.isLoading = true;
+                await Auth.confirmSignUp(globalState.appState.username, globalState.appState.verificationCode);
+                winston.info("User " + globalState.appState.username + " has confirmed their email at " + new Date().toLocaleString("en-US", {timeZone: "America/Denver"}));
+                globalState.appState.isLoading = false;
             }
             catch(e){
-                appState.emailVerificationErrorMessage = e.message;
-                appState.isLoading = false;
+                globalState.appState.emailVerificationErrorMessage = e.message;
+                globalState.appState.isLoading = false;
                 if(e.message.includes("cannot be confirm.")){
-                    appState.emailVerificationErrorMessage = "User is already confirmed.";
+                    globalState.appState.emailVerificationErrorMessage = "User is already confirmed.";
                 }
             }
         }
@@ -62,10 +63,10 @@ export default class EmailVerification extends React.Component{
 
                 <ExpansionPanelDetails>
                     <Grid container spacing = {2} direction = "column" justify = "center" alignItems = "center">
-                        {appState.emailVerificationErrorMessage.length !== 0 && <Message severity = "error" text = {appState.emailVerificationErrorMessage}/>}
+                        {globalState.appState.emailVerificationErrorMessage.length !== 0 && <Message severity = "error" text = {globalState.appState.emailVerificationErrorMessage}/>}
                         <Grid item>
                             <TextField
-                                onChange = {event => appState.username = (event.target as HTMLInputElement).value}
+                                onChange = {event => globalState.appState.username = (event.target as HTMLInputElement).value}
                                 name = "username"
                                 type = "username"
                                 margin = "dense"
@@ -79,7 +80,7 @@ export default class EmailVerification extends React.Component{
                             <Button 
                                 variant = "contained" 
                                 color = "default"
-                                disabled = {appState.isLoading}
+                                disabled = {globalState.appState.isLoading}
                                 onClick = {() => {
                                     this.handleResend();
                                 }}
@@ -90,7 +91,7 @@ export default class EmailVerification extends React.Component{
                         
                         <Grid item>
                             <TextField
-                                onChange = {event => appState.verificationCode = (event.target as HTMLInputElement).value}
+                                onChange = {event => globalState.appState.verificationCode = (event.target as HTMLInputElement).value}
                                 name = "verificationCode"
                                 type = "verificationCode"
                                 margin = "dense"
@@ -104,7 +105,7 @@ export default class EmailVerification extends React.Component{
                             <Button 
                                 variant = "contained" 
                                 color = "primary"
-                                disabled = {appState.isLoading}
+                                disabled = {globalState.appState.isLoading}
                                 onClick = {() => {
                                     this.handleConfirmation();
                                 }}
@@ -119,6 +120,6 @@ export default class EmailVerification extends React.Component{
     }
 
     componentWillUnmount(){
-        appState.emailVerificationErrorMessage = "";
+        globalState.appState.emailVerificationErrorMessage = "";
     }
 }

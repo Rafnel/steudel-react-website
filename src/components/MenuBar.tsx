@@ -1,18 +1,18 @@
-import React, { Fragment } from "react";
-import { Drawer, Typography, Button, SwipeableDrawer, Divider, Grid } from "@material-ui/core";
-import AppStateStore, { appState } from "../stateStores/appState";
-import { Link, withRouter, RouteComponentProps } from "react-router-dom";
-import { Auth } from "aws-amplify";
+import { Button, Divider, Grid, SwipeableDrawer, Typography } from "@material-ui/core";
 import { observer } from "mobx-react";
+import React from "react";
+import { Link, RouteComponentProps, withRouter } from "react-router-dom";
+import { globalState } from "../stateStores/appState";
+
 
 @observer
 class MenuBar extends React.Component<RouteComponentProps<any>>{
     render(){
         return(
             <SwipeableDrawer
-                open = {appState.navBarVisible}
-                onOpen = {() => appState.navBarVisible = true}
-                onClose = {() => appState.navBarVisible = false}
+                open = {globalState.appState.navBarVisible}
+                onOpen = {() => globalState.appState.navBarVisible = true}
+                onClose = {() => globalState.appState.navBarVisible = false}
             >
                 <Typography variant = "h6">
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rafnel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -20,13 +20,13 @@ class MenuBar extends React.Component<RouteComponentProps<any>>{
 
                 <Grid container justify = "center">
                     <Typography variant = "caption">
-                        Version 0.5
+                        Version 0.6
                     </Typography>
                 </Grid>
                 <Divider/>
             
                 <Button size = "medium" component = {Link} to = "/" onClick = {() => {
-                appState.navBarVisible = false; 
+                globalState.appState.navBarVisible = false; 
                 }}>
                     <Typography variant = "button" display = "block">
                         Rafnel Home
@@ -34,7 +34,7 @@ class MenuBar extends React.Component<RouteComponentProps<any>>{
                 </Button>
 
                 <Button size = "medium" component = {Link} to = "/weather" onClick = {() => {
-                appState.navBarVisible = false; 
+                globalState.appState.navBarVisible = false; 
                 }}>
                     <Typography variant = "button" display = "block">
                         Weather

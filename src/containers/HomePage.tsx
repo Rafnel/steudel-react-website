@@ -1,10 +1,9 @@
+import { Button, CircularProgress, Grid, Typography } from "@material-ui/core";
+import { observer } from "mobx-react";
 import React from "react";
-import { Typography, Button, Grid, CircularProgress } from "@material-ui/core";
-import AppStateStore, { appState } from "../stateStores/appState";
 import getRandomComponent from "../api/randomComponent";
 import SwimComponentCard from "../components/SwimComponentCard";
-import { observer } from "mobx-react";
-import Image from 'material-ui-image';
+import { globalState } from "../stateStores/appState";
 
 @observer
 export class HomePage extends React.Component{
@@ -13,7 +12,7 @@ export class HomePage extends React.Component{
         return(
             <Grid container justify = "center" alignItems = "center" direction = "column" spacing = {2}>
                 <Grid item>
-                    <img src = {process.env.PUBLIC_URL + "/android-chrome-192x192.png"}/>
+                    <img src = {process.env.PUBLIC_URL + "/android-chrome-192x192.png"} alt = "logo"/>
                 </Grid>
                 
                 <Grid>
@@ -22,15 +21,15 @@ export class HomePage extends React.Component{
                     </Typography>
                 </Grid>
                 
-                {appState.isLoggedIn 
+                {globalState.appState.isLoggedIn 
                  &&
                  <Grid item>
                     <Button 
                         color = "primary"
                         variant = "contained" 
                         onClick = {event => {
-                            appState.isLoading = true;
-                            getRandomComponent(appState);
+                            globalState.appState.isLoading = true;
+                            getRandomComponent();                            
                         }}
                     >
                         See a random swim component!
@@ -38,13 +37,13 @@ export class HomePage extends React.Component{
                  </Grid>
                 }
 
-                {appState.currentComponent.username.length !== 0 && appState.isLoggedIn
+                {globalState.appState.currentComponent.username.length !== 0 && globalState.appState.isLoggedIn
                  &&
                  <Grid item>
                      <SwimComponentCard/>
                  </Grid>}
 
-                {appState.isLoading && <CircularProgress/>}
+                {globalState.appState.isLoading && <CircularProgress/>}
             </Grid>
         )
     }

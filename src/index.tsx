@@ -1,15 +1,14 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import Amplify from "aws-amplify";
-import config from "./config";
-import * as serviceWorker from './serviceWorker';
-import { BrowserRouter } from "react-router-dom";
-import AppStateStore from './stateStores/appState';
 import { createMuiTheme } from '@material-ui/core';
 import { green, grey } from '@material-ui/core/colors';
 import { ThemeProvider } from '@material-ui/styles';
+import Amplify from "aws-amplify";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { BrowserRouter } from "react-router-dom";
+import App from './App';
+import config from "./config";
+import './index.css';
+import * as serviceWorker from './serviceWorker';
 
 Amplify.configure({
     Auth: {
@@ -23,6 +22,11 @@ Amplify.configure({
       endpoints:[
         {
           name: "swimComponents",
+          endpoint: config.apiGateway.URL,
+          region: config.apiGateway.REGION
+        },
+        {
+          name: "users",
           endpoint: config.apiGateway.URL,
           region: config.apiGateway.REGION
         }

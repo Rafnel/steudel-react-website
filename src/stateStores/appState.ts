@@ -4,7 +4,7 @@ import { observable } from "mobx";
  * Central storage location for the whole application's state. Using MobX,
  * any changes to any of these will propogate to any components that use these.
 */
-export default class AppStateStore{
+export class AppStateStore{
     @observable username: string = "";
     @observable email: string = "";
     @observable name: string = "";
@@ -33,15 +33,25 @@ export default class AppStateStore{
         intervals: [],
         tags: [],
         yardage: 0,
-        difficulty: ""
+        difficulty: "",
+        likes: 0
     };
 
     @observable forgotPasswordErrorMessage: string = "";
     @observable forgotPasswordUsernameEntered: boolean = false;
     @observable loadingForgotPassword: boolean = false;
+    @observable currentUser: User = {
+        username: "",
+        liked_components: [],
+        liked_workouts: []
+    }
 }
 
-export const appState: AppStateStore = new AppStateStore();
+export default class GlobalState{
+    appState: AppStateStore = new AppStateStore();
+}
+
+export const globalState: GlobalState = new GlobalState();
 
 export interface SwimComponent{
     username: string;
@@ -53,4 +63,44 @@ export interface SwimComponent{
     tags: string[];
     yardage: number;
     difficulty: string;
+    likes: number;
+}
+
+export interface User{
+    username: string;
+    liked_components: string[];
+    liked_workouts: string[];
+}
+
+//function for effectively resetting the program on user log-out.
+export function resetState(){
+    globalState.appState.isLoggedIn = false;
+    globalState.appState.currentComponent = {
+        username: "",
+        set: "",
+        component_body: "",
+        component_id: "",
+        date_created: "",
+        intervals: [],
+        tags: [],
+        yardage: 0,
+        difficulty: "",
+        likes: 0
+    }
+    globalState.appState.currentUser = {
+        username: "",
+        liked_components: [],
+        liked_workouts: []
+    }
+    globalState.appState.forgotPasswordErrorMessage = "";
+    globalState.appState.forgotPasswordUsernameEntered = false;
+    globalState.appState.signUpPageErrorMessage = "";
+    globalState.appState.loginPageErrorMessage = "";
+    globalState.appState.email = "";
+    globalState.appState.username = "";
+    globalState.appState.name = "";
+    globalState.appState.signedUp = false;
+    globalState.appState.emailVerified = false;
+    globalState.appState.navBarVisible = false;
+    globalState.appState.resentCode = false;
 }
