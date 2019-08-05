@@ -1,5 +1,5 @@
 import { createMuiTheme } from '@material-ui/core';
-import { green, grey } from '@material-ui/core/colors';
+import { green, grey, red } from '@material-ui/core/colors';
 import { ThemeProvider } from '@material-ui/styles';
 import Amplify from "aws-amplify";
 import React from 'react';
@@ -36,6 +36,7 @@ Amplify.configure({
 
 export const PRIMARY = green[700];
 export const SECONDARY = grey[50];
+export const ERROR = red[400]
 
 const theme = createMuiTheme({
   palette: {

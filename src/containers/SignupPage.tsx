@@ -19,10 +19,6 @@ class SignupPage extends React.Component<RouteComponentProps<any>>{
             globalState.appState.signUpPageErrorMessage = "Username cannot contain a space.";
             return false;
         }
-        if(globalState.appState.username.length > 20){
-            globalState.appState.signUpPageErrorMessage = "Username must be less than 20 characters in length.";
-            return false;
-        }
         if(this.password !== this.confirmPassword){
             globalState.appState.signUpPageErrorMessage = "Passwords must match.";
             return false;
@@ -34,6 +30,10 @@ class SignupPage extends React.Component<RouteComponentProps<any>>{
         if(globalState.appState.username.length === 0 || globalState.appState.name.length === 0
            || globalState.appState.email.length === 0){
             globalState.appState.signUpPageErrorMessage = "You left a field blank.";
+            return false;
+        }
+        if(globalState.appState.username.length > 20){
+            globalState.appState.signUpPageErrorMessage = "Username must be less than 20 characters in length.";
             return false;
         }
 

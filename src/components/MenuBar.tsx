@@ -14,33 +14,60 @@ class MenuBar extends React.Component<RouteComponentProps<any>>{
                 onOpen = {() => globalState.appState.navBarVisible = true}
                 onClose = {() => globalState.appState.navBarVisible = false}
             >
-                <Typography variant = "h6">
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rafnel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                </Typography>
+                <Grid container justify = "center">
+                    <Typography variant = "h6">
+                        Rafnel
+                    </Typography>
+                </Grid>
 
                 <Grid container justify = "center">
                     <Typography variant = "caption">
-                        Version 0.68
+                        Version 0.70
                     </Typography>
                 </Grid>
                 <Divider/>
             
-                <Button size = "medium" component = {Link} to = "/" onClick = {() => {
-                globalState.appState.navBarVisible = false; 
+                <Button size = "medium" onClick = {() => {
+                    globalState.appState.navBarVisible = false; 
+                    this.props.history.push("/");
                 }}>
                     <Typography variant = "button" display = "block">
                         Rafnel Home
                     </Typography>
                 </Button>
 
-                <Button size = "medium" component = {Link} to = "/weather" onClick = {() => {
-                globalState.appState.navBarVisible = false; 
+                {globalState.appState.isLoggedIn
+                 &&
+                 <Button size = "medium" onClick = {() => {
+                    globalState.appState.navBarVisible = false; 
+                    this.props.history.push("/create-swim-component");
+                }}>
+                    <Typography variant = "button" display = "block">
+                        Create Swim Component
+                    </Typography>
+                </Button>}
+
+                <Button size = "medium" onClick = {() => {
+                    globalState.appState.navBarVisible = false;
+                    this.props.history.push("/weather");
                 }}>
                     <Typography variant = "button" display = "block">
                         Weather
                     </Typography>
                     
                 </Button>
+
+                <Grid container direction = "row">
+                    <Grid item>
+                        {/* ugly spacing since Drawer doesn't respect width  */}
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </Grid>
+                </Grid>
             </SwipeableDrawer>
         )
     }

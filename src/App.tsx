@@ -12,6 +12,7 @@ import SuccessMessage from './components/SuccessMessage';
 import Routes from './Routes';
 import { globalState } from "./stateStores/appState";
 import addUser from './api/addUser';
+import ErrorMessage from './components/ErrorMessage';
 
 @observer
 class App extends React.Component<RouteComponentProps<any>>{
@@ -23,6 +24,7 @@ class App extends React.Component<RouteComponentProps<any>>{
         <MenuBar/>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         {globalState.appState.successMessage.length !== 0 && <SuccessMessage/>}
+        {globalState.appState.errorMessage.length !== 0 && <ErrorMessage/>}
 
         <Routes/>
       </div>

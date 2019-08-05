@@ -4,9 +4,10 @@ import React from "react";
 import getRandomComponent from "../api/randomComponent";
 import SwimComponentCard from "../components/SwimComponentCard";
 import { globalState } from "../stateStores/appState";
+import { RouteComponentProps, withRouter } from "react-router-dom";
 
 @observer
-export class HomePage extends React.Component{
+class HomePage extends React.Component<RouteComponentProps<any>>{
     
     render(){
         return(
@@ -20,6 +21,19 @@ export class HomePage extends React.Component{
                         <p>Component-Based Workouts</p>
                     </Typography>
                 </Grid>
+
+                {globalState.appState.isLoggedIn
+                 &&
+                 <Grid item>
+                     <Button
+                        color = "primary"
+                        variant = "contained"
+                        size = "medium" 
+                        onClick = {() => this.props.history.push("/create-swim-component")}
+                     >
+                        Create your own component!
+                     </Button>
+                 </Grid>}
                 
                 {globalState.appState.isLoggedIn 
                  &&
@@ -48,3 +62,5 @@ export class HomePage extends React.Component{
         )
     }
 }
+
+export default withRouter<RouteComponentProps<any>, any>(HomePage);

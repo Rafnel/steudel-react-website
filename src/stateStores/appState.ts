@@ -15,6 +15,7 @@ export class AppStateStore{
     @observable isLoggedIn: boolean = false;
     @observable isAuthenticating: boolean = true;
     @observable successMessage: string = "";
+    @observable errorMessage: string = "";
 
     @observable verificationCode: string = "";
     @observable resentCode: boolean = false;
