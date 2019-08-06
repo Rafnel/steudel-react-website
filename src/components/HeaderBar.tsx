@@ -1,4 +1,4 @@
-import { AppBar, Button, IconButton, Toolbar, Typography } from "@material-ui/core";
+import { AppBar, Button, IconButton, Toolbar, Typography, Icon, Tooltip, Grid } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import { Auth } from "aws-amplify";
 import { observer } from "mobx-react";
@@ -28,6 +28,18 @@ class HeaderBar extends React.Component<RouteComponentProps<any>>{
                     >
                         <MenuIcon color = "secondary"/>
                     </IconButton>
+
+                    {globalState.appState.isLoggedIn
+                     &&
+                     <Tooltip title = "Explore Community Components">
+                        <IconButton 
+                            size = "medium"
+                            onClick = {() => this.props.history.push("/swim-components")}
+                        >
+                            <Icon color = "secondary">explore</Icon>
+                        </IconButton>
+                     </Tooltip>
+                    }
 
                     {globalState.appState.isLoggedIn 
                     ? 

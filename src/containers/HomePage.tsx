@@ -3,12 +3,29 @@ import { observer } from "mobx-react";
 import React from "react";
 import getRandomComponent from "../api/randomComponent";
 import SwimComponentCard from "../components/SwimComponentCard";
-import { globalState } from "../stateStores/appState";
+import { globalState, SwimComponent } from "../stateStores/appState";
 import { RouteComponentProps, withRouter } from "react-router-dom";
+import { observable } from "mobx";
 
 @observer
 class HomePage extends React.Component<RouteComponentProps<any>>{
-    
+    @observable swimComponent: SwimComponent = {
+        username: "",
+        set: "",
+        component_body: "",
+        component_id: "",
+        date_created: "",
+        intervals: [],
+        tags: [],
+        yardage: 0,
+        difficulty: "",
+        likes: 0
+    };
+
+    async retrieveSwimComponent(){
+        this.swimComponent = await getRandomComponent();
+    }
+
     render(){
         return(
             <Grid container justify = "center" alignItems = "center" direction = "column" spacing = {2}>
@@ -42,8 +59,8 @@ class HomePage extends React.Component<RouteComponentProps<any>>{
                         color = "primary"
                         variant = "contained" 
                         onClick = {event => {
-                            globalState.appState.isLoading = true;
-                            getRandomComponent();                            
+                            globalState.appState.isLoading = true; 
+                            this.retrieveSwimComponent();
                         }}
                     >
                         See a random swim component!
@@ -53,10 +70,10 @@ class HomePage extends React.Component<RouteComponentProps<any>>{
 
                 {globalState.appState.isLoading && <CircularProgress/>}
 
-                {globalState.appState.currentComponent.username.length !== 0 && globalState.appState.isLoggedIn
+                {this.swimComponent.username.length !== 0 && globalState.appState.isLoggedIn
                  &&
                  <Grid item>
-                     <SwimComponentCard/>
+                     <SwimComponentCard currentComponent = {this.swimComponent} />
                  </Grid>}
             </Grid>
         )

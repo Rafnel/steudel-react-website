@@ -22,7 +22,7 @@ class MenuBar extends React.Component<RouteComponentProps<any>>{
 
                 <Grid container justify = "center">
                     <Typography variant = "caption">
-                        Version 0.70
+                        Version 0.80
                     </Typography>
                 </Grid>
                 <Divider/>
@@ -35,6 +35,17 @@ class MenuBar extends React.Component<RouteComponentProps<any>>{
                         Rafnel Home
                     </Typography>
                 </Button>
+
+                {globalState.appState.isLoggedIn
+                 &&
+                 <Button size = "medium" onClick = {() => {
+                    globalState.appState.navBarVisible = false; 
+                    this.props.history.push("/swim-components");
+                }}>
+                    <Typography variant = "button" display = "block">
+                        Explore Swim Components
+                    </Typography>
+                </Button>}
 
                 {globalState.appState.isLoggedIn
                  &&

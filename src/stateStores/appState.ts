@@ -25,19 +25,6 @@ export class AppStateStore{
 
     @observable signUpPageErrorMessage: string = "";
 
-    @observable currentComponent: SwimComponent = {
-        username: "",
-        set: "",
-        component_body: "",
-        component_id: "",
-        date_created: "",
-        intervals: [],
-        tags: [],
-        yardage: 0,
-        difficulty: "",
-        likes: 0
-    };
-
     @observable forgotPasswordErrorMessage: string = "";
     @observable forgotPasswordUsernameEntered: boolean = false;
     @observable loadingForgotPassword: boolean = false;
@@ -76,18 +63,6 @@ export interface User{
 //function for effectively resetting the program on user log-out.
 export function resetState(){
     globalState.appState.isLoggedIn = false;
-    globalState.appState.currentComponent = {
-        username: "",
-        set: "",
-        component_body: "",
-        component_id: "",
-        date_created: "",
-        intervals: [],
-        tags: [],
-        yardage: 0,
-        difficulty: "",
-        likes: 0
-    }
     globalState.appState.currentUser = {
         username: "",
         liked_components: [],
