@@ -30,6 +30,16 @@ export class WeatherHeader extends React.Component<WeatherHeaderProps>{
                             margin = "dense"
                             variant = "outlined"
                             label = "City"
+                            onKeyPress = {(event) => {
+                                if(event.key === "Enter"){
+                                    if(this.props.weatherStore.city.length !== 0){
+                                        this.props.weatherStore.errorMessage = "";
+                                        this.props.weatherStore.submitted = true;
+                                        this.props.weatherStore.loading = true;
+                                        this.getWeather(this.props.weatherStore.city, this.setWeatherData.bind(this))
+                                    }
+                                }
+                            }}
                         >
                         </TextField>          
                     </Grid>

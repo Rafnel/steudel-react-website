@@ -22,7 +22,7 @@ class MenuBar extends React.Component<RouteComponentProps<any>>{
 
                 <Grid container justify = "center">
                     <Typography variant = "caption">
-                        Version 0.80
+                        Version 0.85
                     </Typography>
                 </Grid>
                 <Divider/>
@@ -55,6 +55,17 @@ class MenuBar extends React.Component<RouteComponentProps<any>>{
                 }}>
                     <Typography variant = "button" display = "block">
                         Create Swim Component
+                    </Typography>
+                </Button>}
+
+                {globalState.appState.isLoggedIn
+                 &&
+                 <Button size = "medium" onClick = {() => {
+                    globalState.appState.navBarVisible = false; 
+                    this.props.history.push("/create-swim-workout");
+                }}>
+                    <Typography variant = "button" display = "block">
+                        Create Swim Workout
                     </Typography>
                 </Button>}
 

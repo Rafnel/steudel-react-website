@@ -7,6 +7,7 @@ import { globalState } from "./stateStores/appState";
 import HomePage from "./containers/HomePage";
 import CreateSwimComponentPage from "./containers/CreateSwimComponentPage";
 import SwimComponentsPage from "./containers/SwimComponentsPage";
+import CreateSwimWorkoutPage from "./containers/CreateSwimWorkoutPage";
 
 export default class Routes extends React.Component{
   render(){
@@ -19,6 +20,9 @@ export default class Routes extends React.Component{
         {!globalState.appState.isLoggedIn 
           && 
           <Route path="/signup" exact render={() => <SignupPage/>}/>}
+        {globalState.appState.isLoggedIn 
+         && 
+         <Route path="/create-swim-workout" exact render={() => <CreateSwimWorkoutPage/>}/>}
         {globalState.appState.isLoggedIn 
          && 
          <Route path="/create-swim-component" exact render={() => <CreateSwimComponentPage/>}/>}

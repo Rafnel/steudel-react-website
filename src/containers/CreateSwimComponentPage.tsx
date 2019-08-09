@@ -35,6 +35,11 @@ export default class CreateSwimComponentPage extends React.Component{
         return true;
     }
 
+    generateTagsFromBody(componentBody: string): string[]{
+        let tags: string[] = componentBody.split(" ");
+        return tags;
+    }
+
     async saveComponent(){
         globalState.appState.isLoading = true;
         let intervals: string[] = [];
@@ -58,6 +63,9 @@ export default class CreateSwimComponentPage extends React.Component{
         if(this.tags.length > 0){
             tagsList = this.tags.split(",");
         }
+
+        //append tags based off each word in the user's component
+        tagsList.push(...this.generateTagsFromBody(this.componentBody));
 
         let swimComponent: SwimComponent = {
             username: globalState.appState.currentUser.username,

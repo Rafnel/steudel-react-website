@@ -2,7 +2,7 @@ import { Card, CardActions, CardContent, CardHeader, Divider, Grid, Icon, IconBu
 import { green } from "@material-ui/core/colors";
 import { observable } from "mobx";
 import { observer } from "mobx-react";
-import React from "react";
+import React, { Fragment } from "react";
 import updateComponentLikes from "../api/updateComponentLikes";
 import updateUser from "../api/updateUser";
 import { globalState, User, SwimComponent } from "../stateStores/appState";
@@ -35,7 +35,7 @@ export default class SwimComponentCard extends React.Component<SwimComponentCard
                     <Grid container direction = "column">
                         <Grid item>
                             <Typography variant = "body1">
-                                {this.props.currentComponent.component_body}
+                                {this.props.currentComponent.component_body.split("\n").map((component) => {return <Fragment>{component}<br/></Fragment>})}
                             </Typography>
                         </Grid>
 

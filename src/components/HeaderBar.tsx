@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import React from "react";
 import { Link, RouteComponentProps, withRouter } from "react-router-dom";
 import { globalState, resetState } from "../stateStores/appState";
+import CreateButton from "./CreateButton";
 
 
 @observer
@@ -40,6 +41,8 @@ class HeaderBar extends React.Component<RouteComponentProps<any>>{
                         </IconButton>
                      </Tooltip>
                     }
+
+                    {globalState.appState.isLoggedIn && <CreateButton/>}
 
                     {globalState.appState.isLoggedIn 
                     ? 

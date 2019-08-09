@@ -38,19 +38,6 @@ class HomePage extends React.Component<RouteComponentProps<any>>{
                         <p>Component-Based Workouts</p>
                     </Typography>
                 </Grid>
-
-                {globalState.appState.isLoggedIn
-                 &&
-                 <Grid item>
-                     <Button
-                        color = "primary"
-                        variant = "contained"
-                        size = "medium" 
-                        onClick = {() => this.props.history.push("/create-swim-component")}
-                     >
-                        Create your own component!
-                     </Button>
-                 </Grid>}
                 
                 {globalState.appState.isLoggedIn 
                  &&

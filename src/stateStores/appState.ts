@@ -80,3 +80,18 @@ export function resetState(){
     globalState.appState.navBarVisible = false;
     globalState.appState.resentCode = false;
 }
+
+export function emptySwimComponent(): SwimComponent{
+    return {
+        username: globalState.appState.username,
+        set: "",
+        component_body: "",
+        component_id: "",
+        date_created: "",
+        intervals: [],
+        tags: [],
+        yardage: 0,
+        difficulty: "",
+        likes: 0
+    }
+}
