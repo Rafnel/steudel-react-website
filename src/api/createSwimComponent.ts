@@ -1,11 +1,12 @@
 import { API } from "aws-amplify";
-import { SwimComponent } from "../stateStores/appState";
+import { SwimComponent, emptySwimComponent, swimComponentToString } from "../stateStores/appState";
 
 //adds a swim component
 export default async function createSwimComponent(swimComponent: SwimComponent){
     try{
         console.log(":: adding component " + swimComponent.component_body + " to db...");
-        await API.post("swimComponents", "/components", {
+        console.log(":: Component: " + swimComponentToString(swimComponent));
+        let component = await API.post("swimComponents", "/components", {
             body: {
                 username: swimComponent.username,
                 component_body: swimComponent.component_body,
@@ -17,10 +18,14 @@ export default async function createSwimComponent(swimComponent: SwimComponent){
             }
         });
         console.log(":: component " + swimComponent.component_body + " added successfully to db.")
+
+        //return the newly created component from the db
+        let sComp: SwimComponent = component;
+        return sComp;
     }
     catch(e){
         console.log(e.message);
         alert(e);
-        return null;
+        return emptySwimComponent();
     }
 }

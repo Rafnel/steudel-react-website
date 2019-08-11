@@ -12,6 +12,7 @@ export interface WorkoutSwimComponentProps{
 @observer
 export default class WorkoutSwimComponent extends React.Component<WorkoutSwimComponentProps>{
     @observable yardageError: string = "";
+    yardage: number = 0;
     constructor(props: WorkoutSwimComponentProps){
         super(props);
 
@@ -26,14 +27,27 @@ export default class WorkoutSwimComponent extends React.Component<WorkoutSwimCom
     handleYardageChange(event: any){
         if(isNaN(Number((event.target as HTMLInputElement).value))){
             this.yardageError = "Must be numeric.";
+            this.props.store.noSaving = true;
         }
         else if((event.target as HTMLInputElement).value.length > 0){
+            let ydg: number = +(event.target as HTMLInputElement).value;
+
             this.yardageError = "";
-            this.props.store.swimComponents[this.props.indexOfComponentsArray].yardage = +(event.target as HTMLInputElement).value;
+
+            this.props.store.workoutYardage -= this.yardage;
+            this.yardage = ydg;
+            this.props.store.swimComponents[this.props.indexOfComponentsArray].yardage = ydg;
+            this.props.store.workoutYardage += this.yardage;
+
+            this.props.store.noSaving = false;
         }
         else{
             //the user removed the text from the field.
+            this.props.store.workoutYardage -= this.yardage;
             this.yardageError = "";
+            this.yardage = 0;
+
+            this.props.store.noSaving = false;
         }
     }
 
@@ -97,6 +111,38 @@ export default class WorkoutSwimComponent extends React.Component<WorkoutSwimCom
                         margin = "dense"
                         onChange = {event => {
                             this.props.store.swimComponents[this.props.indexOfComponentsArray].intervals[2] = (event.target as HTMLInputElement).value;
+                        }}
+                    />
+                </Grid>
+
+                <Grid item>
+                    /
+                </Grid>
+
+                <Grid item>
+                    <TextField
+                        variant = "outlined"
+                        label = "Interval 4"
+                        style = {{maxWidth: 100}}
+                        margin = "dense"
+                        onChange = {event => {
+                            this.props.store.swimComponents[this.props.indexOfComponentsArray].intervals[3] = (event.target as HTMLInputElement).value;
+                        }}
+                    />
+                </Grid>
+
+                <Grid item>
+                    /
+                </Grid>
+
+                <Grid item>
+                    <TextField
+                        variant = "outlined"
+                        label = "Interval 5"
+                        style = {{maxWidth: 100}}
+                        margin = "dense"
+                        onChange = {event => {
+                            this.props.store.swimComponents[this.props.indexOfComponentsArray].intervals[4] = (event.target as HTMLInputElement).value;
                         }}
                     />
                 </Grid>

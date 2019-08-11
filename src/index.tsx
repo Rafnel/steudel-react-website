@@ -29,6 +29,11 @@ Amplify.configure({
           name: "users",
           endpoint: config.apiGateway.URL,
           region: config.apiGateway.REGION
+        },
+        {
+          name: "swimWorkouts",
+          endpoint: config.apiGateway.URL,
+          region: config.apiGateway.REGION
         }
       ]
     }

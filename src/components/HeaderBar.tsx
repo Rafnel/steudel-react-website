@@ -6,6 +6,8 @@ import React from "react";
 import { Link, RouteComponentProps, withRouter } from "react-router-dom";
 import { globalState, resetState } from "../stateStores/appState";
 import CreateButton from "./CreateButton";
+import HomeButton from "./HomeButton";
+import WeatherButton from "./WeatherButton";
 
 
 @observer
@@ -23,12 +25,7 @@ class HeaderBar extends React.Component<RouteComponentProps<any>>{
         return(
             <AppBar position = "sticky">
                 <Toolbar>
-                    <IconButton
-                        edge = "start"
-                        onClick = {() => globalState.appState.navBarVisible = true}
-                    >
-                        <MenuIcon color = "secondary"/>
-                    </IconButton>
+                    <HomeButton/>
 
                     {globalState.appState.isLoggedIn
                      &&
@@ -70,6 +67,8 @@ class HeaderBar extends React.Component<RouteComponentProps<any>>{
                         </Button>
                     </div>
                     }
+
+                    <WeatherButton/>
                 </Toolbar>
             </AppBar>
         )

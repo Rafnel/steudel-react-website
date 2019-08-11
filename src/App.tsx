@@ -21,8 +21,7 @@ class App extends React.Component<RouteComponentProps<any>>{
       !globalState.appState.isAuthenticating &&
       <div className="Appcontainer">
         <HeaderBar/>
-        <MenuBar/>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;
         {globalState.appState.successMessage.length !== 0 && <SuccessMessage/>}
         {globalState.appState.errorMessage.length !== 0 && <ErrorMessage/>}
 

@@ -54,6 +54,34 @@ export interface SwimComponent{
     likes: number;
 }
 
+export function swimComponentToString(component: SwimComponent): string{
+    let str: string = "";
+
+    str += "body: " + component.component_body;
+    str += "id: " + component.component_id;
+    str += "set: " + component.set;
+    str += "difficulty: " + component.difficulty;
+    str += "tags: " + component.tags.toString();
+    str += "intervals: " + component.intervals.toString();
+    str += "yardage: " + component.yardage;
+    str += "username: " + component.username;
+
+    return str;
+}
+
+export class SwimWorkout{
+    username: string = "";
+    workout_id: string = "";
+    warmup: string[] = [];
+    preset: string[] = [];
+    mainset: string[] = [];
+    cooldown: string[] = [];
+    likes: number = 0;
+    yardage: number = 0;
+    difficulty: string = "";
+    date_created: string = "";
+}
+
 export interface User{
     username: string;
     liked_components: string[];
@@ -83,7 +111,7 @@ export function resetState(){
 
 export function emptySwimComponent(): SwimComponent{
     return {
-        username: globalState.appState.username,
+        username: globalState.appState.currentUser.username,
         set: "",
         component_body: "",
         component_id: "",

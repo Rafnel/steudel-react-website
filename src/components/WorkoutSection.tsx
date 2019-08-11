@@ -15,7 +15,6 @@ export interface WorkoutSectionProps{
 
 export class WorkoutSectionStore{
     
-    
 }
 
 @observer
@@ -32,7 +31,8 @@ export default class WorkoutSection extends React.Component<WorkoutSectionProps>
         //set the initial empty swim component rows based on the number of initial components.
         for(var i = 0; i < this.numComponents; i++){
             this.componentRows.push(<Grid item key = {i}> <WorkoutSwimComponent key = {i} store = {this.props.pageStore} indexOfComponentsArray = {this.props.pageStore.nextIndex}/> </Grid>)
-            this.props.pageStore.swimComponents.push(emptySwimComponent())
+            this.props.pageStore.swimComponents.push(emptySwimComponent());
+            this.props.pageStore.swimComponents[this.props.pageStore.nextIndex].set = this.props.sectionTitle;
             this.props.pageStore.nextIndex++;
         }
 
@@ -44,6 +44,7 @@ export default class WorkoutSection extends React.Component<WorkoutSectionProps>
         //provision a new swimcomponent row
         this.componentRows.push(<Grid item key = {this.numComponents}> <WorkoutSwimComponent key = {this.numComponents} store = {this.props.pageStore} indexOfComponentsArray = {this.props.pageStore.nextIndex}/> </Grid>)
         this.props.pageStore.swimComponents.push(emptySwimComponent())
+        this.props.pageStore.swimComponents[this.props.pageStore.nextIndex].set = this.props.sectionTitle;
         this.props.pageStore.nextIndex++;
 
         //add to number of components counter for this section
@@ -54,8 +55,7 @@ export default class WorkoutSection extends React.Component<WorkoutSectionProps>
     }
 
     render(){
-        console.log("Re-rendering section " + this.props.sectionTitle + " with rows " + this.componentRows.length);
-        console.log(":: components " + this.componentRows);
+        console.log("Rendering section " + this.props.sectionTitle + " with rows " + this.componentRows.length);
         const items = this.componentRows.map((row) => {return row});
         return(
             <Grid spacing = {2} container alignItems = "center" justify = "center" direction = "column">
