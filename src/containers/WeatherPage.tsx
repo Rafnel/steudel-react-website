@@ -5,8 +5,8 @@ import "./WeatherPage.css";
 import 'primereact/resources/themes/nova-light/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
-import { WeatherWidget } from "../components/WeatherWidget";
-import { WeatherHeader } from "../components/WeatherHeader";
+import { WeatherWidget } from "../components/weather/WeatherWidget";
+import { WeatherHeader } from "../components/weather/WeatherHeader";
 
 
 

@@ -1,4 +1,4 @@
-import { createMuiTheme } from '@material-ui/core';
+import { createMuiTheme, CircularProgress } from '@material-ui/core';
 import { green, grey, red } from '@material-ui/core/colors';
 import { ThemeProvider } from '@material-ui/styles';
 import Amplify from "aws-amplify";
@@ -9,6 +9,9 @@ import App from './App';
 import config from "./config";
 import './index.css';
 import * as serviceWorker from './serviceWorker';
+import { globalState } from './stateStores/appState';
+import { observer } from 'mobx-react';
+import LoadingPage from './containers/LoadingPage';
 
 Amplify.configure({
     Auth: {
@@ -57,6 +60,7 @@ const theme = createMuiTheme({
 ReactDOM.render(
   <BrowserRouter>
     <ThemeProvider theme = {theme}>
+      <LoadingPage/>
       <App/>
     </ThemeProvider>
   </BrowserRouter>,

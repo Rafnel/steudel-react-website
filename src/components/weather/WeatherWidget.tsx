@@ -1,5 +1,5 @@
 import React from 'react';
-import { WeatherStore } from '../containers/WeatherPage';
+import { WeatherStore } from '../../containers/WeatherPage';
 import {Card} from 'primereact/card';
 import { observer } from 'mobx-react';
 import {ProgressSpinner} from 'primereact/progressspinner';

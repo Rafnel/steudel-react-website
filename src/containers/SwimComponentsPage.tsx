@@ -2,9 +2,9 @@ import React, { ChangeEvent } from "react";
 import { Grid, Typography, Paper, Tabs, Tab, CircularProgress } from "@material-ui/core";
 import { observer } from "mobx-react";
 import { observable } from "mobx";
-import SwimComponentCards from "../components/SwimComponentCards";
 import { SwimComponent, globalState } from "../stateStores/appState";
 import getSortedSwimComponentsBySet from "../api/getSortedSwimComponentsBySet";
+import SwimComponentCards from "../components/SwimComponentCards";
 
 @observer
 export default class SwimComponentsPage extends React.Component{

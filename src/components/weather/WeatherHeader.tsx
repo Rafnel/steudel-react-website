@@ -1,5 +1,5 @@
 import React from "react";
-import { WeatherStore } from "../containers/WeatherPage";
+import { WeatherStore } from "../../containers/WeatherPage";
 import { observer } from "mobx-react";
 import "./WeatherHeader.css";
 import { TextField, Typography, Button, Grid } from "@material-ui/core";

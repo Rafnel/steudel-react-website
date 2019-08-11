@@ -1,13 +1,13 @@
-import { AppBar, Button, IconButton, Toolbar, Typography, Icon, Tooltip, Grid } from "@material-ui/core";
-import MenuIcon from "@material-ui/icons/Menu";
+import { AppBar, Button, IconButton, Toolbar, Typography, Icon, Tooltip } from "@material-ui/core";
 import { Auth } from "aws-amplify";
 import { observer } from "mobx-react";
 import React from "react";
 import { Link, RouteComponentProps, withRouter } from "react-router-dom";
 import { globalState, resetState } from "../stateStores/appState";
-import CreateButton from "./CreateButton";
-import HomeButton from "./HomeButton";
-import WeatherButton from "./WeatherButton";
+import CreateButton from "./buttons/CreateButton";
+import HomeButton from "./buttons/HomeButton";
+import WeatherButton from "./buttons/WeatherButton";
+import ExploreButton from "./buttons/ExploreButton";
 
 
 @observer
@@ -27,17 +27,7 @@ class HeaderBar extends React.Component<RouteComponentProps<any>>{
                 <Toolbar>
                     <HomeButton/>
 
-                    {globalState.appState.isLoggedIn
-                     &&
-                     <Tooltip title = "Explore Community Components">
-                        <IconButton 
-                            size = "medium"
-                            onClick = {() => this.props.history.push("/swim-components")}
-                        >
-                            <Icon color = "secondary">explore</Icon>
-                        </IconButton>
-                     </Tooltip>
-                    }
+                    {globalState.appState.isLoggedIn && <ExploreButton/>}
 
                     {globalState.appState.isLoggedIn && <CreateButton/>}
 
