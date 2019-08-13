@@ -1,5 +1,5 @@
 import { API } from "aws-amplify";
-import { SwimComponent, globalState } from "../stateStores/appState";
+import { SwimComponent, globalState } from "../configuration/appState";
 
 //gets a list of sorted swim components by set, sorted by likes from most to least.
 export default async function getSortedSwimComponentsBySet(set: string){

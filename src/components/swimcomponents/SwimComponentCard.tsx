@@ -3,9 +3,9 @@ import { green } from "@material-ui/core/colors";
 import { observable } from "mobx";
 import { observer } from "mobx-react";
 import React, { Fragment } from "react";
-import updateComponentLikes from "../api/updateComponentLikes";
-import updateUser from "../api/updateUser";
-import { globalState, User, SwimComponent } from "../stateStores/appState";
+import updateComponentLikes from "../../api/updateComponentLikes";
+import updateUser from "../../api/updateUser";
+import { globalState, User, SwimComponent } from "../../configuration/appState";
 
 export interface SwimComponentCardProps{
     currentComponent: SwimComponent;

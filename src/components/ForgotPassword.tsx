@@ -2,13 +2,12 @@ import { Button, CircularProgress, ExpansionPanel, ExpansionPanelDetails, Expans
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { Auth } from 'aws-amplify';
 import { observer } from "mobx-react";
-import { Message } from "primereact/components/message/Message";
 import React, { Fragment } from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
-import { globalState } from "../stateStores/appState";
+import { globalState } from "../configuration/appState";
 import getUser from "../api/getUser";
 import addUser from "../api/addUser";
-
+import { validateVerificationCode, validatePassword, ensureUserInDB } from "../configuration/loginSignup";
 
 @observer
 class ForgotPassword extends React.Component<RouteComponentProps<any>>{
@@ -17,77 +16,42 @@ class ForgotPassword extends React.Component<RouteComponentProps<any>>{
     emailOrUsername: string = "";
 
     async sendForgotEmail(){
-        globalState.appState.forgotPasswordErrorMessage = "";
         globalState.appState.loadingForgotPassword = true;
         try{
             await Auth.forgotPassword(this.emailOrUsername);
             globalState.appState.successMessage = "Password reset email was sent successfully.";
             globalState.appState.forgotPasswordUsernameEntered = true;
-            globalState.appState.forgotPasswordErrorMessage = "";
         }
         catch(e){
             let message: string = e.message;
             message = message.replace("client id", "email");
-            globalState.appState.forgotPasswordErrorMessage = message;
+            globalState.appState.errorMessage = message;
         }
         globalState.appState.loadingForgotPassword = false;
     }
 
     async verifyReset(){
-        globalState.appState.forgotPasswordErrorMessage = "";
         globalState.appState.loadingForgotPassword = true;
         try{
             await Auth.forgotPasswordSubmit(this.emailOrUsername, globalState.appState.verificationCode, this.password);
             await Auth.signIn(this.emailOrUsername, this.password);
 
-            const currentUserInfo = await Auth.currentUserInfo();
-            globalState.appState.username = currentUserInfo.username;
-            //check if user is in db, if not, they slipped through cracks and we must add them.
-            await getUser(globalState.appState.username);
-            console.log(":: User " + globalState.appState.currentUser.username + " logged in with liked components " + globalState.appState.currentUser.liked_components);
-            if(globalState.appState.currentUser.username === ""){
-                //user doesn't exist in the db. Add them, then populate our currentUser value.
-                await addUser(globalState.appState.username);
-                await getUser(globalState.appState.username);
-            }
+            //function will ensure user is in our users database.
+            await ensureUserInDB();
             globalState.appState.successMessage = "Password change successful. Welcome back " + globalState.appState.username + "!";
 
             globalState.appState.isLoggedIn = true;
             this.props.history.push("/");
         }
         catch(e){
-            globalState.appState.forgotPasswordErrorMessage = e.message;
+            globalState.appState.errorMessage = e.message;
         }
         globalState.appState.loadingForgotPassword = false;
     }
 
     validateUsername(): boolean{
         if(this.emailOrUsername.length === 0){
-            globalState.appState.forgotPasswordErrorMessage = "Email / username field must not be empty.";
-            return false;
-        }
-
-        return true;
-    }
-
-    validatePasswordReset(): boolean{
-        if(globalState.appState.verificationCode.length === 0){
-            globalState.appState.forgotPasswordErrorMessage = "Verification code field must not be empty.";
-            return false;
-        }
-
-        if(this.password.length === 0 || this.confirmPassword.length === 0){
-            globalState.appState.forgotPasswordErrorMessage = "Password fields must not be empty.";
-            return false;
-        }
-        
-        if(this.password !== this.confirmPassword){
-            globalState.appState.forgotPasswordErrorMessage = "Passwords must match.";
-            return false;
-        }
-
-        if(this.password.length < 8){
-            globalState.appState.forgotPasswordErrorMessage = "Password must be 8 characters or greater.";
+            globalState.appState.errorMessage = "Email / username field must not be empty.";
             return false;
         }
 
@@ -107,7 +71,7 @@ class ForgotPassword extends React.Component<RouteComponentProps<any>>{
                         label = "Verification Code"
                         onKeyPress = {(event) => {
                             if(event.key === "Enter"){
-                                if(this.validatePasswordReset()){
+                                if(validatePassword(this.password, this.confirmPassword) && validateVerificationCode()){
                                     this.verifyReset();
                                 }
                             }
@@ -127,7 +91,7 @@ class ForgotPassword extends React.Component<RouteComponentProps<any>>{
                         label = "New Password"
                         onKeyPress = {(event) => {
                             if(event.key === "Enter"){
-                                if(this.validatePasswordReset()){
+                                if(validatePassword(this.password, this.confirmPassword) && validateVerificationCode()){
                                     this.verifyReset();
                                 }
                             }
@@ -147,7 +111,7 @@ class ForgotPassword extends React.Component<RouteComponentProps<any>>{
                         label = "Confirm New Password"
                         onKeyPress = {(event) => {
                             if(event.key === "Enter"){
-                                if(this.validatePasswordReset()){
+                                if(validatePassword(this.password, this.confirmPassword) && validateVerificationCode()){
                                     this.verifyReset();
                                 }
                             }
@@ -162,7 +126,7 @@ class ForgotPassword extends React.Component<RouteComponentProps<any>>{
                         color = "primary"
                         disabled = {globalState.appState.loadingForgotPassword}
                         onClick = {() => {
-                            if(this.validatePasswordReset()){
+                            if(validatePassword(this.password, this.confirmPassword) && validateVerificationCode()){
                                 this.verifyReset();
                             }
                         }}
@@ -183,7 +147,6 @@ class ForgotPassword extends React.Component<RouteComponentProps<any>>{
 
                 <ExpansionPanelDetails>
                     <Grid container spacing = {2} direction = "column" justify = "center" alignItems = "center">
-                        {globalState.appState.forgotPasswordErrorMessage.length !== 0 && <Message severity = "error" text = {globalState.appState.forgotPasswordErrorMessage}/>}
                         <Grid item>
                             <TextField
                                 onChange = {event => this.emailOrUsername = (event.target as HTMLInputElement).value}
@@ -231,7 +194,6 @@ class ForgotPassword extends React.Component<RouteComponentProps<any>>{
     }
 
     componentWillUnmount(){
-        globalState.appState.forgotPasswordErrorMessage = "";
         globalState.appState.forgotPasswordUsernameEntered = false;
     }
 }

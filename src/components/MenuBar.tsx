@@ -1,9 +1,10 @@
 import { Button, Divider, Grid, SwipeableDrawer, Typography } from "@material-ui/core";
 import { observer } from "mobx-react";
 import React from "react";
-import { Link, RouteComponentProps, withRouter } from "react-router-dom";
-import { globalState } from "../stateStores/appState";
+import { RouteComponentProps, withRouter } from "react-router-dom";
+import { globalState } from "../configuration/appState";
 
+//THIS COMPONENT IS DEPRECATED (NOT USED)
 
 @observer
 class MenuBar extends React.Component<RouteComponentProps<any>>{

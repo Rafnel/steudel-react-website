@@ -1,13 +1,13 @@
-import { Typography, Grid, TextField, Button, CircularProgress, Paper, Snackbar, IconButton } from "@material-ui/core";
+import { Typography, Grid, TextField, Button, CircularProgress, Paper } from "@material-ui/core";
 import React from "react";
-import CloseIcon from '@material-ui/icons/Close';
 import { Auth } from "aws-amplify";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { Message } from "primereact/components/message/Message";
 import { observer } from "mobx-react";
 import addUser from "../api/addUser";
 import getUser from "../api/getUser";
-import { globalState } from "../stateStores/appState";
+import { globalState } from "../configuration/appState";
+import { validatePassword } from "../configuration/loginSignup";
 
 @observer
 class SignupPage extends React.Component<RouteComponentProps<any>>{
@@ -16,24 +16,19 @@ class SignupPage extends React.Component<RouteComponentProps<any>>{
 
     validateSignUp(): boolean{
         if(globalState.appState.username.includes(" ")){
-            globalState.appState.signUpPageErrorMessage = "Username cannot contain a space.";
+            globalState.appState.errorMessage = "Username cannot contain a space.";
             return false;
         }
-        if(this.password !== this.confirmPassword){
-            globalState.appState.signUpPageErrorMessage = "Passwords must match.";
-            return false;
-        }
-        if(this.password.length < 8){
-            globalState.appState.signUpPageErrorMessage = "Password must be 8 characters or greater.";
+        if(!validatePassword(this.password, this.confirmPassword)){
             return false;
         }
         if(globalState.appState.username.length === 0 || globalState.appState.name.length === 0
            || globalState.appState.email.length === 0){
-            globalState.appState.signUpPageErrorMessage = "You left a field blank.";
+            globalState.appState.errorMessage = "You left a field blank.";
             return false;
         }
         if(globalState.appState.username.length > 20){
-            globalState.appState.signUpPageErrorMessage = "Username must be less than 20 characters in length.";
+            globalState.appState.errorMessage = "Username must be less than 20 characters in length.";
             return false;
         }
 
@@ -54,7 +49,7 @@ class SignupPage extends React.Component<RouteComponentProps<any>>{
             globalState.appState.signedUp = true;
         }
         catch(e){
-            globalState.appState.signUpPageErrorMessage = e.message;
+            globalState.appState.errorMessage = e.message;
         }
         globalState.appState.isLoading = false;
     }
@@ -74,43 +69,17 @@ class SignupPage extends React.Component<RouteComponentProps<any>>{
             globalState.appState.successMessage = "Account created and logged in successfully.";
         }
         catch(e){
-            globalState.appState.signUpPageErrorMessage = e.message;
+            globalState.appState.errorMessage = e.message;
         }
 
         globalState.appState.isLoading = false;
-    }
-
-    showErrorMessage(){
-        if(globalState.appState.signUpPageErrorMessage.length !== 0){            
-            return <Message severity = "error" text = {globalState.appState.signUpPageErrorMessage}/>
-        }
-        return null;
-    }
-
-    showResendMessage(){
-        if(globalState.appState.resentCode){
-            return <Snackbar 
-                open = {true} 
-                autoHideDuration = {8000} 
-                color = "primary"
-                message = "Resent email confirmation." 
-                action = {<IconButton 
-                                color="inherit" 
-                                key = "close" 
-                                aria-label = "close" 
-                                onClick = {() => globalState.appState.resentCode = false}
-                            > 
-                                <CloseIcon/>
-                          </IconButton>}
-                />
-        }
-        return null;
     }
 
     async handleResend(){
         console.log("Resending confirmation code for email: " + globalState.appState.email);
         globalState.appState.resentCode = true;
         await Auth.resendSignUp(globalState.appState.username);
+        globalState.appState.successMessage = "Resent Email verification code.";
         globalState.appState.isLoading = false;
     }
 
@@ -295,10 +264,6 @@ class SignupPage extends React.Component<RouteComponentProps<any>>{
                 <Grid item>
                     {globalState.appState.isLoading && <CircularProgress/>}
                 </Grid>
-
-                <Grid item>
-                    {this.showErrorMessage()}
-                </Grid>
             </Grid>
         )
     }
@@ -360,14 +325,6 @@ class SignupPage extends React.Component<RouteComponentProps<any>>{
                 </Grid>
 
                 <Grid item>
-                    {this.showResendMessage()}
-                </Grid>
-
-                <Grid item>
-                    {this.showErrorMessage()}
-                </Grid>
-
-                <Grid item>
                     {globalState.appState.isLoading && <CircularProgress/>}
                 </Grid>
             </Grid>
@@ -383,7 +340,6 @@ class SignupPage extends React.Component<RouteComponentProps<any>>{
     }
 
     componentWillUnmount(){
-        globalState.appState.signUpPageErrorMessage = "";
         globalState.appState.signedUp = false;
     }
 }

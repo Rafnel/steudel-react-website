@@ -1,5 +1,5 @@
 import { API } from "aws-amplify";
-import { globalState } from "../stateStores/appState";
+import { globalState } from "../configuration/appState";
 
 export default async function getRandomComponent(){
     try{

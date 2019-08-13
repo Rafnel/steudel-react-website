@@ -2,7 +2,7 @@ import React from "react";
 import { Snackbar, SnackbarContent, IconButton } from "@material-ui/core";
 import { PRIMARY } from "..";
 import CloseIcon from '@material-ui/icons/Close';
-import { globalState } from "../stateStores/appState";
+import { globalState } from "../configuration/appState";
 
 export default class SuccessMessage extends React.Component{
     render(){

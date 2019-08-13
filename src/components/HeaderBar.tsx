@@ -3,7 +3,7 @@ import { Auth } from "aws-amplify";
 import { observer } from "mobx-react";
 import React from "react";
 import { Link, RouteComponentProps, withRouter } from "react-router-dom";
-import { globalState, resetState } from "../stateStores/appState";
+import { globalState, resetState } from "../configuration/appState";
 import CreateButton from "./buttons/CreateButton";
 import HomeButton from "./buttons/HomeButton";
 import WeatherButton from "./buttons/WeatherButton";

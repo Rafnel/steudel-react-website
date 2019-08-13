@@ -2,12 +2,11 @@ import React from "react";
 import { Grid, Typography, Paper, Button, Divider, FormControl, InputLabel, Select, OutlinedInput, MenuItem, CircularProgress } from "@material-ui/core";
 import WorkoutSection from "../components/WorkoutSection";
 import { observable } from "mobx";
-import { SwimComponent, globalState, SwimWorkout } from "../stateStores/appState";
+import { SwimComponent, globalState, SwimWorkout } from "../configuration/appState";
 import { observer } from "mobx-react";
 import SaveIcon from '@material-ui/icons/Save';
 import createSwimComponent from "../api/createSwimComponent";
 import createSwimWorkout from "../api/createSwimWorkout";
-
 
 export class SwimWorkoutPageStore{
     //the list of swim components used by child components on this page
@@ -115,7 +114,11 @@ export default class CreateSwimWorkoutPage extends React.Component{
         }
 
         //finally, add the swim workout to the database.
-        createSwimWorkout(workout);
+        const success: boolean = await createSwimWorkout(workout);
+
+        if(success){
+            globalState.appState.successMessage = "Your workout has been created successfully!";
+        }
 
         globalState.appState.isLoading = false;
     }

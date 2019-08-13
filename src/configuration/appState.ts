@@ -19,13 +19,11 @@ export class AppStateStore{
 
     @observable verificationCode: string = "";
     @observable resentCode: boolean = false;
-    @observable emailVerificationErrorMessage: string = "";
     
     @observable loginPageErrorMessage: string = "";
 
     @observable signUpPageErrorMessage: string = "";
 
-    @observable forgotPasswordErrorMessage: string = "";
     @observable forgotPasswordUsernameEntered: boolean = false;
     @observable loadingForgotPassword: boolean = false;
     @observable currentUser: User = {
@@ -96,7 +94,6 @@ export function resetState(){
         liked_components: [],
         liked_workouts: []
     }
-    globalState.appState.forgotPasswordErrorMessage = "";
     globalState.appState.forgotPasswordUsernameEntered = false;
     globalState.appState.signUpPageErrorMessage = "";
     globalState.appState.loginPageErrorMessage = "";

@@ -1,8 +1,10 @@
 import React from "react";
 import { Grid, TextField, Tooltip } from "@material-ui/core";
-import { SwimWorkoutPageStore } from "../containers/CreateSwimWorkoutPage";
+import { SwimWorkoutPageStore } from "../../containers/CreateSwimWorkoutPage";
 import { observable } from "mobx";
 import { observer } from "mobx-react";
+import { CreateSwimComponentStore } from "../../containers/CreateSwimComponentPage";
+import IntervalsList from "../intervals/IntervalsList";
 
 export interface WorkoutSwimComponentProps{
     store: SwimWorkoutPageStore;
@@ -13,8 +15,13 @@ export interface WorkoutSwimComponentProps{
 export default class WorkoutSwimComponent extends React.Component<WorkoutSwimComponentProps>{
     @observable yardageError: string = "";
     yardage: number = 0;
+    @observable intervalsStore: CreateSwimComponentStore = new CreateSwimComponentStore();
+    
     constructor(props: WorkoutSwimComponentProps){
         super(props);
+
+        //give the intervals store the reference to the swim component's intervals list.
+        this.intervalsStore.intervals = this.props.store.swimComponents[this.props.indexOfComponentsArray].intervals;
 
         this.handleComponentBodyChange = this.handleComponentBodyChange.bind(this);
         this.handleYardageChange = this.handleYardageChange.bind(this);
@@ -72,79 +79,7 @@ export default class WorkoutSwimComponent extends React.Component<WorkoutSwimCom
                 </Grid>
 
                 <Grid item>
-                    <TextField
-                        variant = "outlined"
-                        label = "Interval 1"
-                        style = {{maxWidth: 100}}
-                        margin = "dense"
-                        onChange = {event => {
-                            this.props.store.swimComponents[this.props.indexOfComponentsArray].intervals[0] = (event.target as HTMLInputElement).value;
-                        }}
-                    />
-                </Grid>
-
-                <Grid item>
-                    /
-                </Grid>
-
-                <Grid item>
-                    <TextField
-                        variant = "outlined"
-                        label = "Interval 2"
-                        style = {{maxWidth: 100}}
-                        margin = "dense"
-                        onChange = {event => {
-                            this.props.store.swimComponents[this.props.indexOfComponentsArray].intervals[1] = (event.target as HTMLInputElement).value;
-                        }}
-                    />
-                </Grid>
-
-                <Grid item>
-                    /
-                </Grid>
-
-                <Grid item>
-                    <TextField
-                        variant = "outlined"
-                        label = "Interval 3"
-                        style = {{maxWidth: 100}}
-                        margin = "dense"
-                        onChange = {event => {
-                            this.props.store.swimComponents[this.props.indexOfComponentsArray].intervals[2] = (event.target as HTMLInputElement).value;
-                        }}
-                    />
-                </Grid>
-
-                <Grid item>
-                    /
-                </Grid>
-
-                <Grid item>
-                    <TextField
-                        variant = "outlined"
-                        label = "Interval 4"
-                        style = {{maxWidth: 100}}
-                        margin = "dense"
-                        onChange = {event => {
-                            this.props.store.swimComponents[this.props.indexOfComponentsArray].intervals[3] = (event.target as HTMLInputElement).value;
-                        }}
-                    />
-                </Grid>
-
-                <Grid item>
-                    /
-                </Grid>
-
-                <Grid item>
-                    <TextField
-                        variant = "outlined"
-                        label = "Interval 5"
-                        style = {{maxWidth: 100}}
-                        margin = "dense"
-                        onChange = {event => {
-                            this.props.store.swimComponents[this.props.indexOfComponentsArray].intervals[4] = (event.target as HTMLInputElement).value;
-                        }}
-                    />
+                    <IntervalsList store = {this.intervalsStore} initialSize = {5}/>
                 </Grid>
 
                 <Grid item>

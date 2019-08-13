@@ -1,13 +1,13 @@
 import React from "react";
 import { Route, Switch, Redirect } from "react-router-dom";
-import WeatherPage from "./containers/WeatherPage";
-import SignupPage from "./containers/SignupPage";
-import LoginPage from "./containers/LoginPage";
-import { globalState } from "./stateStores/appState";
-import HomePage from "./containers/HomePage";
-import CreateSwimComponentPage from "./containers/CreateSwimComponentPage";
-import SwimComponentsPage from "./containers/SwimComponentsPage";
-import CreateSwimWorkoutPage from "./containers/CreateSwimWorkoutPage";
+import WeatherPage from "./WeatherPage";
+import SignupPage from "./SignupPage";
+import LoginPage from "./LoginPage";
+import HomePage from "./HomePage";
+import CreateSwimComponentPage from "./CreateSwimComponentPage";
+import SwimComponentsPage from "./SwimComponentsPage";
+import CreateSwimWorkoutPage from "./CreateSwimWorkoutPage";
+import { globalState } from "../configuration/appState";
 
 export default class Routes extends React.Component{
   render(){

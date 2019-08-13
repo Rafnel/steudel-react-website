@@ -1,6 +1,6 @@
 import React from "react";
 import { Grid } from "@material-ui/core";
-import { SwimComponent } from "../stateStores/appState";
+import { SwimComponent } from "../../configuration/appState";
 import SwimComponentCard from "./SwimComponentCard";
 
 export interface SwimComponentCardsProps{

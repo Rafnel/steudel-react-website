@@ -1,5 +1,5 @@
 import { API } from "aws-amplify";
-import { SwimComponent, globalState } from "../stateStores/appState";
+import { SwimComponent, globalState } from "../configuration/appState";
 
 //increments / decrements the amount of likes for a component 
 export default async function updateComponentLikes(swimComponent: SwimComponent, value: number){

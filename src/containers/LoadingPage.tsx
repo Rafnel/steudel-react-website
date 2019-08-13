@@ -1,5 +1,5 @@
 import React from "react";
-import { globalState } from "../stateStores/appState";
+import { globalState } from "../configuration/appState";
 import { Grid, Typography } from "@material-ui/core";
 import { observer } from "mobx-react";
 import ReactLoading from 'react-loading';

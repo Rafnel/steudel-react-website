@@ -8,7 +8,8 @@ import addUser from "../api/addUser";
 import getUser from "../api/getUser";
 import EmailVerification from "../components/EmailVerification";
 import ForgotPassword from "../components/ForgotPassword";
-import { globalState } from "../stateStores/appState";
+import { globalState } from "../configuration/appState";
+import { ensureUserInDB } from "../configuration/loginSignup";
 
 @observer
 class LoginPage extends React.Component<RouteComponentProps<any>>{
@@ -26,17 +27,8 @@ class LoginPage extends React.Component<RouteComponentProps<any>>{
         else{
             try{
                 await Auth.signIn(globalState.appState.email, this.password);
-                const currentUserInfo = await Auth.currentUserInfo();
-
-                globalState.appState.username = currentUserInfo.username;
-                //check if user is in db, if not, they slipped through cracks and we must add them.
-                await getUser(globalState.appState.username);
-                console.log(":: User " + globalState.appState.currentUser.username + " logged in with liked components " + globalState.appState.currentUser.liked_components);
-                if(globalState.appState.currentUser.username === ""){
-                    //user doesn't exist in the db. Add them, then populate our currentUser value.
-                    await addUser(globalState.appState.username);
-                    await getUser(globalState.appState.username);
-                }
+                await ensureUserInDB();
+                
                 globalState.appState.successMessage = "Successfully logged in. Welcome back " + globalState.appState.username + "!";
                 this.props.history.push("/");
                 globalState.appState.isLoggedIn = true;

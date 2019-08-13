@@ -1,9 +1,9 @@
-import { Button, CircularProgress, Grid, Typography } from "@material-ui/core";
+import { Button, CircularProgress, Grid, Typography, Link } from "@material-ui/core";
 import { observer } from "mobx-react";
 import React from "react";
 import getRandomComponent from "../api/randomComponent";
-import SwimComponentCard from "../components/SwimComponentCard";
-import { globalState, SwimComponent } from "../stateStores/appState";
+import SwimComponentCard from "../components/swimcomponents/SwimComponentCard";
+import { globalState, SwimComponent } from "../configuration/appState";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { observable } from "mobx";
 
@@ -31,6 +31,16 @@ class HomePage extends React.Component<RouteComponentProps<any>>{
             <Grid container justify = "center" alignItems = "center" direction = "column" spacing = {2}>
                 <Grid item>
                     <img src = {process.env.PUBLIC_URL + "/android-chrome-192x192.png"} alt = "logo"/>
+
+                    <Typography>
+                        <Link color = "inherit" href = "https://github.com/Rafnel/steudel-react-website">
+                            Version 0.90: 2019-08-12
+                        </Link>
+                    </Typography>
+                </Grid>
+
+                <Grid item>
+                    
                 </Grid>
                 
                 <Grid>

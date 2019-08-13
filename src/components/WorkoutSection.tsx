@@ -3,9 +3,9 @@ import React from "react";
 import { observable } from "mobx";
 import { observer } from "mobx-react";
 import { SwimWorkoutPageStore } from "../containers/CreateSwimWorkoutPage";
-import WorkoutSwimComponent from "./WorkoutSwimComponent";
+import WorkoutSwimComponent from "./swimcomponents/WorkoutSwimComponent";
 import AddIcon from '@material-ui/icons/Add';
-import { emptySwimComponent } from "../stateStores/appState";
+import { emptySwimComponent } from "../configuration/appState";
 
 export interface WorkoutSectionProps{
     sectionTitle: string;
@@ -13,13 +13,8 @@ export interface WorkoutSectionProps{
     pageStore: SwimWorkoutPageStore;
 }
 
-export class WorkoutSectionStore{
-    
-}
-
 @observer
 export default class WorkoutSection extends React.Component<WorkoutSectionProps>{
-    @observable store: WorkoutSectionStore = new WorkoutSectionStore();
     @observable componentRows: any[] = [];
     @observable numComponents: number = 0;
 

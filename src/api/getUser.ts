@@ -1,5 +1,5 @@
 import { API } from "aws-amplify";
-import { globalState } from "../stateStores/appState";
+import { globalState } from "../configuration/appState";
 
 //sets the currentUser in the appState variable.
 export default async function getUser(username: string){

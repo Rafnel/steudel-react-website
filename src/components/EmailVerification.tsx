@@ -2,21 +2,19 @@ import { Button, ExpansionPanel, ExpansionPanelDetails, ExpansionPanelSummary, G
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { Auth } from "aws-amplify";
 import { observer } from "mobx-react";
-import { Message } from "primereact/components/message/Message";
 import React from "react";
-import { globalState } from "../stateStores/appState";
-
-
+import { globalState } from "../configuration/appState";
 
 @observer
 export default class EmailVerification extends React.Component{
     async handleResend(){
+        //check that the user entered a username
         if(globalState.appState.username.length === 0){
-            globalState.appState.emailVerificationErrorMessage = "Please enter a username to resend the confirmation code.";
+            globalState.appState.errorMessage = "Please enter a username to resend the confirmation code.";
         }
+        //if they entered a username, attempt to resend email confirmation code.
         else{
             console.log("Resending confirmation code for username: " + globalState.appState.username);
-            globalState.appState.resentCode = true;
             try{
                 globalState.appState.isLoading = true;
                 await Auth.resendSignUp(globalState.appState.username);
@@ -24,7 +22,7 @@ export default class EmailVerification extends React.Component{
                 globalState.appState.isLoading = false;
             }
             catch(e){
-                globalState.appState.emailVerificationErrorMessage = e.message;
+                globalState.appState.errorMessage = e.message;
                 globalState.appState.isLoading = false;
             }
         }   
@@ -32,11 +30,10 @@ export default class EmailVerification extends React.Component{
 
     async handleConfirmation(){
         if(globalState.appState.username.length === 0){
-            console.log(globalState.appState.emailVerificationErrorMessage.length);
-            globalState.appState.emailVerificationErrorMessage = "Please enter a username to confirm your account.";
+            globalState.appState.errorMessage = "Please enter a username to confirm your account.";
         }
         else if(globalState.appState.verificationCode.length === 0){
-            globalState.appState.emailVerificationErrorMessage = "Please enter the code from your Email.";
+            globalState.appState.errorMessage = "Please enter the code from your Email.";
         }
         else{
             try{
@@ -46,10 +43,10 @@ export default class EmailVerification extends React.Component{
                 globalState.appState.successMessage = "Your account has been confirmed. You can now sign in.";
             }
             catch(e){
-                globalState.appState.emailVerificationErrorMessage = e.message;
+                globalState.appState.errorMessage = e.message;
                 globalState.appState.isLoading = false;
                 if(e.message.includes("cannot be confirm.")){
-                    globalState.appState.emailVerificationErrorMessage = "User is already confirmed.";
+                    globalState.appState.errorMessage = "User is already confirmed.";
                 }
             }
         }
@@ -64,7 +61,6 @@ export default class EmailVerification extends React.Component{
 
                 <ExpansionPanelDetails>
                     <Grid container spacing = {2} direction = "column" justify = "center" alignItems = "center">
-                        {globalState.appState.emailVerificationErrorMessage.length !== 0 && <Message severity = "error" text = {globalState.appState.emailVerificationErrorMessage}/>}
                         <Grid item>
                             <TextField
                                 onChange = {event => globalState.appState.username = (event.target as HTMLInputElement).value}
@@ -118,9 +114,5 @@ export default class EmailVerification extends React.Component{
                 </ExpansionPanelDetails>
             </ExpansionPanel>
         )
-    }
-
-    componentWillUnmount(){
-        globalState.appState.emailVerificationErrorMessage = "";
     }
 }

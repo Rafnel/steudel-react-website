@@ -3,21 +3,22 @@ import { Grid, Paper, Typography, TextField, Select, OutlinedInput, FormControl,
 import SaveIcon from '@material-ui/icons/Save';
 import { observer } from "mobx-react";
 import { observable } from "mobx";
-import { globalState, SwimComponent } from "../stateStores/appState";
+import { globalState, SwimComponent } from "../configuration/appState";
 import createSwimComponent from "../api/createSwimComponent";
+import IntervalsList from "../components/intervals/IntervalsList";
+
+export class CreateSwimComponentStore{
+    @observable intervals: string[] = [];
+}
 
 @observer
 export default class CreateSwimComponentPage extends React.Component{
     componentBody: string = "";
-    interval1: string = "";
-    interval2: string = "";
-    interval3: string = "";
-    interval4: string = "";
-    interval5: string = "";
     yardage: string = "";
     @observable difficulty: string = "";
     @observable set: string = "";
     tags: string = "";
+    @observable store: CreateSwimComponentStore = new CreateSwimComponentStore();
 
     validateComponent(): boolean{
         if(isNaN(Number(this.yardage))){
@@ -42,21 +43,15 @@ export default class CreateSwimComponentPage extends React.Component{
 
     async saveComponent(){
         globalState.appState.isLoading = true;
-        let intervals: string[] = [];
-        if(this.interval1.length > 0){
-            intervals.push(this.interval1);
-        }
-        if(this.interval2.length > 0){
-            intervals.push(this.interval2);
-        }
-        if(this.interval3.length > 0){
-            intervals.push(this.interval3);
-        }
-        if(this.interval4.length > 0){
-            intervals.push(this.interval4);
-        }
-        if(this.interval5.length > 0){
-            intervals.push(this.interval5);
+        //only add intervals that have content.
+        console.log("intervals list length: " + this.store.intervals.length);
+        let intervalsToAdd: string[] = [];
+        for(var i = 0; i < this.store.intervals.length; i++){
+            console.log("Interval " + i + " is " + this.store.intervals[i]);
+            if(this.store.intervals[i].length > 0){
+                console.log("adding interval " + this.store.intervals[i]);
+                intervalsToAdd.push(this.store.intervals[i]);
+            }
         }
 
         let tagsList: string[] = [];
@@ -75,7 +70,7 @@ export default class CreateSwimComponentPage extends React.Component{
             component_body: this.componentBody,
             component_id: "",
             date_created: "",
-            intervals: intervals,
+            intervals: intervalsToAdd,
             tags: tagsList,
             likes: 0
         };
@@ -132,75 +127,8 @@ export default class CreateSwimComponentPage extends React.Component{
                             </Grid>
 
                             <Grid item>
-                                <Grid spacing = {1} alignItems = "center" justify = "center" container direction = "row">
-                                    <Grid item>
-                                        <TextField
-                                            variant = "outlined"
-                                            label = "Interval 1"
-                                            style = {{maxWidth: 100}}
-                                            margin = "dense"
-                                            onChange = {event => {this.interval1 = (event.target as HTMLInputElement).value}}
-                                        />
-                                    </Grid>
-
-                                    <Grid item>
-                                        /
-                                    </Grid>
-
-                                    <Grid item>
-                                        <TextField
-                                            variant = "outlined"
-                                            label = "Interval 2"
-                                            style = {{maxWidth: 100}}
-                                            margin = "dense"
-                                            onChange = {event => {this.interval2 = (event.target as HTMLInputElement).value}}
-                                        />
-                                    </Grid>
-
-                                    <Grid item>
-                                        /
-                                    </Grid>
-
-                                    <Grid item>
-                                        <TextField
-                                            variant = "outlined"
-                                            label = "Interval 3"
-                                            style = {{maxWidth: 100}}
-                                            margin = "dense"
-                                            onChange = {event => {this.interval3 = (event.target as HTMLInputElement).value}}
-                                        />
-                                    </Grid>
-
-                                    <Grid item>
-                                        /
-                                    </Grid>
-
-                                    <Grid item>
-                                        <TextField
-                                            variant = "outlined"
-                                            label = "Interval 4"
-                                            style = {{maxWidth: 100}}
-                                            margin = "dense"
-                                            onChange = {event => {this.interval4 = (event.target as HTMLInputElement).value}}
-                                        />
-                                    </Grid>
-
-                                    <Grid item>
-                                        /
-                                    </Grid>
-
-                                    <Grid item>
-                                        <TextField
-                                            variant = "outlined"
-                                            label = "Interval 5"
-                                            style = {{maxWidth: 100}}
-                                            margin = "dense"
-                                            onChange = {event => {this.interval5 = (event.target as HTMLInputElement).value}}
-                                        />
-                                    </Grid>
-                                </Grid>
+                                <IntervalsList store = {this.store} initialSize = {5}/>
                             </Grid>
-                            
 
                             <Grid item>
                                 <FormControl variant = "outlined" margin = "dense">
@@ -214,6 +142,7 @@ export default class CreateSwimComponentPage extends React.Component{
                                     <FormHelperText margin = "dense">This field must be numeric only.</FormHelperText>
                                 </FormControl>                 
                             </Grid>
+                            
 
                             <Grid item>
                                 <Grid spacing = {1} alignItems = "center" justify = "center" container direction = "row">
