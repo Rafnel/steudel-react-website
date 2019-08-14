@@ -168,7 +168,14 @@ export default class CreateSwimWorkoutPage extends React.Component{
 
                 <Grid item>
                     <Paper style = {{padding: 10}}>
-                        <Grid item>
+
+                        {this.createWorkoutSections()}
+
+                        <Divider/>
+
+                        &nbsp;
+
+                        <Grid container justify = "center" alignItems = "center">
                             <FormControl variant = "outlined" style = {{minWidth: 200}}>
                                 <InputLabel margin = "dense">Workout Difficulty</InputLabel>
                                 <Select
@@ -188,18 +195,10 @@ export default class CreateSwimWorkoutPage extends React.Component{
                             </FormControl>
                         </Grid>
 
-                        {this.createWorkoutSections()}
-
-                        <Divider/>
-
-                        &nbsp;
-
-                        <Grid container justify = "flex-end" alignItems = "flex-end" spacing  = {2} direction = "row">
-                            <Grid item>
-                                <Typography variant = "body2">
-                                    <b>Total Workout Yardage: {this.store.workoutYardage}</b>
-                                </Typography>
-                            </Grid>
+                        <Grid container justify = "flex-end">
+                            <Typography variant = "body2">
+                                <b>Total Workout Yardage: {this.store.workoutYardage}</b>
+                            </Typography>
                         </Grid>
                     </Paper>
                 </Grid>

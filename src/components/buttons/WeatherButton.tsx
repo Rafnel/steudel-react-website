@@ -7,6 +7,7 @@ class WeatherButton extends React.Component<RouteComponentProps<any>>{
         return(
             <Tooltip title = "Check the weather before your workout!">
                 <IconButton 
+                    style = {{justifyContent: "flex-end"}}
                     size = "medium"
                     onClick = {() => this.props.history.push("/weather")}
                 >

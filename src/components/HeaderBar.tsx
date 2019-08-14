@@ -8,6 +8,8 @@ import CreateButton from "./buttons/CreateButton";
 import HomeButton from "./buttons/HomeButton";
 import WeatherButton from "./buttons/WeatherButton";
 import ExploreButton from "./buttons/ExploreButton";
+import AccountButton from "./buttons/AccountButton";
+import QuestionButton from "./buttons/QuestionButton";
 
 
 @observer
@@ -31,34 +33,11 @@ class HeaderBar extends React.Component<RouteComponentProps<any>>{
 
                     {globalState.appState.isLoggedIn && <CreateButton/>}
 
-                    {globalState.appState.isLoggedIn 
-                    ? 
-                    <Button style = {{marginLeft: "auto"}} size = "medium" onClick = {this.handleLogout}>
-                        <Typography color = "secondary" variant = "button" display = "block">
-                            Log Out
-                        </Typography>
-                    </Button>
-                    :
-                    <div style = {{marginLeft: "auto"}}>
-                        <Button style = {{margin: "auto"}} size = "medium" component = {Link} to = "/signup" onClick = {() => {
-                            globalState.appState.navBarVisible = false; 
-                        }}>
-                            <Typography color = "secondary" variant = "button" display = "block">
-                                Sign up
-                            </Typography>
-                        </Button>
-
-                        <Button style = {{margin: "auto"}} size = "medium" component = {Link} to = "/login" onClick = {() => {
-                            globalState.appState.navBarVisible = false; 
-                        }}>
-                        <Typography color = "secondary" variant = "button" display = "block">
-                            Log in
-                        </Typography>
-                        </Button>
-                    </div>
-                    }
-
-                    <WeatherButton/>
+                    <span style = {{marginLeft: "auto", marginRight: -12}}>
+                        <AccountButton/>
+                        <WeatherButton/>
+                        <QuestionButton/>
+                    </span>
                 </Toolbar>
             </AppBar>
         )
