@@ -35,7 +35,7 @@ class QuestionButton extends React.Component<RouteComponentProps<any>, QuestionB
     }
 
     handleContactCreator(){
-
+        this.props.history.push("/contact");
         this.handlePopperClose();
     }
 

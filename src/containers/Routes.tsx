@@ -8,12 +8,14 @@ import CreateSwimComponentPage from "./CreateSwimComponentPage";
 import SwimComponentsPage from "./SwimComponentsPage";
 import CreateSwimWorkoutPage from "./CreateSwimWorkoutPage";
 import { globalState } from "../configuration/appState";
+import ContactPage from "./ContactPage";
 
 export default class Routes extends React.Component{
   render(){
     return(
       <Switch>
         <Route path="/" exact render = {() => <HomePage/>} />
+        <Route path="/contact" exact render = {() => <ContactPage/>} />
         {!globalState.appState.isLoggedIn 
           && 
           <Route path="/login" exact render = {() => <LoginPage/>}/>}

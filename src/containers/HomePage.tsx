@@ -6,6 +6,7 @@ import SwimComponentCard from "../components/swimcomponents/SwimComponentCard";
 import { globalState, SwimComponent } from "../configuration/appState";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { observable } from "mobx";
+import GetStarted from "../components/GetStarted";
 
 @observer
 class HomePage extends React.Component<RouteComponentProps<any>>{
@@ -48,6 +49,13 @@ class HomePage extends React.Component<RouteComponentProps<any>>{
                         <p>Component-Based Workouts</p>
                     </Typography>
                 </Grid>
+
+                {!globalState.appState.isLoggedIn
+                 &&
+                 <Grid item>
+                     <GetStarted/>
+                 </Grid>
+                }
                 
                 {globalState.appState.isLoggedIn 
                  &&
