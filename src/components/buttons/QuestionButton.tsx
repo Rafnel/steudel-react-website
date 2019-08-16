@@ -30,7 +30,7 @@ class QuestionButton extends React.Component<RouteComponentProps<any>, QuestionB
     }
 
     handleAbout(){
-
+        this.props.history.push("/about");
         this.handlePopperClose();
     }
 

@@ -1,4 +1,4 @@
-import { Button, CircularProgress, Grid, Typography, Link } from "@material-ui/core";
+import { Button, CircularProgress, Grid, Typography, Link, Box } from "@material-ui/core";
 import { observer } from "mobx-react";
 import React from "react";
 import getRandomComponent from "../api/randomComponent";
@@ -7,6 +7,7 @@ import { globalState, SwimComponent } from "../configuration/appState";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { observable } from "mobx";
 import GetStarted from "../components/GetStarted";
+import WhyCreateAccount from "../components/WhyCreateAccount";
 
 @observer
 class HomePage extends React.Component<RouteComponentProps<any>>{
@@ -35,13 +36,9 @@ class HomePage extends React.Component<RouteComponentProps<any>>{
 
                     <Typography>
                         <Link color = "inherit" href = "https://github.com/Rafnel/steudel-react-website">
-                            Version 0.92: 2019-08-13
+                            Version 0.95: 2019-08-15
                         </Link>
                     </Typography>
-                </Grid>
-
-                <Grid item>
-                    
                 </Grid>
                 
                 <Grid>

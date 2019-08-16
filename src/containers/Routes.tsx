@@ -9,6 +9,7 @@ import SwimComponentsPage from "./SwimComponentsPage";
 import CreateSwimWorkoutPage from "./CreateSwimWorkoutPage";
 import { globalState } from "../configuration/appState";
 import ContactPage from "./ContactPage";
+import AboutPage from "./AboutPage";
 
 export default class Routes extends React.Component{
   render(){
@@ -16,6 +17,7 @@ export default class Routes extends React.Component{
       <Switch>
         <Route path="/" exact render = {() => <HomePage/>} />
         <Route path="/contact" exact render = {() => <ContactPage/>} />
+        <Route path="/about" exact render = {() => <AboutPage/>} />
         {!globalState.appState.isLoggedIn 
           && 
           <Route path="/login" exact render = {() => <LoginPage/>}/>}

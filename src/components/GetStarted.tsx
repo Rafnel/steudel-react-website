@@ -1,6 +1,7 @@
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { Paper, Grid, Button, Typography } from "@material-ui/core";
 import React from "react";
+import WhyCreateAccount from "./WhyCreateAccount";
 
 class GetStarted extends React.Component<RouteComponentProps<any>>{
     render(){
@@ -34,10 +35,16 @@ class GetStarted extends React.Component<RouteComponentProps<any>>{
 
                 &nbsp;
 
-                <Grid container direction = "column" alignItems = "center" justify = "center">
-                    <Typography variant = "body1">
-                        <b>to get started!</b>
-                    </Typography>
+                <Grid container justify = "center" alignItems = "center">
+                    Accounts are free, and as of version 0.95 users can:
+                </Grid>
+
+                <WhyCreateAccount/>
+
+                <Grid container justify = "center" alignItems = "center">
+                    <Button variant = "outlined" color = "primary" onClick = {() => this.props.history.push("/about")}>
+                        More Information
+                    </Button>
                 </Grid>
             </Paper>
         )
