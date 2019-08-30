@@ -69,10 +69,12 @@ export async function ensureUserInDB(){
     globalState.appState.username = currentUserInfo.username;
     //check if user is in db, if not, they slipped through cracks and we must add them.
     await getUser(globalState.appState.username);
-    console.log(":: User " + globalState.appState.currentUser.username + " logged in with liked components " + globalState.appState.currentUser.liked_components);
+    
     if(globalState.appState.currentUser.username === ""){
         //user doesn't exist in the db. Add them, then populate our currentUser value.
         await addUser(globalState.appState.username);
         await getUser(globalState.appState.username);
     }
+
+    console.log(":: User " + globalState.appState.currentUser.username + " logged in with liked components " + globalState.appState.currentUser.liked_components);
 }

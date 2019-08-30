@@ -15,9 +15,17 @@ class SignupPage extends React.Component<RouteComponentProps<any>>{
     confirmPassword: string = "";
 
     validateSignUp(): boolean{
-        if(globalState.appState.username.includes(" ")){
+        let usrName: string = globalState.appState.username;
+        if(usrName.includes(" ")){
             globalState.appState.errorMessage = "Username cannot contain a space.";
             return false;
+        }
+        //check that none of the chars are extended ascii
+        for(var i = 0; i < usrName.length; i++){
+            if(usrName.charCodeAt(i) > 127){
+                globalState.appState.errorMessage = "Please only include regular characters in your username.";
+                return false;
+            }
         }
         if(!validatePassword(this.password, this.confirmPassword)){
             return false;

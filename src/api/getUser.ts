@@ -11,6 +11,7 @@ export default async function getUser(username: string){
     }
     catch(e){
         console.log(":: User " + username + " did not exist in db");
+        globalState.appState.currentUser.username = "";
         return null;
     }
 }
