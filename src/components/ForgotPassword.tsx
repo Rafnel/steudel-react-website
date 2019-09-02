@@ -5,8 +5,6 @@ import { observer } from "mobx-react";
 import React, { Fragment } from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { globalState } from "../configuration/appState";
-import getUser from "../api/getUser";
-import addUser from "../api/addUser";
 import { validateVerificationCode, validatePassword, ensureUserInDB } from "../configuration/loginSignup";
 
 @observer

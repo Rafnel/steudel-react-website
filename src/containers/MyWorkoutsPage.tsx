@@ -10,7 +10,7 @@ export default class MyWorkoutsPage extends React.Component{
     renderUserWorkouts(){
         if(globalState.appState.isLoading === false){
             console.log(":: Creating user workout components...");
-            const workouts = globalState.mySwimWorkouts.map(workout => <Grid item> <SwimWorkoutComponent workout = {workout}/> </Grid>);
+            const workouts = globalState.mySwimWorkouts.map(workout => <Grid item key = {workout.workout_id}> <SwimWorkoutComponent workout = {workout}/> </Grid>);
             if(workouts.length === 0){
                 return <Typography variant = "body1"> No workouts! </Typography>
             }

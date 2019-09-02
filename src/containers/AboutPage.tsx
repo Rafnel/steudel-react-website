@@ -74,7 +74,7 @@ export default class AboutPage extends React.Component{
                         </Grid>
 
                         <Grid item>
-                            Accounts are free, and as of version 0.95 users can:
+                            Accounts are free, and as of version 1.00 users can:
                         </Grid>
                         <WhyCreateAccount/>
                     </Grid>

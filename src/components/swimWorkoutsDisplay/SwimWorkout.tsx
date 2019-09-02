@@ -2,7 +2,7 @@ import React from "react";
 import { SwimWorkout } from "../../configuration/appState";
 import WorkoutSet from "./WorkoutSet";
 import { observer } from "mobx-react";
-import { Grid, Typography, Link, Button, Paper } from "@material-ui/core";
+import { Grid, Button, Paper } from "@material-ui/core";
 import { RouteComponentProps, withRouter } from "react-router";
 
 export interface SwimWorkoutProps extends RouteComponentProps<any>{
@@ -14,16 +14,16 @@ class SwimWorkoutComponent extends React.Component<SwimWorkoutProps>{
     getWorkoutSections(){
         let sections = [];
         if(this.props.workout.warmup.length > 0){
-            sections.push(<WorkoutSet setName = "Warmup" components = {this.props.workout.warmup}/>);
+            sections.push(<WorkoutSet key = "Warmup" setName = "Warmup" components = {this.props.workout.warmup}/>);
         }
         if(this.props.workout.preset.length > 0){
-            sections.push(<WorkoutSet setName = "Pre Set" components = {this.props.workout.preset}/>);
+            sections.push(<WorkoutSet key = "Pre Set" setName = "Pre Set" components = {this.props.workout.preset}/>);
         }
         if(this.props.workout.mainset.length > 0){
-            sections.push(<WorkoutSet setName = "Main Set" components = {this.props.workout.mainset}/>);
+            sections.push(<WorkoutSet key = "Main Set" setName = "Main Set" components = {this.props.workout.mainset}/>);
         }
         if(this.props.workout.cooldown.length > 0){
-            sections.push(<WorkoutSet setName = "Cooldown" components = {this.props.workout.cooldown}/>);
+            sections.push(<WorkoutSet key = "Cooldown" setName = "Cooldown" components = {this.props.workout.cooldown}/>);
         }
 
         return sections;
@@ -39,18 +39,20 @@ class SwimWorkoutComponent extends React.Component<SwimWorkoutProps>{
     }
     render(){
         return(
-            <Paper style = {{padding: 10}}>
-                <Grid container direction = "column" spacing = {2}>
-                    <Grid item>
-                        {this.getWorkoutSections()}
-                    </Grid>
-
-                    <Grid container alignItems = "flex-end" justify = "flex-end">
+            <Paper style = {{padding: 10, maxWidth: "800px", backgroundColor: "#FFFFFF"}}>
+                <div id = "workout">
+                    <Grid container direction = "column" spacing = {2}>
                         <Grid item>
-                            {this.linkButton()} 
+                            {this.getWorkoutSections()}
                         </Grid>
-                    </Grid>
-                </Grid>     
+
+                        <Grid container alignItems = "flex-end" justify = "flex-end">
+                            <Grid item>
+                                {this.linkButton()} 
+                            </Grid>
+                        </Grid>
+                    </Grid>     
+                </div>
             </Paper>
         )
     }

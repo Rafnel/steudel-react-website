@@ -21,6 +21,9 @@ export default class WhyCreateAccount extends React.Component{
                             <li>
                                 Create their own full swim workouts
                             </li>
+                            <li>
+                                View their created workouts and export them as PDFs
+                            </li>
                         </ul>
                     </Typography>
                 </Grid>

@@ -4,8 +4,6 @@ import { observer } from "mobx-react";
 import { Message } from "primereact/components/message/Message";
 import React from "react";
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import addUser from "../api/addUser";
-import getUser from "../api/getUser";
 import EmailVerification from "../components/EmailVerification";
 import ForgotPassword from "../components/ForgotPassword";
 import { globalState } from "../configuration/appState";

@@ -14,7 +14,7 @@ export default class ContactCard extends React.Component{
 
                 <CardMedia>
                     <Grid container justify = "center">
-                        <img src="/swimming_me.jpg" />
+                        <img alt = "" src="/swimming_me.jpg" />
                     </Grid>
                 </CardMedia>
 

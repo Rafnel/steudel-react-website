@@ -9,7 +9,6 @@ export default async function getComponentByID(username: string, id: string){
         return jsonComponent;
     }
     catch(e){
-        alert(e);
         console.log(e.message);
         return null;
     }

@@ -2,8 +2,6 @@ import React, { Fragment } from "react";
 import { Tooltip, IconButton, Icon, Popper, Paper, ClickAwayListener, MenuList, MenuItem, Fade } from "@material-ui/core";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { green } from "@material-ui/core/colors";
-import { Auth } from "aws-amplify";
-import { resetState, globalState } from "../../configuration/appState";
 
 export interface QuestionButtonState{
     popperOpen: boolean;

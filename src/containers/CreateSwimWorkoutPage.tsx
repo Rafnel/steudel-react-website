@@ -98,7 +98,7 @@ export default class CreateSwimWorkoutPage extends React.Component{
         workout.yardage = this.store.workoutYardage;
         workout.difficulty = this.store.difficulty;
         //get the components in the correct set.
-        for(var i = 0; i < componentsToSave.length; i++){
+        for(i = 0; i < componentsToSave.length; i++){
             if(componentsToSave[i].set === "Warmup"){
                 workout.warmup.push(componentIDs[i]);
             }

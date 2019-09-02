@@ -1,5 +1,5 @@
 import { RouteComponentProps, withRouter } from "react-router-dom";
-import { Paper, Grid, Button, Typography } from "@material-ui/core";
+import { Paper, Grid, Button } from "@material-ui/core";
 import React from "react";
 import WhyCreateAccount from "./WhyCreateAccount";
 
@@ -36,7 +36,7 @@ class GetStarted extends React.Component<RouteComponentProps<any>>{
                 &nbsp;
 
                 <Grid container justify = "center" alignItems = "center">
-                    Accounts are free, and as of version 0.95 users can:
+                    Accounts are free, and as of version 1.00 users can:
                 </Grid>
 
                 <WhyCreateAccount/>

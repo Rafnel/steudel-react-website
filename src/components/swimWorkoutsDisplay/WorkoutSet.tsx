@@ -22,7 +22,7 @@ export default class WorkoutSet extends React.Component<WorkoutSetProps>{
             let id: string = items[1];
 
             const component: SwimComponent = await getComponentByID(username, id);
-            this.components.push(<Grid item> <OneLineSwimComponent component = {component}/> </Grid>)
+            this.components.push(<Grid item key = {component.component_id}> <OneLineSwimComponent key = {component.component_id} component = {component}/> </Grid>)
         }
 
         this.loadingComponents = false;

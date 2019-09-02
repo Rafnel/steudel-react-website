@@ -2,7 +2,6 @@ import { Typography, Grid, TextField, Button, CircularProgress, Paper } from "@m
 import React from "react";
 import { Auth } from "aws-amplify";
 import { RouteComponentProps, withRouter } from "react-router-dom";
-import { Message } from "primereact/components/message/Message";
 import { observer } from "mobx-react";
 import addUser from "../api/addUser";
 import getUser from "../api/getUser";

@@ -1,5 +1,4 @@
 import { API } from "aws-amplify";
-import { globalState } from "../configuration/appState";
 
 //gets all workouts created by the user specified
 export default async function getAllWorkoutsFromUser(username: string){
