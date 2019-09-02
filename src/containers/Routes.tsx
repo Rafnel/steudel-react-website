@@ -10,6 +10,8 @@ import CreateSwimWorkoutPage from "./CreateSwimWorkoutPage";
 import { globalState } from "../configuration/appState";
 import ContactPage from "./ContactPage";
 import AboutPage from "./AboutPage";
+import MyWorkoutsPage from "./MyWorkoutsPage";
+import SingleWorkoutPage from "./SingleWorkoutPage";
 
 export default class Routes extends React.Component{
   render(){
@@ -18,6 +20,14 @@ export default class Routes extends React.Component{
         <Route path="/" exact render = {() => <HomePage/>} />
         <Route path="/contact" exact render = {() => <ContactPage/>} />
         <Route path="/about" exact render = {() => <AboutPage/>} />
+        {globalState.appState.isLoggedIn 
+          && 
+          <Route path="/workout/:username/:id" exact render = {(props) => {
+            return <SingleWorkoutPage username = {props.match.params.username} workoutID = {props.match.params.id}/>
+          }}/>}
+        {globalState.appState.isLoggedIn 
+          && 
+          <Route path="/my-workouts" exact render = {() => <MyWorkoutsPage/>}/>}
         {!globalState.appState.isLoggedIn 
           && 
           <Route path="/login" exact render = {() => <LoginPage/>}/>}

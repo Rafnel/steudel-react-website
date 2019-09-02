@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Tooltip, IconButton, Icon, Popper, Paper, ClickAwayListener, MenuList, MenuItem, Fade } from "@material-ui/core";
+import { Tooltip, IconButton, Icon, Popper, Paper, ClickAwayListener, MenuList, MenuItem, Fade, Divider } from "@material-ui/core";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { green } from "@material-ui/core/colors";
 import { Auth } from "aws-amplify";
@@ -29,6 +29,11 @@ class AccountButton extends React.Component<RouteComponentProps<any>, AccountBut
         this.setState({popperOpen: false});
     }
 
+    handleClickMyWorkouts = async (event: any) => {
+        this.props.history.push("/my-workouts");
+        this.handlePopperClose();
+    }
+
     handleLogout = async (event: any) => {
         await Auth.signOut();
     
@@ -56,9 +61,18 @@ class AccountButton extends React.Component<RouteComponentProps<any>, AccountBut
                     <MenuList>
                         {globalState.appState.isLoggedIn 
                         ?
-                        <MenuItem onClick = {this.handleLogout}>
-                            Log out
-                        </MenuItem>
+                        <Fragment>
+                            <MenuItem onClick = {this.handleClickMyWorkouts}>
+                                My Workouts
+                            </MenuItem>
+
+                            <Divider/>
+
+                            <MenuItem onClick = {this.handleLogout}>
+                                Log out
+                            </MenuItem>
+                        </Fragment>
+                        
                         :
                         <Fragment>
                             <MenuItem onClick = {this.handleClickLogIn}>

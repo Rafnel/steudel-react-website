@@ -35,6 +35,9 @@ export class AppStateStore{
 
 export default class GlobalState{
     appState: AppStateStore = new AppStateStore();
+
+    //swim workouts that the user has created
+    mySwimWorkouts: SwimWorkout[] = [];
 }
 
 export const globalState: GlobalState = new GlobalState();
