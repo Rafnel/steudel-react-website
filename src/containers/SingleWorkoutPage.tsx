@@ -28,11 +28,11 @@ export default class SingleWorkoutPage extends React.Component<SingleWorkoutPage
         const input = document.getElementById("workout") as HTMLElement;
 
         html2canvas(input).then(canvas => {
-            const imgData = canvas.toDataURL("image/jpeg");
+            const imgData = canvas.toDataURL("image/png");
 
             //second, convert the png to pdf using jsPDF library.
             const pdf = new jsPDF();
-            pdf.addImage(imgData, "JPEG", 0, 0);
+            pdf.addImage(imgData, "PNG", 0, 0);
             pdf.save("workout.pdf");
         });
     }

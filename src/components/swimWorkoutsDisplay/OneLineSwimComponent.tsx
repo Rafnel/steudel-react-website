@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { SwimComponent } from "../../configuration/appState";
 import { observer } from "mobx-react";
 import { Typography, Grid } from "@material-ui/core";
@@ -14,7 +14,7 @@ export default class OneLineSwimComponent extends React.Component<OneLineSwimCom
             <Grid container direction = "row" spacing = {3}>
                 <Grid item>
                     <Typography variant = "h6">
-                        {this.props.component.component_body}
+                        {this.props.component.component_body.split("\n").map((line) => {return <Fragment>{line}<br/></Fragment>})}
                     </Typography>
                 </Grid>
 
