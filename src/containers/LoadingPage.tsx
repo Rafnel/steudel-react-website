@@ -2,9 +2,9 @@ import React from "react";
 import { globalState } from "../configuration/appState";
 import { Grid, Typography } from "@material-ui/core";
 import { observer } from "mobx-react";
-import ReactLoading from 'react-loading';
 import { PRIMARY } from "..";
 import HeaderBar from "../components/HeaderBar";
+import RiseLoader from 'react-spinners/RiseLoader';
 
 
 @observer
@@ -24,7 +24,7 @@ export default class LoadingPage extends React.Component{
                         </Grid>
 
                         <Grid item>
-                            <ReactLoading type = "bubbles" color = {PRIMARY} height={200} width={200}/>
+                            <RiseLoader margin = "4px" color = {PRIMARY} size = {30}/>
                         </Grid>
                     </Grid>
                 </div>

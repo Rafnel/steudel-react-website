@@ -10,7 +10,7 @@ import * as serviceWorker from './serviceWorker';
 import LoadingPage from './containers/LoadingPage';
 
 export const PRIMARY = green[900];
-export const SECONDARY = green[600];
+export const SECONDARY = green[200];
 export const ERROR = red[400];
 export const ICONS = grey[50];
 

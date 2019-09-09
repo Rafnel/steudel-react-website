@@ -1,4 +1,4 @@
-import { Typography, Grid, Divider, Button } from "@material-ui/core";
+import { Typography, Grid, Divider, Button, Icon, Chip } from "@material-ui/core";
 import React, { Fragment } from "react";
 import { observer } from "mobx-react";
 import { observable } from "mobx";
@@ -7,6 +7,7 @@ import getAllWorkoutsFromUser from "../../api/getAllWorkoutsFromUser";
 import BeatLoader from 'react-spinners/BeatLoader';
 import { PRIMARY } from "../..";
 import { RouteComponentProps, withRouter } from "react-router";
+import EditIcon from '@material-ui/icons/Edit';
 
 @observer
 class WorkoutsHub extends React.Component<RouteComponentProps<any>>{
@@ -32,43 +33,47 @@ class WorkoutsHub extends React.Component<RouteComponentProps<any>>{
                     {!this.loadingWorkouts
                      &&
                      <Grid item>
-                         <Typography>
-                            Workouts you have created: {this.workouts.length}
-                        </Typography>
+                        <Chip
+                            color = "secondary"
+                            icon = {<EditIcon/>}
+                            label = {"Workouts Created: " + this.workouts.length}
+                        />
                      </Grid>
                     }
-                </Grid>  
 
-                <Grid item>
-                    <Grid container direction = "row" spacing = {1}>
-                        <Grid item>
-                            <Button
-                                color = "primary"
-                                style = {{textTransform: "initial"}}
-                                variant = "contained"
-                                onClick = {() => {
-                                    this.props.history.push("/create-swim-workout");
-                                }}
-                            >
-                                Create Workout
-                            </Button>
-                        </Grid>
+                    <Grid item>
+                        <Grid container direction = "row" spacing = {1}>
+                            <Grid item>
+                                <Button
+                                    color = "primary"
+                                    style = {{textTransform: "initial"}}
+                                    variant = "outlined"
+                                    onClick = {() => {
+                                        this.props.history.push("/create-swim-workout");
+                                    }}
+                                >
+                                    <Icon>edit</Icon>
+                                    Create
+                                </Button>
+                            </Grid>
 
-                        <Grid item>
-                            <Button
-                                color = "primary"
-                                style = {{textTransform: "initial"}}
-                                variant = "contained"
-                                onClick = {() => {
-                                    this.props.history.push("/my-workouts");
-                                }}
-                            >
-                                View My Workouts
-                            </Button>
+                            <Grid item>
+                                <Button
+                                    color = "primary"
+                                    style = {{textTransform: "initial"}}
+                                    variant = "outlined"
+                                    onClick = {() => {
+                                        this.props.history.push("/my-workouts");
+                                    }}
+                                >
+                                    <Icon>library_books</Icon>
+                                    My Workouts
+                                </Button>
+                            </Grid>
+                            
                         </Grid>
-                        
                     </Grid>
-                </Grid>
+                </Grid>  
 
                 &nbsp;
 

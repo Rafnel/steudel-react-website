@@ -39,7 +39,7 @@ class SwimWorkoutComponent extends React.Component<SwimWorkoutProps>{
     }
     render(){
         return(
-            <Paper style = {{padding: 10, minWidth: "700px", maxWidth: "800px", backgroundColor: "#FFFFFF"}}>
+            <Paper style = {{padding: 10, backgroundColor: "#FFFFFF"}}>
                 <div id = "workout">
                     <Grid container direction = "column" spacing = {2}>
                         <Grid item>
