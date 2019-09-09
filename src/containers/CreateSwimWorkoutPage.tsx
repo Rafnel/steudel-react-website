@@ -225,4 +225,8 @@ export default class CreateSwimWorkoutPage extends React.Component{
             </Grid>
         )
     }
+
+    componentDidMount(){
+        globalState.appState.isLoading = false;
+    }
 }

@@ -10,7 +10,7 @@ class ExploreButton extends React.Component<RouteComponentProps<any>>{
                     size = "medium"
                     onClick = {() => this.props.history.push("/swim-components")}
                 >
-                    <Icon color = "secondary">explore</Icon>
+                    <Icon color = "error">explore</Icon>
                 </IconButton>
             </Tooltip>
         )

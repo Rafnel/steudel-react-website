@@ -63,7 +63,7 @@ class CreateButton extends React.Component<RouteComponentProps<any>, CreateButto
                         size = "medium"
                         onClick = {(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => this.setState({popperOpen: !this.state.popperOpen, popperAnchor: event.currentTarget})}
                     >
-                        <Icon color = "secondary">edit</Icon>
+                        <Icon color = "error">edit</Icon>
                     </IconButton>
                 </Tooltip>
                 

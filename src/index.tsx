@@ -1,5 +1,5 @@
 import { createMuiTheme } from '@material-ui/core';
-import { green, grey, red } from '@material-ui/core/colors';
+import { green, grey, red, brown } from '@material-ui/core/colors';
 import { ThemeProvider } from '@material-ui/styles';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -9,9 +9,10 @@ import './index.css';
 import * as serviceWorker from './serviceWorker';
 import LoadingPage from './containers/LoadingPage';
 
-export const PRIMARY = green[700];
-export const SECONDARY = grey[50];
-export const ERROR = red[400]
+export const PRIMARY = green[900];
+export const SECONDARY = green[600];
+export const ERROR = red[400];
+export const ICONS = grey[50];
 
 const theme = createMuiTheme({
   palette: {
@@ -21,6 +22,9 @@ const theme = createMuiTheme({
     secondary: {
       main: SECONDARY
     },
+    error: {
+      main: ICONS
+    }
   }
 });
 

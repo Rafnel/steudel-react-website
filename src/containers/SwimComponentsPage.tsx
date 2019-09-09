@@ -5,6 +5,9 @@ import { observable } from "mobx";
 import { SwimComponent, globalState } from "../configuration/appState";
 import getSortedSwimComponentsBySet from "../api/getSortedSwimComponentsBySet";
 import SwimComponentCards from "../components/swimcomponents/SwimComponentCards";
+import { PRIMARY } from "..";
+import SyncLoader from 'react-spinners/SyncLoader';
+
 
 @observer
 export default class SwimComponentsPage extends React.Component{
@@ -71,7 +74,7 @@ export default class SwimComponentsPage extends React.Component{
                                 </Grid>
 
                                 <Grid item>
-                                    {globalState.appState.isLoading && <CircularProgress/>}
+                                    {globalState.appState.isLoading && <SyncLoader size = {20} color = {PRIMARY}/>}
                                 </Grid>
 
                                 <Grid item>

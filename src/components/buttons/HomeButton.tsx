@@ -10,7 +10,7 @@ class HomeButton extends React.Component<RouteComponentProps<any>>{
                     size = "medium"
                     onClick = {() => this.props.history.push("/")}
                 >
-                    <Icon color = "secondary">home</Icon>
+                    <Icon color = "error">home</Icon>
                 </IconButton>
             </Tooltip>
         )

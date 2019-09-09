@@ -32,7 +32,7 @@ export default class SingleWorkoutPage extends React.Component<SingleWorkoutPage
 
             //second, convert the png to pdf using jsPDF library.
             const pdf = new jsPDF();
-            pdf.addImage(imgData, "PNG", 0, 0);
+            pdf.addImage(imgData, "PNG", 2, 2);
             pdf.save("workout.pdf");
         });
     }

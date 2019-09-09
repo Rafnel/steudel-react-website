@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 import { Tooltip, IconButton, Icon, Popper, Paper, ClickAwayListener, MenuList, MenuItem, Fade, Divider } from "@material-ui/core";
 import { RouteComponentProps, withRouter } from "react-router-dom";
-import { green } from "@material-ui/core/colors";
+import { green, grey } from "@material-ui/core/colors";
 import { Auth } from "aws-amplify";
 import { resetState, globalState } from "../../configuration/appState";
 
@@ -100,7 +100,7 @@ class AccountButton extends React.Component<RouteComponentProps<any>, AccountBut
                         size = "medium"
                         onClick = {(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => this.setState({popperOpen: !this.state.popperOpen, popperAnchor: event.currentTarget})}
                     >
-                        <Icon color = "secondary">account_circle</Icon>
+                        <Icon color = "error">account_circle</Icon>
                     </IconButton>
                 </Tooltip>
                 

@@ -1,10 +1,12 @@
 import React, { Fragment } from "react";
-import { SwimComponent } from "../../configuration/appState";
+import { SwimComponent, globalState } from "../../configuration/appState";
 import { observable } from "mobx";
 import { observer } from "mobx-react";
 import { Typography, Grid, CircularProgress, Divider } from "@material-ui/core";
 import OneLineSwimComponent from "./OneLineSwimComponent";
 import getComponentByID from "../../api/getComponentByID";
+import BeatLoader from 'react-spinners/BeatLoader';
+import { PRIMARY } from "../..";
 
 export interface WorkoutSetProps{
     components: string[];
@@ -29,7 +31,7 @@ export default class WorkoutSet extends React.Component<WorkoutSetProps>{
     }
     renderComponents(){
         if(this.loadingComponents){
-            return <CircularProgress/>
+            return <BeatLoader color = {PRIMARY}/>
         }
         else{
             return this.components;
@@ -46,11 +48,19 @@ export default class WorkoutSet extends React.Component<WorkoutSetProps>{
 
                 &nbsp;
 
-                <Grid container direction = "column" alignItems = "flex-start" justify = "flex-start" spacing = {2}>
+                {this.loadingComponents && 
+                 <Grid container direction = "column" alignItems = "center" justify = "center" spacing = {2}>
                     {this.renderComponents()}
-                </Grid>
+                 </Grid>
+                }
 
-                <Divider/>
+                {!this.loadingComponents && 
+                 <Grid container direction = "column" alignItems = "flex-start" justify = "flex-start" spacing = {2}>
+                    {this.renderComponents()}
+                 </Grid>
+                }
+
+                {!this.loadingComponents && <Divider/>}
             </Fragment>
         )
     }

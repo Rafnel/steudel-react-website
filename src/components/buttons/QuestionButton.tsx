@@ -64,7 +64,7 @@ class QuestionButton extends React.Component<RouteComponentProps<any>, QuestionB
                         size = "medium"
                         onClick = {(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => this.setState({popperOpen: !this.state.popperOpen, popperAnchor: event.currentTarget})}
                     >
-                        <Icon color = "secondary">contact_support</Icon>
+                        <Icon color = "error">contact_support</Icon>
                     </IconButton>
                 </Tooltip>
                 

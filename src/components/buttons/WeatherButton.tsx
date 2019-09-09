@@ -11,7 +11,7 @@ class WeatherButton extends React.Component<RouteComponentProps<any>>{
                     size = "medium"
                     onClick = {() => this.props.history.push("/weather")}
                 >
-                    <Icon color = "secondary">wb_sunny</Icon>
+                    <Icon color = "error">wb_sunny</Icon>
                 </IconButton>
             </Tooltip>
         )

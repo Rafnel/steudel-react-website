@@ -7,6 +7,7 @@ import { globalState, SwimComponent } from "../configuration/appState";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { observable } from "mobx";
 import GetStarted from "../components/GetStarted";
+import UserStatsHub from "../components/userStats/UserStatsHub";
 
 @observer
 class HomePage extends React.Component<RouteComponentProps<any>>{
@@ -23,10 +24,6 @@ class HomePage extends React.Component<RouteComponentProps<any>>{
         likes: 0
     };
 
-    async retrieveSwimComponent(){
-        this.swimComponent = await getRandomComponent();
-    }
-
     render(){
         return(
             <Grid container justify = "center" alignItems = "center" direction = "column" spacing = {2}>
@@ -35,16 +32,18 @@ class HomePage extends React.Component<RouteComponentProps<any>>{
 
                     <Typography>
                         <Link color = "inherit" href = "https://github.com/Rafnel/steudel-react-website">
-                            Version 1.00: 2019-09-02
+                            Version 1.10: 2019-09-09
                         </Link>
                     </Typography>
                 </Grid>
                 
-                <Grid>
+                {!globalState.appState.isLoggedIn && 
+                 <Grid>
                     <Typography variant = "h5" gutterBottom>
                         <p>Component-Based Workouts</p>
                     </Typography>
-                </Grid>
+                 </Grid>
+                }
 
                 {!globalState.appState.isLoggedIn
                  &&
@@ -52,21 +51,10 @@ class HomePage extends React.Component<RouteComponentProps<any>>{
                      <GetStarted/>
                  </Grid>
                 }
-                
-                {globalState.appState.isLoggedIn 
+
+                {globalState.appState.isLoggedIn
                  &&
-                 <Grid item>
-                    <Button 
-                        color = "primary"
-                        variant = "contained" 
-                        onClick = {event => {
-                            globalState.appState.isLoading = true; 
-                            this.retrieveSwimComponent();
-                        }}
-                    >
-                        See a random swim component!
-                    </Button>
-                 </Grid>
+                 <UserStatsHub/>
                 }
 
                 {globalState.appState.isLoading && <CircularProgress/>}
