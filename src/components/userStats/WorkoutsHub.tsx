@@ -1,21 +1,20 @@
-import { Typography, Grid, Divider, Button, Icon, Chip } from "@material-ui/core";
-import React, { Fragment } from "react";
-import { observer } from "mobx-react";
+import { Button, Chip, Divider, Grid, Icon, Typography } from "@material-ui/core";
+import EditIcon from '@material-ui/icons/Edit';
 import { observable } from "mobx";
-import { globalState } from "../../configuration/appState";
-import getAllWorkoutsFromUser from "../../api/getAllWorkoutsFromUser";
+import { observer } from "mobx-react";
+import React, { Fragment } from "react";
+import { RouteComponentProps, withRouter } from "react-router";
 import BeatLoader from 'react-spinners/BeatLoader';
 import { PRIMARY } from "../..";
-import { RouteComponentProps, withRouter } from "react-router";
-import EditIcon from '@material-ui/icons/Edit';
+import { getLoggedInUserWorkouts } from "../../configuration/getUserData";
+import { globalState } from "../../configuration/appState";
 
 @observer
 class WorkoutsHub extends React.Component<RouteComponentProps<any>>{
     @observable loadingWorkouts: boolean = true;
-    @observable workouts: any[] = [];
 
     async getWorkouts(){
-        this.workouts = await getAllWorkoutsFromUser(globalState.appState.currentUser.username);
+        await getLoggedInUserWorkouts();
         this.loadingWorkouts = false;
     }
 
@@ -36,7 +35,7 @@ class WorkoutsHub extends React.Component<RouteComponentProps<any>>{
                         <Chip
                             color = "secondary"
                             icon = {<EditIcon/>}
-                            label = {"Workouts Created: " + this.workouts.length}
+                            label = {"Workouts Created: " + globalState.mySwimWorkouts.length}
                         />
                      </Grid>
                     }

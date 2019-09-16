@@ -37,7 +37,10 @@ export default class GlobalState{
     appState: AppStateStore = new AppStateStore();
 
     //swim workouts that the user has created
-    mySwimWorkouts: SwimWorkout[] = [];
+    @observable mySwimWorkouts: SwimWorkout[] = [];
+    @observable mySwimComponents: SwimComponent[] = [];
+    @observable needToUpdateSwimWorkouts: boolean = true;
+    @observable needToUpdateSwimComponents: boolean = true;
 }
 
 export const globalState: GlobalState = new GlobalState();
@@ -107,6 +110,11 @@ export function resetState(){
     globalState.appState.emailVerified = false;
     globalState.appState.navBarVisible = false;
     globalState.appState.resentCode = false;
+
+    globalState.mySwimWorkouts = [];
+    globalState.mySwimComponents = [];
+    globalState.needToUpdateSwimComponents = true;
+    globalState.needToUpdateSwimWorkouts = true;
 }
 
 export function emptySwimComponent(): SwimComponent{

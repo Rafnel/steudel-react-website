@@ -7,6 +7,7 @@ import { observer } from "mobx-react";
 import SaveIcon from '@material-ui/icons/Save';
 import createSwimComponent from "../api/createSwimComponent";
 import createSwimWorkout from "../api/createSwimWorkout";
+import { getLoggedInUserComponents } from "../configuration/getUserData";
 
 export class SwimWorkoutPageStore{
     //the list of swim components used by child components on this page
@@ -59,6 +60,9 @@ export default class CreateSwimWorkoutPage extends React.Component{
     //function will save each component making up the workout on this page, then finally save the workout as a list of 
     //username,component_id strings for each component in a certain set.
     async handleWorkoutSave(){
+        //get the user's components from the db if it isn't in memory already.
+        await getLoggedInUserComponents();
+
         globalState.appState.isLoading = true;
         //first, filter out any components that have an empty body.
         let componentsToSave: SwimComponent[] = this.store.swimComponents.filter((component) =>{
@@ -86,10 +90,19 @@ export default class CreateSwimWorkoutPage extends React.Component{
                 return;
             }
 
-            //save the component
-            let comp: SwimComponent = await createSwimComponent(componentsToSave[i]);
-            //add it to the list for the workout.
-            componentIDs.push(comp.username + "," + comp.component_id);
+            let potentialCompID: string = this.findDuplicateComponent(componentsToSave[i]);
+            if(potentialCompID === ""){
+                //this component was not a duplicate
+                //save the component
+                let comp: SwimComponent = await createSwimComponent(componentsToSave[i]);
+                //add it to the list for the workout.
+                componentIDs.push(comp.username + "," + comp.component_id);
+            }
+            else{
+                //component was a duplicate, and potentialCompID should have ID of existing component.
+                componentIDs.push(potentialCompID);
+            }
+            
         }
 
         //construct the workout
@@ -117,10 +130,43 @@ export default class CreateSwimWorkoutPage extends React.Component{
         const success: boolean = await createSwimWorkout(workout);
 
         if(success){
+            globalState.needToUpdateSwimComponents = true;
+            globalState.needToUpdateSwimWorkouts = true;
             globalState.appState.successMessage = "Your workout has been created successfully!";
         }
 
         globalState.appState.isLoading = false;
+    }
+
+    //function will compare this component's body + intervals to the user's whole list of components.
+    //if it finds a duplicate, instead of creating new component in db, just re-use old component.
+    findDuplicateComponent(swimComponent: SwimComponent): string{
+        console.log("checking component with body " + swimComponent.component_body + " for duplication...");
+        //loop through all the user's components
+        for(let i = 0; i < globalState.mySwimComponents.length; i++){
+            let cur = globalState.mySwimComponents[i];
+            //for each component, check if the body and intervals are same.
+            if(swimComponent.component_body === cur.component_body){
+                //check intervals
+                if(swimComponent.intervals.length !== cur.intervals.length){
+                    continue;
+                }
+
+                //intervals length is same if we are here, so loop through each interval and check equality.
+                for(let j = 0; j < cur.intervals.length; j++){
+                    if(swimComponent.intervals[j] !== cur.intervals[j]){
+                        continue;
+                    }
+                }
+
+                //if we make it here, component is equal.
+                return (cur.username + "," + cur.component_id);
+            }
+        }
+
+        //component is unique
+        console.log("Component with body " + swimComponent.component_body + " was unique!");
+        return "";
     }
 
     createWorkoutSections(){

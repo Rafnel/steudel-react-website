@@ -1,8 +1,17 @@
 import { globalState } from "./appState";
 import getAllWorkoutsFromUser from "../api/getAllWorkoutsFromUser";
+import getAllComponentsFromUser from "../api/getAllComponentsFromUser";
 
 export async function getLoggedInUserWorkouts(){
-    globalState.appState.isLoading = true;
-    globalState.mySwimWorkouts = await getAllWorkoutsFromUser(globalState.appState.currentUser.username);
-    globalState.appState.isLoading = false;
+    if(globalState.needToUpdateSwimWorkouts){
+        globalState.mySwimWorkouts = await getAllWorkoutsFromUser(globalState.appState.currentUser.username);
+        globalState.needToUpdateSwimWorkouts = false;
+    }
+}
+
+export async function getLoggedInUserComponents(){
+    if(globalState.needToUpdateSwimComponents){
+        globalState.mySwimComponents = await getAllComponentsFromUser(globalState.appState.currentUser.username);
+        globalState.needToUpdateSwimComponents = false;
+    }
 }

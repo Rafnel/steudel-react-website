@@ -1,9 +1,9 @@
-import React from "react";
-import { Grid, Typography, Paper, CircularProgress } from "@material-ui/core";
-import { getLoggedInUserWorkouts } from "../configuration/getUserData";
-import { globalState } from "../configuration/appState";
-import SwimWorkoutComponent from "../components/swimWorkoutsDisplay/SwimWorkout";
+import { CircularProgress, Grid, Paper, Typography } from "@material-ui/core";
 import { observer } from "mobx-react";
+import React from "react";
+import SwimWorkoutComponent from "../components/swimWorkoutsDisplay/SwimWorkout";
+import { globalState } from "../configuration/appState";
+import { getLoggedInUserWorkouts } from "../configuration/getUserData";
 
 @observer
 export default class MyWorkoutsPage extends React.Component{
@@ -50,7 +50,9 @@ export default class MyWorkoutsPage extends React.Component{
         )
     }
 
-    componentDidMount(){
-        getLoggedInUserWorkouts();
+    async componentDidMount(){
+        globalState.appState.isLoading = true;
+        await getLoggedInUserWorkouts();
+        globalState.appState.isLoading = false;
     }
 }

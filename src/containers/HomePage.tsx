@@ -11,19 +11,6 @@ import UserStatsHub from "../components/userStats/UserStatsHub";
 
 @observer
 class HomePage extends React.Component<RouteComponentProps<any>>{
-    @observable swimComponent: SwimComponent = {
-        username: "",
-        set: "",
-        component_body: "",
-        component_id: "",
-        date_created: "",
-        intervals: [],
-        tags: [],
-        yardage: 0,
-        difficulty: "",
-        likes: 0
-    };
-
     render(){
         return(
             <Grid container justify = "center" alignItems = "center" direction = "column" spacing = {2}>
@@ -32,7 +19,7 @@ class HomePage extends React.Component<RouteComponentProps<any>>{
 
                     <Typography>
                         <Link color = "inherit" href = "https://github.com/Rafnel/steudel-react-website">
-                            Version 1.20: 2019-09-09
+                            Version 1.25: 2019-09-15
                         </Link>
                     </Typography>
                 </Grid>
@@ -58,12 +45,6 @@ class HomePage extends React.Component<RouteComponentProps<any>>{
                 }
 
                 {globalState.appState.isLoading && <CircularProgress/>}
-
-                {this.swimComponent.username.length !== 0 && globalState.appState.isLoggedIn
-                 &&
-                 <Grid item>
-                     <SwimComponentCard currentComponent = {this.swimComponent} />
-                 </Grid>}
             </Grid>
         )
     }

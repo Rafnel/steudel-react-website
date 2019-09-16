@@ -9,25 +9,25 @@ import BeatLoader from 'react-spinners/BeatLoader';
 import { RouteComponentProps, withRouter } from "react-router";
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import EditIcon from '@material-ui/icons/Edit';
+import { getLoggedInUserComponents } from "../../configuration/getUserData";
 
 @observer
 class ComponentsHub extends React.Component<RouteComponentProps<any>>{
     @observable loadingComponents: boolean = true;
-    @observable components: any[] = [];
     @observable likes: number = 0;
 
     async getComponents(){
-        this.components = await getAllComponentsFromUser(globalState.appState.currentUser.username);
-        if(this.components === null){
-            this.components = [];
+        await getLoggedInUserComponents();
+        if(globalState.mySwimComponents === null){
+            globalState.mySwimComponents = [];
         }
         await this.getLikes();
         this.loadingComponents = false;
     }
 
     async getLikes(){
-        for(let i = 0; i < this.components.length; i++){
-            this.likes += this.components[i].likes;
+        for(let i = 0; i < globalState.mySwimComponents.length; i++){
+            this.likes += globalState.mySwimComponents[i].likes;
         }
     }
 
@@ -49,7 +49,7 @@ class ComponentsHub extends React.Component<RouteComponentProps<any>>{
                          <Chip
                             color = "secondary"
                             icon = {<EditIcon/>}
-                            label = {"Components Created: " + this.components.length}
+                            label = {"Components Created: " + globalState.mySwimComponents.length}
                          />
                      </Grid>
                     }
