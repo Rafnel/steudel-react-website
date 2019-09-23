@@ -2,7 +2,7 @@ import React from "react";
 import { SwimWorkout } from "../../configuration/appState";
 import WorkoutSet from "./WorkoutSet";
 import { observer } from "mobx-react";
-import { Grid, Button, Paper } from "@material-ui/core";
+import { Grid, Button, Paper, Container, Box } from "@material-ui/core";
 import { RouteComponentProps, withRouter } from "react-router";
 
 export interface SwimWorkoutProps extends RouteComponentProps<any>{
@@ -39,21 +39,24 @@ class SwimWorkoutComponent extends React.Component<SwimWorkoutProps>{
     }
     render(){
         return(
-            <Paper style = {{padding: 10, backgroundColor: "#FFFFFF"}}>
-                <div id = "workout">
-                    <Grid container direction = "column" spacing = {2}>
-                        <Grid item>
-                            {this.getWorkoutSections()}
-                        </Grid>
-
-                        <Grid container alignItems = "flex-end" justify = "flex-end">
+            <Container maxWidth = "md" component = "main">
+                <Paper style = {{padding: 10, backgroundColor: "#FFFFFF"}}>
+                    <div id = "workout">
+                        <Grid container direction = "column" spacing = {2}>
                             <Grid item>
-                                {this.linkButton()} 
+                                {this.getWorkoutSections()}
                             </Grid>
-                        </Grid>
-                    </Grid>     
-                </div>
-            </Paper>
+
+                            <Grid container alignItems = "flex-end" justify = "flex-end">
+                                <Grid item>
+                                    {this.linkButton()} 
+                                </Grid>
+                            </Grid>
+                        </Grid>     
+                    </div>
+                </Paper>
+            </Container>
+            
         )
     }
 }

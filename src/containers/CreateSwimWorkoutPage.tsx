@@ -145,10 +145,11 @@ export default class CreateSwimWorkoutPage extends React.Component{
         //loop through all the user's components
         for(let i = 0; i < globalState.mySwimComponents.length; i++){
             let cur = globalState.mySwimComponents[i];
-            //for each component, check if the body and intervals are same.
+            //for each component, check if the body, set and intervals are same.
             if(swimComponent.component_body === cur.component_body){
-                //check intervals
-                if(swimComponent.intervals.length !== cur.intervals.length){
+                //check intervals & set equality
+                if(swimComponent.intervals.length !== cur.intervals.length ||
+                   swimComponent.set !== cur.set){
                     continue;
                 }
 

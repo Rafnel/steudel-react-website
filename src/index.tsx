@@ -14,6 +14,14 @@ export const SECONDARY = green[200];
 export const ERROR = red[400];
 export const ICONS = grey[50];
 
+const breakPointValues = {
+  xs: 0,
+  sm: 600,
+  md: 800,
+  lg: 1280,
+  xl: 1920
+}
+
 const theme = createMuiTheme({
   palette: {
     primary: {
@@ -25,7 +33,8 @@ const theme = createMuiTheme({
     error: {
       main: ICONS
     }
-  }
+  },
+  breakpoints: {values: breakPointValues}
 });
 
 ReactDOM.render(
