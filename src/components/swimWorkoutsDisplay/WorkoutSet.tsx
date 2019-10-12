@@ -60,7 +60,7 @@ export default class WorkoutSet extends React.Component<WorkoutSetProps>{
                  </Grid>
                 }
 
-                {!this.loadingComponents && <Divider/>}
+                {!this.loadingComponents && <Divider style = {{backgroundColor: "#000000"}}/>}
             </Fragment>
         )
     }
