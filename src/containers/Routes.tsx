@@ -25,6 +25,12 @@ export default class Routes extends React.Component{
           <Route path="/workout/:username/:id" exact render = {(props) => {
             return <SingleWorkoutPage username = {props.match.params.username} workoutID = {props.match.params.id}/>
           }}/>}
+        {!globalState.appState.isLoggedIn && 
+          <Route path="/workout/:username/:id" exact render = {(props) => {
+            globalState.appState.redirectAfterLogin = "/workout/" + props.match.params.username + "/" + props.match.params.id;
+            return <LoginPage/>;
+          }}/>
+        }
         {globalState.appState.isLoggedIn 
           && 
           <Route path="/my-workouts" exact render = {() => <MyWorkoutsPage/>}/>}

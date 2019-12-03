@@ -38,9 +38,10 @@ class AccountButton extends React.Component<RouteComponentProps<any>, AccountBut
         await Auth.signOut();
     
         //reset the app's state since the user logged out.
-        resetState();
         globalState.appState.successMessage = "Logged out successfully.";
+        globalState.appState.isLoggedIn = false;
         this.props.history.push("/login");
+        resetState();
         this.handlePopperClose();
     }
 

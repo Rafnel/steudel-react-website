@@ -16,11 +16,13 @@ import QuestionButton from "./buttons/QuestionButton";
 class HeaderBar extends React.Component<RouteComponentProps<any>>{
     handleLogout = async (event: any) => {
         await Auth.signOut();
+
+        resetState();
     
         //reset the app's state since the user logged out.
-        resetState();
         globalState.appState.successMessage = "Logged out successfully.";
         this.props.history.push("/login");
+        
     }
     
     render(){

@@ -24,6 +24,8 @@ export class AppStateStore{
 
     @observable signUpPageErrorMessage: string = "";
 
+    @observable redirectAfterLogin: string = "";
+
     @observable forgotPasswordUsernameEntered: boolean = false;
     @observable loadingForgotPassword: boolean = false;
     @observable currentUser: User = {
@@ -110,6 +112,7 @@ export function resetState(){
     globalState.appState.emailVerified = false;
     globalState.appState.navBarVisible = false;
     globalState.appState.resentCode = false;
+    globalState.appState.redirectAfterLogin = "";
 
     globalState.mySwimWorkouts = [];
     globalState.mySwimComponents = [];

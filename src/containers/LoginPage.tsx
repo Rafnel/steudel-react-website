@@ -1,4 +1,4 @@
-import { Button, CircularProgress, Grid, TextField, Typography } from "@material-ui/core";
+import { Button, CircularProgress, Grid, TextField, Typography, Chip } from "@material-ui/core";
 import { Auth } from "aws-amplify";
 import { observer } from "mobx-react";
 import { Message } from "primereact/components/message/Message";
@@ -28,6 +28,13 @@ class LoginPage extends React.Component<RouteComponentProps<any>>{
                 await ensureUserInDB();
                 
                 globalState.appState.successMessage = "Successfully logged in. Welcome back " + globalState.appState.username + "!";
+
+                if(globalState.appState.redirectAfterLogin !== ""){
+                    globalState.appState.isLoggedIn = true;
+                    this.props.history.push(globalState.appState.redirectAfterLogin);
+                    return;
+                }
+
                 this.props.history.push("/");
                 globalState.appState.isLoggedIn = true;
             }
@@ -44,6 +51,13 @@ class LoginPage extends React.Component<RouteComponentProps<any>>{
                 <Grid item>
                     <Typography variant = "h2">Rafnel Login</Typography>
                 </Grid>
+
+                {globalState.appState.redirectAfterLogin !== "" && 
+                    <Grid item>
+                        <Chip label = "Please log in or create an account to access the workout." color = "primary"/>
+                    </Grid>
+                }
+
                 {globalState.appState.loginPageErrorMessage.length !== 0 && <Message severity = "error" text = {globalState.appState.loginPageErrorMessage}/>}
                 <Grid container direction = "row" spacing = {1} justify = "center" alignItems = "center">
                     <Grid item>
