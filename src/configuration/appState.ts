@@ -1,51 +1,3 @@
-import { observable } from "mobx";
-
-/*
- * Central storage location for the whole application's state. Using MobX,
- * any changes to any of these will propogate to any components that use these.
-*/
-export class AppStateStore{
-    @observable username: string = "";
-    @observable email: string = "";
-    @observable name: string = "";
-    @observable signedUp: boolean = false;
-    @observable isLoading: boolean = false;
-    @observable emailVerified: boolean = false;
-    @observable navBarVisible: boolean = false; 
-    @observable isLoggedIn: boolean = false;
-    @observable isAuthenticating: boolean = true;
-    @observable successMessage: string = "";
-    @observable errorMessage: string = "";
-
-    @observable verificationCode: string = "";
-    @observable resentCode: boolean = false;
-    
-    @observable loginPageErrorMessage: string = "";
-
-    @observable signUpPageErrorMessage: string = "";
-
-    @observable redirectAfterLogin: string = "";
-
-    @observable forgotPasswordUsernameEntered: boolean = false;
-    @observable loadingForgotPassword: boolean = false;
-    @observable currentUser: User = {
-        username: "",
-        liked_components: [],
-        liked_workouts: []
-    }
-}
-
-export default class GlobalState{
-    appState: AppStateStore = new AppStateStore();
-
-    //swim workouts that the user has created
-    @observable mySwimWorkouts: SwimWorkout[] = [];
-    @observable mySwimComponents: SwimComponent[] = [];
-    @observable needToUpdateSwimWorkouts: boolean = true;
-    @observable needToUpdateSwimComponents: boolean = true;
-}
-
-export const globalState: GlobalState = new GlobalState();
 
 export interface SwimComponent{
     username: string;
@@ -88,41 +40,15 @@ export class SwimWorkout{
     date_created: string = "";
 }
 
-export interface User{
-    username: string;
-    liked_components: string[];
-    liked_workouts: string[];
-}
-
-//function for effectively resetting the program on user log-out.
-export function resetState(){
-    globalState.appState.isLoggedIn = false;
-    globalState.appState.currentUser = {
-        username: "",
-        liked_components: [],
-        liked_workouts: []
-    }
-    globalState.appState.forgotPasswordUsernameEntered = false;
-    globalState.appState.signUpPageErrorMessage = "";
-    globalState.appState.loginPageErrorMessage = "";
-    globalState.appState.email = "";
-    globalState.appState.username = "";
-    globalState.appState.name = "";
-    globalState.appState.signedUp = false;
-    globalState.appState.emailVerified = false;
-    globalState.appState.navBarVisible = false;
-    globalState.appState.resentCode = false;
-    globalState.appState.redirectAfterLogin = "";
-
-    globalState.mySwimWorkouts = [];
-    globalState.mySwimComponents = [];
-    globalState.needToUpdateSwimComponents = true;
-    globalState.needToUpdateSwimWorkouts = true;
+export class User{
+    username: string = "";
+    liked_components: string[] = [];
+    liked_workouts: string[] = [];
 }
 
 export function emptySwimComponent(): SwimComponent{
     return {
-        username: globalState.appState.currentUser.username,
+        username: "",
         set: "",
         component_body: "",
         component_id: "",

@@ -1,13 +1,23 @@
 import { CircularProgress, Grid, Link, Typography } from "@material-ui/core";
-import { observer } from "mobx-react";
+import { observer, inject } from "mobx-react";
 import React from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import GetStarted from "../components/GetStarted";
 import UserStatsHub from "../components/userStats/UserStatsHub";
-import { globalState } from "../configuration/appState";
+import { AppStateStore } from "../configuration/stateStores/appStateStore";
 
+export interface HomePageProps{
+    appState?: AppStateStore
+}
+
+//updated
+@inject("appState")
 @observer
-class HomePage extends React.Component<RouteComponentProps<any>>{
+class HomePage extends React.Component<RouteComponentProps<any> & HomePageProps>{
+    get appState(){
+        return this.props.appState as AppStateStore;
+    }
+
     render(){
         return(
             <Grid container justify = "center" alignItems = "center" direction = "column" spacing = {2}>
@@ -21,7 +31,7 @@ class HomePage extends React.Component<RouteComponentProps<any>>{
                     </Typography>
                 </Grid>
                 
-                {!globalState.appState.isLoggedIn && 
+                {!this.appState.isLoggedIn && 
                  <Grid>
                     <Typography variant = "h5" gutterBottom>
                         <p>Component-Based Workouts</p>
@@ -29,22 +39,22 @@ class HomePage extends React.Component<RouteComponentProps<any>>{
                  </Grid>
                 }
 
-                {!globalState.appState.isLoggedIn
+                {!this.appState.isLoggedIn
                  &&
                  <Grid item>
                      <GetStarted/>
                  </Grid>
                 }
 
-                {globalState.appState.isLoggedIn
+                {this.appState.isLoggedIn
                  &&
                  <UserStatsHub/>
                 }
 
-                {globalState.appState.isLoading && <CircularProgress/>}
+                {this.appState.isLoading && <CircularProgress/>}
             </Grid>
         )
     }
 }
 
-export default withRouter<RouteComponentProps<any>, any>(HomePage);
+export default withRouter<RouteComponentProps<any> & HomePageProps, any>(HomePage);

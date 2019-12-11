@@ -1,48 +1,74 @@
 import { Button, CircularProgress, Grid, TextField, Typography, Chip } from "@material-ui/core";
 import { Auth } from "aws-amplify";
-import { observer } from "mobx-react";
-import { Message } from "primereact/components/message/Message";
+import { observer, inject } from "mobx-react";
 import React from "react";
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import EmailVerification from "../components/EmailVerification";
 import ForgotPassword from "../components/ForgotPassword";
-import { globalState } from "../configuration/appState";
-import { ensureUserInDB } from "../configuration/loginSignup";
+import UIStateStore from "../configuration/stateStores/uiStateStore";
+import UserStateStore from "../configuration/stateStores/userStateStore";
+import { AppStateStore } from "../configuration/stateStores/appStateStore";
+import { signUserIn } from "../configuration/cognitoAPI";
 
+export interface LoginPageProps{
+    uiState?: UIStateStore;
+    userState?: UserStateStore;
+    appState?: AppStateStore;
+}
+
+//updated
+@inject("uiState", "userState", "appState")
 @observer
-class LoginPage extends React.Component<RouteComponentProps<any>>{
+class LoginPage extends React.Component<RouteComponentProps<any> & LoginPageProps>{
     password: string = "";
+    email: string = "";
+
+    get uiState(){
+        return this.props.uiState as UIStateStore;
+    }
+
+    get userState(){
+        return this.props.userState as UserStateStore;
+    }
+
+    get appState(){
+        return this.props.appState as AppStateStore;
+    }
+
     handleLogin = async (event: any) =>{
-        globalState.appState.isLoading = true;
+        this.appState.isLoading = true;
         event.preventDefault();
 
-        if(globalState.appState.email.length === 0){
-            globalState.appState.loginPageErrorMessage = "Please enter your Email or username.";
+        if(this.email.length === 0){
+            this.uiState.setErrorMessage("Please enter your Email or username.");
         }
         else if(this.password.length === 0){
-            globalState.appState.loginPageErrorMessage = "Please enter a password.";
+            this.uiState.setErrorMessage("Please enter a password.");
+        }
+
+        //sign the user in.
+        let loginStatusObject = await signUserIn(this.email, this.password);
+        if(loginStatusObject.status === false){
+            //login failed.
+            this.uiState.setErrorMessage(loginStatusObject.message);
         }
         else{
-            try{
-                await Auth.signIn(globalState.appState.email, this.password);
-                await ensureUserInDB();
-                
-                globalState.appState.successMessage = "Successfully logged in. Welcome back " + globalState.appState.username + "!";
+            //login succeeded, change the state
+            this.uiState.setSuccessMessage("Welcome back " + loginStatusObject.user.username + "!");
+            this.userState.currentUser = loginStatusObject.user;
 
-                if(globalState.appState.redirectAfterLogin !== ""){
-                    globalState.appState.isLoggedIn = true;
-                    this.props.history.push(globalState.appState.redirectAfterLogin);
-                    return;
-                }
-
+            if(this.appState.redirectAfterLogin !== ""){
+                //if we are to redirect the user somewhere, redirect them here.
+                this.props.history.push(this.appState.redirectAfterLogin);
+            }
+            else{
+                //redirect user to dashboard
                 this.props.history.push("/");
-                globalState.appState.isLoggedIn = true;
             }
-            catch(e){
-                globalState.appState.loginPageErrorMessage = e.message;
-            }
+            this.appState.isLoggedIn = true;
         }
-        globalState.appState.isLoading = false;
+
+        this.appState.isLoading = false;
     }
 
     render(){
@@ -52,17 +78,16 @@ class LoginPage extends React.Component<RouteComponentProps<any>>{
                     <Typography variant = "h2">Rafnel Login</Typography>
                 </Grid>
 
-                {globalState.appState.redirectAfterLogin !== "" && 
+                {this.appState.redirectAfterLogin !== "" && 
                     <Grid item>
                         <Chip label = "Please log in or create an account to access the workout." color = "primary"/>
                     </Grid>
                 }
 
-                {globalState.appState.loginPageErrorMessage.length !== 0 && <Message severity = "error" text = {globalState.appState.loginPageErrorMessage}/>}
                 <Grid container direction = "row" spacing = {1} justify = "center" alignItems = "center">
                     <Grid item>
                         <TextField
-                            onChange = {event => {globalState.appState.email = (event.target as HTMLInputElement).value}}
+                            onChange = {event => {this.email = (event.target as HTMLInputElement).value}}
                             name = "email"
                             type = "email"
                             margin = "dense"
@@ -102,14 +127,14 @@ class LoginPage extends React.Component<RouteComponentProps<any>>{
                         variant = "contained" 
                         color = "primary"
                         onClick = {this.handleLogin}
-                        disabled = {globalState.appState.isLoading}
+                        disabled = {this.appState.isLoading}
                     >
                         Log in
                     </Button>
                 </Grid>
 
                 <Grid item>
-                    {globalState.appState.isLoading ? <CircularProgress/> : null}
+                    {this.appState.isLoading ? <CircularProgress/> : null}
                 </Grid>
 
                 <Grid item>
@@ -123,10 +148,6 @@ class LoginPage extends React.Component<RouteComponentProps<any>>{
             </Grid>
         )
     }
-
-    componentWillUnmount(){
-        globalState.appState.loginPageErrorMessage = "";
-    }
 }
 
-export default withRouter<RouteComponentProps<any>, any>(LoginPage);
+export default withRouter<RouteComponentProps<any> & LoginPageProps, any>(LoginPage);

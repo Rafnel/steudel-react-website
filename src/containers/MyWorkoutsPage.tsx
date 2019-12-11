@@ -1,16 +1,32 @@
 import { CircularProgress, Grid, Paper, Typography } from "@material-ui/core";
-import { observer } from "mobx-react";
+import { observer, inject } from "mobx-react";
 import React from "react";
 import SwimWorkoutComponent from "../components/swimWorkoutsDisplay/SwimWorkout";
-import { globalState } from "../configuration/appState";
-import { getLoggedInUserWorkouts } from "../configuration/getUserData";
+import { AppStateStore } from "../configuration/stateStores/appStateStore";
+import UserStateStore from "../configuration/stateStores/userStateStore";
+import getAllWorkoutsFromUser from "../api/getAllWorkoutsFromUser";
 
+export interface MyWorkoutsPageProps{
+    appState?: AppStateStore;
+    userState?: UserStateStore;
+}
+
+//updated
+@inject("appState", "userState")
 @observer
-export default class MyWorkoutsPage extends React.Component{
+export default class MyWorkoutsPage extends React.Component<MyWorkoutsPageProps>{
+    get userState(){
+        return this.props.userState as UserStateStore;
+    }
+
+    get appState(){
+        return this.props.appState as AppStateStore;
+    }
+
     renderUserWorkouts(){
-        if(globalState.appState.isLoading === false){
+        if(this.appState.isLoading === false){
             console.log(":: Creating user workout components...");
-            const workouts = globalState.mySwimWorkouts.map(workout => <Grid item key = {workout.workout_id}> <SwimWorkoutComponent workout = {workout}/> </Grid>);
+            const workouts = this.userState.mySwimWorkouts.map(workout => <Grid item key = {workout.workout_id}> <SwimWorkoutComponent workout = {workout}/> </Grid>);
             if(workouts.length === 0){
                 return <Typography variant = "body1"> No workouts! </Typography>
             }
@@ -40,9 +56,9 @@ export default class MyWorkoutsPage extends React.Component{
                 <Grid item>
                     <Paper style = {{padding: 10}}>
                         <Grid container direction = "column" alignItems = "center" justify = "center" spacing = {2}>
-                            {globalState.appState.isLoading && <CircularProgress/>}
+                            {this.appState.isLoading && <CircularProgress/>}
 
-                            {!globalState.appState.isLoading && this.renderUserWorkouts()}
+                            {!this.appState.isLoading && this.renderUserWorkouts()}
                         </Grid>
                     </Paper>
                 </Grid>
@@ -51,8 +67,13 @@ export default class MyWorkoutsPage extends React.Component{
     }
 
     async componentDidMount(){
-        globalState.appState.isLoading = true;
-        await getLoggedInUserWorkouts();
-        globalState.appState.isLoading = false;
+        this.appState.isLoading = true;
+        this.userState.mySwimWorkouts = await getAllWorkoutsFromUser(this.userState.currentUser.username);
+        
+        if(this.userState.mySwimWorkouts === null){
+            this.userState.mySwimWorkouts = [];
+        }
+
+        this.appState.isLoading = false;
     }
 }

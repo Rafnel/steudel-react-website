@@ -1,33 +1,44 @@
 import { Typography, Grid, Divider, Button, Icon, Chip } from "@material-ui/core";
 import React, { Fragment } from "react";
 import { observable } from "mobx";
-import { observer } from "mobx-react";
+import { observer, inject } from "mobx-react";
 import getAllComponentsFromUser from "../../api/getAllComponentsFromUser";
-import { globalState } from "../../configuration/appState";
 import { PRIMARY } from "../..";
 import BeatLoader from 'react-spinners/BeatLoader';
 import { RouteComponentProps, withRouter } from "react-router";
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import EditIcon from '@material-ui/icons/Edit';
-import { getLoggedInUserComponents } from "../../configuration/getUserData";
+import UserStateStore from "../../configuration/stateStores/userStateStore";
 
+export interface ComponentsHubProps{
+    userState?: UserStateStore;
+}
+
+//updated
+@inject("userState")
 @observer
-class ComponentsHub extends React.Component<RouteComponentProps<any>>{
+class ComponentsHub extends React.Component<RouteComponentProps<any> & ComponentsHubProps>{
     @observable loadingComponents: boolean = true;
     @observable likes: number = 0;
 
+    get userState(){
+        return this.props.userState as UserStateStore;
+    }
+
     async getComponents(){
-        await getLoggedInUserComponents();
-        if(globalState.mySwimComponents === null){
-            globalState.mySwimComponents = [];
+        this.userState.mySwimComponents = await getAllComponentsFromUser(this.userState.currentUser.username);
+        this.userState.needToUpdateSwimComponents = false;
+
+        if(this.userState.mySwimComponents === null){
+            this.userState.mySwimComponents = [];
         }
         await this.getLikes();
         this.loadingComponents = false;
     }
 
     async getLikes(){
-        for(let i = 0; i < globalState.mySwimComponents.length; i++){
-            this.likes += globalState.mySwimComponents[i].likes;
+        for(let i = 0; i < this.userState.mySwimComponents.length; i++){
+            this.likes += this.userState.mySwimComponents[i].likes;
         }
     }
 
@@ -49,7 +60,7 @@ class ComponentsHub extends React.Component<RouteComponentProps<any>>{
                          <Chip
                             color = "secondary"
                             icon = {<EditIcon/>}
-                            label = {"Components Created: " + globalState.mySwimComponents.length}
+                            label = {"Components Created: " + this.userState.mySwimComponents.length}
                          />
                      </Grid>
                     }
@@ -109,4 +120,4 @@ class ComponentsHub extends React.Component<RouteComponentProps<any>>{
     }
 }
 
-export default withRouter<RouteComponentProps<any>, any>(ComponentsHub);
+export default withRouter<RouteComponentProps<any> & ComponentsHubProps, any>(ComponentsHub);

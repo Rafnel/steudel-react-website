@@ -9,6 +9,7 @@ export interface SwimWorkoutProps extends RouteComponentProps<any>{
     workout: SwimWorkout;
 }
 
+//updated
 @observer
 class SwimWorkoutComponent extends React.Component<SwimWorkoutProps>{
     getWorkoutSections(){

@@ -10,6 +10,7 @@ export interface IntervalsListProps{
     initialSize: number;
 }
 
+//updated
 @observer
 export default class IntervalsList extends React.Component<IntervalsListProps>{
     @observable intervalComponents: any[] = [];

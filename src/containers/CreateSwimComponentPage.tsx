@@ -1,18 +1,29 @@
 import React from "react";
 import { Grid, Paper, Typography, TextField, Select, OutlinedInput, FormControl, InputLabel, MenuItem, FormHelperText, Button, CircularProgress } from "@material-ui/core";
 import SaveIcon from '@material-ui/icons/Save';
-import { observer } from "mobx-react";
+import { observer, inject } from "mobx-react";
 import { observable } from "mobx";
-import { globalState, SwimComponent } from "../configuration/appState";
+import { SwimComponent } from "../configuration/appState";
 import createSwimComponent from "../api/createSwimComponent";
 import IntervalsList from "../components/intervals/IntervalsList";
+import { AppStateStore } from "../configuration/stateStores/appStateStore";
+import UserStateStore from "../configuration/stateStores/userStateStore";
+import UIStateStore from "../configuration/stateStores/uiStateStore";
 
 export class CreateSwimComponentStore{
     @observable intervals: string[] = [];
 }
 
+export interface CreateSwimComponentPageProps{
+    appState?: AppStateStore;
+    userState?: UserStateStore;
+    uiState?: UIStateStore
+}
+
+//updated
+@inject("appState", "userState", "uiState")
 @observer
-export default class CreateSwimComponentPage extends React.Component{
+export default class CreateSwimComponentPage extends React.Component<CreateSwimComponentPageProps>{
     componentBody: string = "";
     yardage: string = "";
     @observable difficulty: string = "";
@@ -20,17 +31,29 @@ export default class CreateSwimComponentPage extends React.Component{
     tags: string = "";
     @observable store: CreateSwimComponentStore = new CreateSwimComponentStore();
 
+    get uiState(){
+        return this.props.uiState as UIStateStore;
+    }
+
+    get userState(){
+        return this.props.userState as UserStateStore;
+    }
+
+    get appState(){
+        return this.props.appState as AppStateStore;
+    }
+
     validateComponent(): boolean{
         if(isNaN(Number(this.yardage))){
-            globalState.appState.errorMessage = "Yardage must be a numeric value only.";
+            this.uiState.setErrorMessage("Yardage must be a numeric value only.");
             return false;
         }
         if(this.tags.includes(" ")){
-            globalState.appState.errorMessage = "Tags can not contain a space.";
+            this.uiState.setErrorMessage("Tags can not contain a space.");
             return false;
         }
         if(this.componentBody.length === 0 || this.yardage.length === 0 || this.difficulty.length === 0 || this.set.length === 0){
-            globalState.appState.errorMessage = "Required fields can not be empty.";
+            this.uiState.setErrorMessage("Required fields can not be empty.");
             return false;
         }
         return true;
@@ -42,7 +65,7 @@ export default class CreateSwimComponentPage extends React.Component{
     }
 
     async saveComponent(){
-        globalState.appState.isLoading = true;
+        this.appState.isLoading = true;
         //only add intervals that have content.
         console.log("intervals list length: " + this.store.intervals.length);
         let intervalsToAdd: string[] = [];
@@ -63,7 +86,7 @@ export default class CreateSwimComponentPage extends React.Component{
         tagsList.push(...this.generateTagsFromBody(this.componentBody));
 
         let swimComponent: SwimComponent = {
-            username: globalState.appState.currentUser.username,
+            username: this.userState.currentUser.username,
             yardage: +this.yardage,
             set: this.set,
             difficulty: this.difficulty,
@@ -77,13 +100,13 @@ export default class CreateSwimComponentPage extends React.Component{
 
         try{
             await createSwimComponent(swimComponent);
-            globalState.appState.successMessage = "Your component has been created successfully.";
+            this.uiState.setSuccessMessage("Your component has been created successfully.");
         }
         catch(e){
-            globalState.appState.errorMessage = e + " " + e.message;
+            this.uiState.errorMessage = e + " " + e.message;
         }
 
-        globalState.appState.isLoading = false;
+        this.appState.isLoading = false;
     }
 
     render(){
@@ -214,7 +237,7 @@ export default class CreateSwimComponentPage extends React.Component{
                     <Button
                         variant = "contained"
                         size = "medium"
-                        disabled = {globalState.appState.isLoading}
+                        disabled = {this.appState.isLoading}
                         color = "primary"
                         onClick = {() => {
                             if(this.validateComponent()){
@@ -228,7 +251,7 @@ export default class CreateSwimComponentPage extends React.Component{
                     </Button>
                 </Grid>
 
-                {globalState.appState.isLoading && <CircularProgress/>}
+                {this.appState.isLoading && <CircularProgress/>}
             </Grid>
         )
     }

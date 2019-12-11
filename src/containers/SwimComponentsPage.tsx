@@ -1,21 +1,30 @@
 import React, { ChangeEvent } from "react";
 import { Grid, Typography, Paper, Tabs, Tab, CircularProgress } from "@material-ui/core";
-import { observer } from "mobx-react";
+import { observer, inject } from "mobx-react";
 import { observable } from "mobx";
-import { SwimComponent, globalState } from "../configuration/appState";
+import { SwimComponent } from "../configuration/appState";
 import getSortedSwimComponentsBySet from "../api/getSortedSwimComponentsBySet";
 import SwimComponentCards from "../components/swimcomponents/SwimComponentCards";
 import { PRIMARY } from "..";
 import SyncLoader from 'react-spinners/SyncLoader';
+import { AppStateStore } from "../configuration/stateStores/appStateStore";
 
+export interface SwimComponentsPageProps{
+    appState?: AppStateStore;
+}
 
+@inject("appState")
 @observer
-export default class SwimComponentsPage extends React.Component{
+export default class SwimComponentsPage extends React.Component<SwimComponentsPageProps>{
     @observable activeTab: number = 0;
     @observable activeList: SwimComponent[] = [];
 
+    get appState(){
+        return this.props.appState as AppStateStore;
+    }
+
     async retrieveComponentList(){
-        globalState.appState.isLoading = true;
+        this.appState.isLoading = true;
         let set: string = "";
         if(this.activeTab === 0){
             set = "Warmup";
@@ -32,7 +41,7 @@ export default class SwimComponentsPage extends React.Component{
         let swimComponents: SwimComponent[] = await getSortedSwimComponentsBySet(set);
         this.activeList = swimComponents;
 
-        globalState.appState.isLoading = false;
+        this.appState.isLoading = false;
     }
     
     render(){
@@ -74,11 +83,11 @@ export default class SwimComponentsPage extends React.Component{
                                 </Grid>
 
                                 <Grid item>
-                                    {globalState.appState.isLoading && <SyncLoader size = {20} color = {PRIMARY}/>}
+                                    {this.appState.isLoading && <SyncLoader size = {20} color = {PRIMARY}/>}
                                 </Grid>
 
                                 <Grid item>
-                                    {!globalState.appState.isLoading && <SwimComponentCards components = {this.activeList}/>}
+                                    {!this.appState.isLoading && <SwimComponentCards components = {this.activeList}/>}
                                 </Grid>
                             </Grid>
                         </Paper>

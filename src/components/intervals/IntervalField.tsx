@@ -7,6 +7,7 @@ export interface IntervalFieldProps{
     intervalIndex: number;
 }
 
+//updated
 export default class IntervalField extends React.Component<IntervalFieldProps>{
     label: string = "Interval " + (this.props.intervalIndex + 1);
 

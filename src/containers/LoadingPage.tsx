@@ -1,16 +1,25 @@
 import React from "react";
-import { globalState } from "../configuration/appState";
 import { Grid, Typography } from "@material-ui/core";
-import { observer } from "mobx-react";
+import { observer, inject } from "mobx-react";
 import { PRIMARY } from "..";
 import HeaderBar from "../components/HeaderBar";
 import RiseLoader from 'react-spinners/RiseLoader';
+import { AppStateStore } from "../configuration/stateStores/appStateStore";
 
+export interface LoadingPageProps{
+    appState?: AppStateStore;
+}
 
+//updated
+@inject("appState")
 @observer
-export default class LoadingPage extends React.Component{
+export default class LoadingPage extends React.Component<LoadingPageProps>{
+    get appState(){
+        return this.props.appState as AppStateStore;
+    }
+
     render(){
-        if(globalState.appState.isAuthenticating){
+        if(this.appState.isAuthenticating){
             return(
                 <div>
                     <HeaderBar/>

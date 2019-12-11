@@ -1,5 +1,6 @@
+import { SwimComponent } from './../configuration/appState';
 import { API } from "aws-amplify";
-import { SwimComponent, emptySwimComponent, swimComponentToString } from "../configuration/appState";
+import { emptySwimComponent, swimComponentToString } from "../configuration/appState";
 
 //adds a swim component
 export default async function createSwimComponent(swimComponent: SwimComponent){

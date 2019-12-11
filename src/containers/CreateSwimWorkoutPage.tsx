@@ -2,12 +2,14 @@ import React from "react";
 import { Grid, Typography, Paper, Button, Divider, FormControl, InputLabel, Select, OutlinedInput, MenuItem, CircularProgress } from "@material-ui/core";
 import WorkoutSection from "../components/WorkoutSection";
 import { observable } from "mobx";
-import { SwimComponent, globalState, SwimWorkout } from "../configuration/appState";
-import { observer } from "mobx-react";
+import { SwimComponent, SwimWorkout } from "../configuration/appState";
+import { observer, inject } from "mobx-react";
 import SaveIcon from '@material-ui/icons/Save';
 import createSwimComponent from "../api/createSwimComponent";
 import createSwimWorkout from "../api/createSwimWorkout";
-import { getLoggedInUserComponents } from "../configuration/getUserData";
+import { AppStateStore } from "../configuration/stateStores/appStateStore";
+import UIStateStore from "../configuration/stateStores/uiStateStore";
+import UserStateStore from "../configuration/stateStores/userStateStore";
 
 export class SwimWorkoutPageStore{
     //the list of swim components used by child components on this page
@@ -26,8 +28,16 @@ export class SwimWorkoutPageStore{
     @observable noSaving: boolean = false;
 }
 
+export interface CreateSwimWorkoutPageProps{
+    uiState?: UIStateStore;
+    appState?: AppStateStore;
+    userState?: UserStateStore;
+}
+
+//updated
+@inject("appState", "uiState", "userState")
 @observer
-export default class CreateSwimWorkoutPage extends React.Component{
+export default class CreateSwimWorkoutPage extends React.Component<CreateSwimWorkoutPageProps>{
     constructor(props: any){
         super(props);
 
@@ -35,9 +45,21 @@ export default class CreateSwimWorkoutPage extends React.Component{
     }
     store: SwimWorkoutPageStore = new SwimWorkoutPageStore();
 
+    get uiState(){
+        return this.props.uiState as UIStateStore;
+    }
+
+    get userState(){
+        return this.props.userState as UserStateStore;
+    }
+
+    get appState(){
+        return this.props.appState as AppStateStore;
+    }
+
     validateComponent(component: SwimComponent): boolean{
         if(isNaN(Number(component.yardage))){
-            globalState.appState.errorMessage = "Yardage for your components must be a numeric value only.";
+            this.uiState.errorMessage = "Yardage for your components must be a numeric value only.";
             return false;
         }
         
@@ -46,11 +68,11 @@ export default class CreateSwimWorkoutPage extends React.Component{
 
     validateWorkout(): boolean{
         if(this.store.difficulty.length === 0){
-            globalState.appState.errorMessage = "Please enter a difficulty for the workout.";
+            this.uiState.errorMessage = "Please enter a difficulty for the workout.";
             return false;
         }
         else if(this.store.workoutYardage === 0){
-            globalState.appState.errorMessage = "Your workout can not have 0 yardage.";
+            this.uiState.errorMessage = "Your workout can not have 0 yardage.";
             return false;
         }
 
@@ -61,9 +83,9 @@ export default class CreateSwimWorkoutPage extends React.Component{
     //username,component_id strings for each component in a certain set.
     async handleWorkoutSave(){
         //get the user's components from the db if it isn't in memory already.
-        await getLoggedInUserComponents();
+        //TODODODODODOawait getLoggedInUserComponents();
 
-        globalState.appState.isLoading = true;
+        this.appState.isLoading = true;
         //first, filter out any components that have an empty body.
         let componentsToSave: SwimComponent[] = this.store.swimComponents.filter((component) =>{
             return component.component_body.length > 0;
@@ -71,8 +93,8 @@ export default class CreateSwimWorkoutPage extends React.Component{
 
         //if the components to save is empty, return an error to user.
         if(componentsToSave.length === 0){
-            globalState.appState.errorMessage = "Please enter some components for your workout before submitting.";
-            globalState.appState.isLoading = false;
+            this.uiState.errorMessage = "Please enter some components for your workout before submitting.";
+            this.appState.isLoading = false;
             return;
         }
 
@@ -87,6 +109,7 @@ export default class CreateSwimWorkoutPage extends React.Component{
 
             //validate the component
             if(!this.validateComponent(componentsToSave[i])){
+                this.appState.isLoading = false;
                 return;
             }
 
@@ -107,7 +130,7 @@ export default class CreateSwimWorkoutPage extends React.Component{
 
         //construct the workout
         let workout: SwimWorkout = new SwimWorkout();
-        workout.username = globalState.appState.currentUser.username;
+        workout.username = this.userState.currentUser.username;
         workout.yardage = this.store.workoutYardage;
         workout.difficulty = this.store.difficulty;
         //get the components in the correct set.
@@ -130,12 +153,12 @@ export default class CreateSwimWorkoutPage extends React.Component{
         const success: boolean = await createSwimWorkout(workout);
 
         if(success){
-            globalState.needToUpdateSwimComponents = true;
-            globalState.needToUpdateSwimWorkouts = true;
-            globalState.appState.successMessage = "Your workout has been created successfully!";
+            this.userState.needToUpdateSwimComponents = true;
+            this.userState.needToUpdateSwimWorkouts = true;
+            this.uiState.successMessage = "Your workout has been created successfully!";
         }
 
-        globalState.appState.isLoading = false;
+        this.appState.isLoading = false;
     }
 
     //function will compare this component's body + intervals to the user's whole list of components.
@@ -143,8 +166,8 @@ export default class CreateSwimWorkoutPage extends React.Component{
     findDuplicateComponent(swimComponent: SwimComponent): string{
         console.log("checking component with body " + swimComponent.component_body + " for duplication...");
         //loop through all the user's components
-        for(let i = 0; i < globalState.mySwimComponents.length; i++){
-            let cur = globalState.mySwimComponents[i];
+        for(let i = 0; i < this.userState.mySwimComponents.length; i++){
+            let cur = this.userState.mySwimComponents[i];
             //for each component, check if the body, set and intervals are same.
             if(swimComponent.component_body === cur.component_body){
                 //check intervals & set equality
@@ -250,13 +273,13 @@ export default class CreateSwimWorkoutPage extends React.Component{
                     </Paper>
                 </Grid>
 
-                {globalState.appState.isLoading && <CircularProgress/>}
+                {this.appState.isLoading && <CircularProgress/>}
 
                 <Grid item>
                     <Button
                         variant = "contained"
                         size = "medium"
-                        disabled = {globalState.appState.isLoading || this.store.noSaving}
+                        disabled = {this.appState.isLoading || this.store.noSaving}
                         color = "primary"
                         onClick = {() => {
                             if(this.validateWorkout()){
@@ -274,6 +297,6 @@ export default class CreateSwimWorkoutPage extends React.Component{
     }
 
     componentDidMount(){
-        globalState.appState.isLoading = false;
+        this.appState.isLoading = false;
     }
 }

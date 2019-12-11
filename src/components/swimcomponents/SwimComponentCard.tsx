@@ -5,16 +5,19 @@ import { observer } from "mobx-react";
 import React, { Fragment } from "react";
 import updateComponentLikes from "../../api/updateComponentLikes";
 import updateUser from "../../api/updateUser";
-import { globalState, User, SwimComponent } from "../../configuration/appState";
+import { User, SwimComponent } from "../../configuration/appState";
+import UserStateStore from "../../configuration/stateStores/userStateStore";
 
 export interface SwimComponentCardProps{
     currentComponent: SwimComponent;
+    userState?: UserStateStore;
 }
 
+//updated
 @observer
 export default class SwimComponentCard extends React.Component<SwimComponentCardProps>{
     isComponentLiked(): boolean{
-        const user: User = globalState.appState.currentUser;
+        const user: User = this.userState.currentUser;
         for(let i = 0; i < user.liked_components.length; i++){
             if(user.liked_components[i].includes(this.props.currentComponent.component_id)){
                 return true;
@@ -23,6 +26,11 @@ export default class SwimComponentCard extends React.Component<SwimComponentCard
 
         return false;
     }
+
+    get userState(){
+        return this.props.userState as UserStateStore;
+    }
+
     @observable componentLiked: boolean = this.isComponentLiked();
     render(){
         return(
@@ -59,14 +67,14 @@ export default class SwimComponentCard extends React.Component<SwimComponentCard
                             if(!this.componentLiked){
                                 this.props.currentComponent.likes -= 1;
                                 value = -1;
-                                globalState.appState.currentUser.liked_components = globalState.appState.currentUser.liked_components.filter(comp => comp !== componentLikeString);
-                                updateUser(globalState.appState.currentUser);
+                                this.userState.currentUser.liked_components = this.userState.currentUser.liked_components.filter(comp => comp !== componentLikeString);
+                                updateUser(this.userState.currentUser);
                             }
                             else{
                                 this.props.currentComponent.likes += 1;
                                 value = 1;
-                                globalState.appState.currentUser.liked_components.push(componentLikeString);
-                                updateUser(globalState.appState.currentUser);
+                                this.userState.currentUser.liked_components.push(componentLikeString);
+                                updateUser(this.userState.currentUser);
                             }
 
                             //this needs to become atomic in some way TODO

@@ -1,54 +1,84 @@
 import { Button, ExpansionPanel, ExpansionPanelDetails, ExpansionPanelSummary, Grid, TextField, Typography } from "@material-ui/core";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { Auth } from "aws-amplify";
-import { observer } from "mobx-react";
+import { observer, inject } from "mobx-react";
 import React from "react";
-import { globalState } from "../configuration/appState";
+import UIStateStore from "../configuration/stateStores/uiStateStore";
+import UserStateStore from "../configuration/stateStores/userStateStore";
+import { AppStateStore } from "../configuration/stateStores/appStateStore";
+import { resendConfirmationCode, confirmUserEmail } from "../configuration/cognitoAPI";
+import { observable } from "mobx";
 
+export interface EmailVerificationProps{
+    uiState?: UIStateStore;
+    userState?: UserStateStore;
+    appState?: AppStateStore;
+}
+
+//updated
+@inject("uiState", "userState", "appState")
 @observer
-export default class EmailVerification extends React.Component{
+export default class EmailVerification extends React.Component<EmailVerificationProps>{
+    verificationCode: string = "";
+    username: string = "";
+    @observable loading: boolean = false;
+
+    get uiState(){
+        return this.props.uiState as UIStateStore;
+    }
+
+    get userState(){
+        return this.props.userState as UserStateStore;
+    }
+
+    get appState(){
+        return this.props.appState as AppStateStore;
+    }
+    
     async handleResend(){
         //check that the user entered a username
-        if(globalState.appState.username.length === 0){
-            globalState.appState.errorMessage = "Please enter a username to resend the confirmation code.";
+        if(this.username.length === 0){
+            this.uiState.setErrorMessage("Please enter a username to resend the confirmation code.");
         }
         //if they entered a username, attempt to resend email confirmation code.
         else{
-            console.log("Resending confirmation code for username: " + globalState.appState.username);
-            try{
-                globalState.appState.isLoading = true;
-                await Auth.resendSignUp(globalState.appState.username);
-                globalState.appState.successMessage = "Verification code has been resent.";
-                globalState.appState.isLoading = false;
+            console.log("Resending confirmation code for username: " + this.username);
+            this.loading = true;
+            let statusObject = await resendConfirmationCode(this.username);
+
+            if(statusObject.status === false){
+                //code resend failed.
+                this.uiState.setErrorMessage(statusObject.message);
             }
-            catch(e){
-                globalState.appState.errorMessage = e.message;
-                globalState.appState.isLoading = false;
+            else{
+                //code resend succeeded.
+                this.uiState.setSuccessMessage("Resent email confirmation code successfully! Check your inbox.");
             }
+
+            this.loading = false;
         }   
     }
 
     async handleConfirmation(){
-        if(globalState.appState.username.length === 0){
-            globalState.appState.errorMessage = "Please enter a username to confirm your account.";
+        if(this.username.length === 0){
+            this.uiState.setErrorMessage("Please enter a username to confirm your account.");
         }
-        else if(globalState.appState.verificationCode.length === 0){
-            globalState.appState.errorMessage = "Please enter the code from your Email.";
+        else if(this.verificationCode.length === 0){
+            this.uiState.setErrorMessage("Please enter the code from your Email.");
         }
         else{
-            try{
-                globalState.appState.isLoading = true;
-                await Auth.confirmSignUp(globalState.appState.username, globalState.appState.verificationCode);
-                globalState.appState.isLoading = false;
-                globalState.appState.successMessage = "Your account has been confirmed. You can now sign in.";
+            this.loading = true;
+            let statusObject = await confirmUserEmail(this.username, this.verificationCode);
+
+            if(statusObject.status === false){
+                //email confirmation failed.
+                this.uiState.setErrorMessage(statusObject.message);
             }
-            catch(e){
-                globalState.appState.errorMessage = e.message;
-                globalState.appState.isLoading = false;
-                if(e.message.includes("cannot be confirm.")){
-                    globalState.appState.errorMessage = "User is already confirmed.";
-                }
+            else{
+                //email confirmation succeeded.
+                this.uiState.setSuccessMessage("Your account has been confirmed. You can now sign in.");
             }
+            
+            this.loading = false;
         }
     }
     
@@ -63,7 +93,7 @@ export default class EmailVerification extends React.Component{
                     <Grid container spacing = {2} direction = "column" justify = "center" alignItems = "center">
                         <Grid item>
                             <TextField
-                                onChange = {event => globalState.appState.username = (event.target as HTMLInputElement).value}
+                                onChange = {event => this.username = (event.target as HTMLInputElement).value}
                                 name = "username"
                                 type = "username"
                                 margin = "dense"
@@ -77,7 +107,7 @@ export default class EmailVerification extends React.Component{
                             <Button 
                                 variant = "contained" 
                                 color = "default"
-                                disabled = {globalState.appState.isLoading}
+                                disabled = {this.loading}
                                 onClick = {() => {
                                     this.handleResend();
                                 }}
@@ -88,7 +118,7 @@ export default class EmailVerification extends React.Component{
                         
                         <Grid item>
                             <TextField
-                                onChange = {event => globalState.appState.verificationCode = (event.target as HTMLInputElement).value}
+                                onChange = {event => this.verificationCode = (event.target as HTMLInputElement).value}
                                 name = "verificationCode"
                                 type = "verificationCode"
                                 margin = "dense"
@@ -102,7 +132,7 @@ export default class EmailVerification extends React.Component{
                             <Button 
                                 variant = "contained" 
                                 color = "primary"
-                                disabled = {globalState.appState.isLoading}
+                                disabled = {this.loading}
                                 onClick = {() => {
                                     this.handleConfirmation();
                                 }}

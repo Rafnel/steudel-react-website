@@ -2,40 +2,70 @@ import { Typography, Grid, TextField, Button, CircularProgress, Paper } from "@m
 import React from "react";
 import { Auth } from "aws-amplify";
 import { RouteComponentProps, withRouter } from "react-router-dom";
-import { observer } from "mobx-react";
+import { observer, inject } from "mobx-react";
 import addUser from "../api/addUser";
-import getUser from "../api/getUser";
-import { globalState } from "../configuration/appState";
 import { validatePassword } from "../configuration/loginSignup";
+import UIStateStore from "../configuration/stateStores/uiStateStore";
+import { AppStateStore } from "../configuration/stateStores/appStateStore";
+import UserStateStore from "../configuration/stateStores/userStateStore";
+import { confirmSignup, signUserIn } from "../configuration/cognitoAPI";
+import { observable } from "mobx";
 
+export interface SignupPageProps{
+    uiState?: UIStateStore;
+    appState?: AppStateStore;
+    userState?: UserStateStore;
+}
+
+//updated
+@inject("appState", "uiState", "userState")
 @observer
-class SignupPage extends React.Component<RouteComponentProps<any>>{
+class SignupPage extends React.Component<RouteComponentProps<any> & SignupPageProps>{
     password: string = "";
     confirmPassword: string = "";
+    username: string = "";
+    email: string = "";
+    name: string = "";
+    verificationCode: string = "";
+    @observable resentCode: boolean = false;
+
+    get uiState(){
+        return this.props.uiState as UIStateStore;
+    }
+    
+    get appState(){
+        return this.props.appState as AppStateStore;
+    }
+    
+    get userState(){
+        return this.props.userState as UserStateStore;
+    }
 
     validateSignUp(): boolean{
-        let usrName: string = globalState.appState.username;
-        if(usrName.includes(" ")){
-            globalState.appState.errorMessage = "Username cannot contain a space.";
+        if(this.username.includes(" ")){
+            this.uiState.errorMessage = "Username cannot contain a space.";
             return false;
         }
         //check that none of the chars are extended ascii
-        for(var i = 0; i < usrName.length; i++){
-            if(usrName.charCodeAt(i) > 127){
-                globalState.appState.errorMessage = "Please only include regular characters in your username.";
+        for(var i = 0; i < this.username.length; i++){
+            if(this.username.charCodeAt(i) > 127){
+                this.uiState.errorMessage = "Please only include regular characters in your username.";
                 return false;
             }
         }
-        if(!validatePassword(this.password, this.confirmPassword)){
+        let validationObj = validatePassword(this.password, this.confirmPassword);
+
+        if(validationObj.status === false){
+            this.uiState.errorMessage = validationObj.message;
             return false;
         }
-        if(globalState.appState.username.length === 0 || globalState.appState.name.length === 0
-           || globalState.appState.email.length === 0){
-            globalState.appState.errorMessage = "You left a field blank.";
+        if(this.username.length === 0 || this.name.length === 0
+           || this.email.length === 0){
+            this.uiState.errorMessage = "You left a field blank.";
             return false;
         }
-        if(globalState.appState.username.length > 20){
-            globalState.appState.errorMessage = "Username must be less than 20 characters in length.";
+        if(this.username.length > 20){
+            this.uiState.errorMessage = "Username must be less than 20 characters in length.";
             return false;
         }
 
@@ -45,49 +75,56 @@ class SignupPage extends React.Component<RouteComponentProps<any>>{
     async handleSignUp(){
         try{
             await Auth.signUp({
-                username: globalState.appState.username,
+                username: this.username,
                 password: this.password,
                 attributes: {
-                    name: globalState.appState.name,
-                    email: globalState.appState.email
+                    name: this.name,
+                    email: this.email
                 }
             });
 
-            globalState.appState.signedUp = true;
+            this.appState.signedUp = true;
         }
         catch(e){
-            globalState.appState.errorMessage = e.message;
+            this.uiState.errorMessage = e.message;
         }
-        globalState.appState.isLoading = false;
+        this.appState.isLoading = false;
     }
 
     async handleConfirmation(){
-        try{
-            console.log(":: Authenticating user with email " + globalState.appState.email + " and code " + globalState.appState.verificationCode);
-
-            await Auth.confirmSignUp(globalState.appState.username, globalState.appState.verificationCode);
-            await Auth.signIn(globalState.appState.email, this.password);
-            //add user to the db
-            await addUser(globalState.appState.username);
-            await getUser(globalState.appState.username);
-
-            globalState.appState.isLoggedIn = true;
-            this.props.history.push("/");
-            globalState.appState.successMessage = "Account created and logged in successfully.";
+        let confStatus = await confirmSignup(this.username, this.verificationCode);
+        if(confStatus.status === false){
+            //confirmation failed.
+            this.uiState.errorMessage = confStatus.message;
         }
-        catch(e){
-            globalState.appState.errorMessage = e.message;
+        else{
+            //account confirmed successfully. sign the user in and add them to the db.
+            let loginStatus = await signUserIn(this.email, this.password);
+
+            if(loginStatus.status === false){
+                //sign in didn't work.
+                this.uiState.errorMessage = "Account creation was successful, but login failed. Try to log in to your new account from the login page.";
+            }
+            else{
+                //sign in worked. add to db and change state
+                this.userState.currentUser = loginStatus.user;
+
+                await addUser(this.userState.currentUser.username);
+                this.props.history.push("/");
+                this.appState.isLoggedIn = true;
+                this.uiState.successMessage = "Account created and logged in successfully.";
+            }            
         }
 
-        globalState.appState.isLoading = false;
+        this.appState.isLoading = false;
     }
 
     async handleResend(){
-        console.log("Resending confirmation code for email: " + globalState.appState.email);
-        globalState.appState.resentCode = true;
-        await Auth.resendSignUp(globalState.appState.username);
-        globalState.appState.successMessage = "Resent Email verification code.";
-        globalState.appState.isLoading = false;
+        console.log("Resending confirmation code for email: " + this.email);
+        this.resentCode = true;
+        await Auth.resendSignUp(this.username);
+        this.uiState.successMessage = "Resent Email verification code.";
+        this.appState.isLoading = false;
     }
 
     renderSignUpForm(){
@@ -106,14 +143,14 @@ class SignupPage extends React.Component<RouteComponentProps<any>>{
                         <Grid container justify = "center">
                             <TextField
                                 style = {{width: "300px"}}
-                                onChange = {event => {globalState.appState.username = (event.target as HTMLInputElement).value}}
+                                onChange = {event => {this.username = (event.target as HTMLInputElement).value}}
                                 name = "username"
                                 type = "username"
                                 margin = "dense"
                                 onKeyPress = {(event) => {
                                     if(event.key === "Enter"){
                                         if(this.validateSignUp()){
-                                            globalState.appState.isLoading = true;
+                                            this.appState.isLoading = true;
                                             this.handleSignUp();
                                         }
                                     }
@@ -139,13 +176,13 @@ class SignupPage extends React.Component<RouteComponentProps<any>>{
 
                         <Grid container justify = "center">
                             <TextField
-                                onChange = {event => globalState.appState.name = (event.target as HTMLInputElement).value}
+                                onChange = {event => this.name = (event.target as HTMLInputElement).value}
                                 name = "name"
                                 type = "name"
                                 onKeyPress = {(event) => {
                                     if(event.key === "Enter"){
                                         if(this.validateSignUp()){
-                                            globalState.appState.isLoading = true;
+                                            this.appState.isLoading = true;
                                             this.handleSignUp();
                                         }
                                     }
@@ -167,13 +204,13 @@ class SignupPage extends React.Component<RouteComponentProps<any>>{
 
                         <Grid container justify = "center">
                             <TextField
-                                onChange = {event => {globalState.appState.email = (event.target as HTMLInputElement).value}}
+                                onChange = {event => {this.email = (event.target as HTMLInputElement).value}}
                                 name = "email"
                                 type = "email"
                                 onKeyPress = {(event) => {
                                     if(event.key === "Enter"){
                                         if(this.validateSignUp()){
-                                            globalState.appState.isLoading = true;
+                                            this.appState.isLoading = true;
                                             this.handleSignUp();
                                         }
                                     }
@@ -199,7 +236,7 @@ class SignupPage extends React.Component<RouteComponentProps<any>>{
                                 onKeyPress = {(event) => {
                                     if(event.key === "Enter"){
                                         if(this.validateSignUp()){
-                                            globalState.appState.isLoading = true;
+                                            this.appState.isLoading = true;
                                             this.handleSignUp();
                                         }
                                     }
@@ -222,7 +259,7 @@ class SignupPage extends React.Component<RouteComponentProps<any>>{
                                 onKeyPress = {(event) => {
                                     if(event.key === "Enter"){
                                         if(this.validateSignUp()){
-                                            globalState.appState.isLoading = true;
+                                            this.appState.isLoading = true;
                                             this.handleSignUp();
                                         }
                                     }
@@ -255,11 +292,11 @@ class SignupPage extends React.Component<RouteComponentProps<any>>{
                 <Grid item>
                     <Button 
                         variant = "contained" 
-                        disabled = {globalState.appState.isLoading}
+                        disabled = {this.appState.isLoading}
                         color = "primary"
                         onClick = {() => {
                             if(this.validateSignUp()){
-                                globalState.appState.isLoading = true;
+                                this.appState.isLoading = true;
                                 this.handleSignUp();
                             }
                         }}
@@ -269,7 +306,7 @@ class SignupPage extends React.Component<RouteComponentProps<any>>{
                 </Grid>
 
                 <Grid item>
-                    {globalState.appState.isLoading && <CircularProgress/>}
+                    {this.appState.isLoading && <CircularProgress/>}
                 </Grid>
             </Grid>
         )
@@ -287,9 +324,9 @@ class SignupPage extends React.Component<RouteComponentProps<any>>{
                     <Button 
                         variant = "contained" 
                         color = "default"
-                        disabled = {globalState.appState.isLoading}
+                        disabled = {this.appState.isLoading}
                         onClick = {() => {
-                            globalState.appState.isLoading = true;
+                            this.appState.isLoading = true;
                             this.handleResend();
                         }}
                     >
@@ -299,14 +336,13 @@ class SignupPage extends React.Component<RouteComponentProps<any>>{
                 
                 <Grid item>
                     <TextField
-                        onChange = {event => globalState.appState.verificationCode = (event.target as HTMLInputElement).value}
+                        onChange = {event =>this.verificationCode = (event.target as HTMLInputElement).value}
                         name = "verificationCode"
                         type = "verificationCode"
                         margin = "dense"
                         onKeyPress = {(event) => {
                             if(event.key === "Enter"){
-                                globalState.appState.isLoading = true;
-                                globalState.appState.signUpPageErrorMessage = "";
+                                this.appState.isLoading = true;
                                 this.handleConfirmation();
                             }
                         }}
@@ -320,10 +356,9 @@ class SignupPage extends React.Component<RouteComponentProps<any>>{
                     <Button 
                         variant = "contained" 
                         color = "primary"
-                        disabled = {globalState.appState.isLoading}
+                        disabled = {this.appState.isLoading}
                         onClick = {() => {
-                            globalState.appState.isLoading = true;
-                            globalState.appState.signUpPageErrorMessage = "";
+                            this.appState.isLoading = true;
                             this.handleConfirmation();
                         }}
                     >
@@ -332,13 +367,13 @@ class SignupPage extends React.Component<RouteComponentProps<any>>{
                 </Grid>
 
                 <Grid item>
-                    {globalState.appState.isLoading && <CircularProgress/>}
+                    {this.appState.isLoading && <CircularProgress/>}
                 </Grid>
             </Grid>
         )
     }
     render(){
-        if(globalState.appState.signedUp){
+        if(this.appState.signedUp){
             return this.renderConfirmation();
         }
         else{
@@ -347,8 +382,8 @@ class SignupPage extends React.Component<RouteComponentProps<any>>{
     }
 
     componentWillUnmount(){
-        globalState.appState.signedUp = false;
+        this.appState.signedUp = false;
     }
 }
 
-export default withRouter<RouteComponentProps<any>, any>(SignupPage);
+export default withRouter<RouteComponentProps<any> & SignupPageProps, any>(SignupPage);

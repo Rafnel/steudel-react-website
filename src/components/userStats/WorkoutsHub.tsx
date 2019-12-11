@@ -1,20 +1,31 @@
 import { Button, Chip, Divider, Grid, Icon, Typography } from "@material-ui/core";
 import EditIcon from '@material-ui/icons/Edit';
 import { observable } from "mobx";
-import { observer } from "mobx-react";
+import { observer, inject } from "mobx-react";
 import React, { Fragment } from "react";
 import { RouteComponentProps, withRouter } from "react-router";
 import BeatLoader from 'react-spinners/BeatLoader';
 import { PRIMARY } from "../..";
-import { getLoggedInUserWorkouts } from "../../configuration/getUserData";
-import { globalState } from "../../configuration/appState";
+import UserStateStore from "../../configuration/stateStores/userStateStore";
+import getAllWorkoutsFromUser from "../../api/getAllWorkoutsFromUser";
 
+export interface WorkoutsHubProps{
+    userState?: UserStateStore;
+}
+
+//updated
+@inject("userState")
 @observer
-class WorkoutsHub extends React.Component<RouteComponentProps<any>>{
+class WorkoutsHub extends React.Component<RouteComponentProps<any> & WorkoutsHubProps>{
     @observable loadingWorkouts: boolean = true;
 
+    get userState(){
+        return this.props.userState as UserStateStore;
+    }
+
     async getWorkouts(){
-        await getLoggedInUserWorkouts();
+        this.userState.mySwimWorkouts = await getAllWorkoutsFromUser(this.userState.currentUser.username);
+        this.userState.needToUpdateSwimWorkouts = false;
         this.loadingWorkouts = false;
     }
 
@@ -35,7 +46,7 @@ class WorkoutsHub extends React.Component<RouteComponentProps<any>>{
                         <Chip
                             color = "secondary"
                             icon = {<EditIcon/>}
-                            label = {"Workouts Created: " + globalState.mySwimWorkouts.length}
+                            label = {"Workouts Created: " + this.userState.mySwimWorkouts.length}
                         />
                      </Grid>
                     }
@@ -86,4 +97,4 @@ class WorkoutsHub extends React.Component<RouteComponentProps<any>>{
     }
 }
 
-export default withRouter<RouteComponentProps<any>, any>(WorkoutsHub);
+export default withRouter<RouteComponentProps<any> & WorkoutsHubProps, any>(WorkoutsHub);

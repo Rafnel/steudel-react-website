@@ -11,6 +11,7 @@ export interface WorkoutSwimComponentProps{
     indexOfComponentsArray: number;
 }
 
+//updated
 @observer
 export default class WorkoutSwimComponent extends React.Component<WorkoutSwimComponentProps>{
     @observable yardageError: string = "";

@@ -1,5 +1,5 @@
 import { API } from "aws-amplify";
-import { SwimWorkout, globalState } from "../configuration/appState";
+import { SwimWorkout } from "../configuration/appState";
 
 //adds a swim workout
 export default async function createSwimWorkout(swimWorkout: SwimWorkout): Promise<boolean>{
@@ -21,7 +21,6 @@ export default async function createSwimWorkout(swimWorkout: SwimWorkout): Promi
     }
     catch(e){
         console.log(e.message);
-        globalState.appState.errorMessage = e.message;
         return false;
     }
 }

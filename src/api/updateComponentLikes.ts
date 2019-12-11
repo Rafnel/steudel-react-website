@@ -1,5 +1,5 @@
 import { API } from "aws-amplify";
-import { SwimComponent, globalState } from "../configuration/appState";
+import { SwimComponent } from "../configuration/appState";
 
 //increments / decrements the amount of likes for a component 
 export default async function updateComponentLikes(swimComponent: SwimComponent, value: number){
@@ -12,7 +12,6 @@ export default async function updateComponentLikes(swimComponent: SwimComponent,
                 value: value
             }
         });
-        globalState.appState.isLoading = false;
         console.log(":: value add successful for component " + swimComponent.component_id + " with body " + swimComponent.component_body);
     }
     catch(e){

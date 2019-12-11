@@ -1,17 +1,17 @@
 import { API } from "aws-amplify";
-import { globalState } from "../configuration/appState";
+import { User } from "../configuration/appState";
 
-//sets the currentUser in the appState variable.
-export default async function getUser(username: string){
+//updated
+//returns the user with <username> in the form of a User object.
+export default async function getUser(username: string): Promise<User>{
     try{
         console.log(":: retrieving user " + username + " from user_table.");
         let jsonUser = await API.get("users", `/user/${username}`, null);
-        globalState.appState.currentUser = jsonUser;
         console.log(":: retrieved user " + username + " successfully.");
+        return jsonUser;
     }
     catch(e){
         console.log(":: User " + username + " did not exist in db");
-        globalState.appState.currentUser.username = "";
-        return null;
+        return new User();
     }
 }

@@ -1,11 +1,13 @@
 import React from "react";
 import { Box, Grid, Typography } from "@material-ui/core";
-import { observer } from "mobx-react";
+import { observer, inject } from "mobx-react";
 import { observable } from "mobx";
 import ExampleSetAbout from "../components/ExampleSetAbout";
 import WhyCreateAccount from "../components/WhyCreateAccount";
 
-
+//updated
+//need to inject all pages, even with nothing, due to react router
+@inject()
 @observer
 export default class AboutPage extends React.Component{
     @observable activeTab: number = 0;

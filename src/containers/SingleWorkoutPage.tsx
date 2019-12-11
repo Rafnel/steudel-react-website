@@ -1,26 +1,33 @@
 import React from "react";
 import { Grid, CircularProgress, Button, Icon } from "@material-ui/core";
-import { observer } from "mobx-react";
+import { observer, inject } from "mobx-react";
 import { observable } from "mobx";
-import { SwimWorkout, globalState } from "../configuration/appState";
+import { SwimWorkout } from "../configuration/appState";
 import getWorkoutByID from "../api/getWorkoutByID";
 import SwimWorkoutComponent from "../components/swimWorkoutsDisplay/SwimWorkout";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { css } from "@material-ui/system";
+import { AppStateStore } from "../configuration/stateStores/appStateStore";
 
 export interface SingleWorkoutPageProps{
     username: string;
     workoutID: string;
+    appState?: AppStateStore;
 }
 
+//updated
+@inject("appState")
 @observer
 export default class SingleWorkoutPage extends React.Component<SingleWorkoutPageProps>{
     @observable workout: SwimWorkout = new SwimWorkout();
     async getWorkout(){
-        globalState.appState.isLoading = true;
+        this.appState.isLoading = true;
         this.workout = await getWorkoutByID(this.props.username, this.props.workoutID);
-        globalState.appState.isLoading = false;
+        this.appState.isLoading = false;
+    }
+
+    get appState(){
+        return this.props.appState as AppStateStore;
     }
 
     exportWorkoutPDF(){
@@ -41,8 +48,8 @@ export default class SingleWorkoutPage extends React.Component<SingleWorkoutPage
         return(
             <Grid container justify = "center" alignItems = "center" direction = "column" spacing = {2}>
                 <Grid item>
-                    {globalState.appState.isLoading && <CircularProgress/>}
-                    {!globalState.appState.isLoading && <SwimWorkoutComponent workout = {this.workout}/>}
+                    {this.appState.isLoading && <CircularProgress/>}
+                    {!this.appState.isLoading && <SwimWorkoutComponent workout = {this.workout}/>}
                 </Grid>
 
                 <Grid item>

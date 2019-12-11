@@ -1,5 +1,5 @@
 import { API } from "aws-amplify";
-import { SwimComponent, globalState } from "../configuration/appState";
+import { SwimComponent } from "../configuration/appState";
 
 //gets a list of sorted swim components by set, sorted by likes from most to least.
 export default async function getSortedSwimComponentsBySet(set: string){
@@ -10,7 +10,6 @@ export default async function getSortedSwimComponentsBySet(set: string){
                 set: set
             }
         });
-        globalState.appState.isLoading = false;
         let components: SwimComponent[] = jsonList;
         console.log(":: set list for " + set + " with length: " + components.length);
 

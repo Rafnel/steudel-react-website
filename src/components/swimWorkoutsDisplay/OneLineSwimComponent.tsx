@@ -7,6 +7,7 @@ export interface OneLineSwimComponentProps{
     component: SwimComponent;
 }
 
+//updated
 @observer
 export default class OneLineSwimComponent extends React.Component<OneLineSwimComponentProps>{    
     render(){

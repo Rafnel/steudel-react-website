@@ -7,6 +7,7 @@ export interface SwimComponentCardsProps{
     components: SwimComponent[]
 }
 
+//updated
 export default class SwimComponentCards extends React.Component<SwimComponentCardsProps>{
     render(){
         const items = this.props.components.map(component => <Grid item> <SwimComponentCard currentComponent = {component}/> </Grid>)

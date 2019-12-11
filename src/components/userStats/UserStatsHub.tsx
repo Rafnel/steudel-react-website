@@ -4,7 +4,7 @@ import ComponentsHub from "./ComponentsHub";
 import WorkoutsHub from "./WorkoutsHub";
 
 
-
+//updated
 export default class UserStatsHub extends React.Component{
     render(){
         return(

@@ -2,6 +2,7 @@ import { RouteComponentProps, withRouter } from "react-router-dom";
 import React from "react";
 import { Tooltip, IconButton, Icon } from "@material-ui/core";
 
+//updated
 class HomeButton extends React.Component<RouteComponentProps<any>>{
     render(){
         return(

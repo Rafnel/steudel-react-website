@@ -1,43 +1,39 @@
 import { AppBar, Toolbar } from "@material-ui/core";
 import { Auth } from "aws-amplify";
-import { observer } from "mobx-react";
+import { observer, inject } from "mobx-react";
 import React from "react";
 import { RouteComponentProps, withRouter } from "react-router-dom";
-import { globalState, resetState } from "../configuration/appState";
 import CreateButton from "./buttons/CreateButton";
 import HomeButton from "./buttons/HomeButton";
-import WeatherButton from "./buttons/WeatherButton";
 import ExploreButton from "./buttons/ExploreButton";
 import AccountButton from "./buttons/AccountButton";
 import QuestionButton from "./buttons/QuestionButton";
+import { AppStateStore } from "../configuration/stateStores/appStateStore";
 
+export interface HeaderBarProps{
+    appState?: AppStateStore;
+}
 
+//updated
+@inject("appState")
 @observer
-class HeaderBar extends React.Component<RouteComponentProps<any>>{
-    handleLogout = async (event: any) => {
-        await Auth.signOut();
-
-        resetState();
-    
-        //reset the app's state since the user logged out.
-        globalState.appState.successMessage = "Logged out successfully.";
-        this.props.history.push("/login");
-        
+class HeaderBar extends React.Component<RouteComponentProps<any> & HeaderBarProps>{
+    get appState(){
+        return this.props.appState as AppStateStore;
     }
-    
+
     render(){
         return(
             <AppBar position = "sticky">
                 <Toolbar>
                     <HomeButton/>
 
-                    {globalState.appState.isLoggedIn && <ExploreButton/>}
+                    {this.appState.isLoggedIn && <ExploreButton/>}
 
-                    {globalState.appState.isLoggedIn && <CreateButton/>}
+                    {this.appState.isLoggedIn && <CreateButton/>}
 
                     <span style = {{marginLeft: "auto", marginRight: -12}}>
                         <AccountButton/>
-                        <WeatherButton/>
                         <QuestionButton/>
                     </span>
                 </Toolbar>
@@ -46,4 +42,4 @@ class HeaderBar extends React.Component<RouteComponentProps<any>>{
     }
 }
 
-export default withRouter<RouteComponentProps<any>, any>(HeaderBar);
+export default withRouter<RouteComponentProps<any> & HeaderBarProps, any>(HeaderBar);

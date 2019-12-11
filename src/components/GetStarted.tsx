@@ -3,6 +3,7 @@ import { Paper, Grid, Button } from "@material-ui/core";
 import React from "react";
 import WhyCreateAccount from "./WhyCreateAccount";
 
+//updated
 class GetStarted extends React.Component<RouteComponentProps<any>>{
     render(){
         return(

@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { SwimComponent, globalState } from "../../configuration/appState";
+import { SwimComponent } from "../../configuration/appState";
 import { observable } from "mobx";
 import { observer } from "mobx-react";
 import { Typography, Grid, CircularProgress, Divider } from "@material-ui/core";
@@ -13,6 +13,7 @@ export interface WorkoutSetProps{
     setName: string;
 }
 
+//updated
 @observer
 export default class WorkoutSet extends React.Component<WorkoutSetProps>{
     @observable loadingComponents: boolean = true;

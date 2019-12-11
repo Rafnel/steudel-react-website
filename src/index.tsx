@@ -8,6 +8,10 @@ import App from './containers/App';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
 import LoadingPage from './containers/LoadingPage';
+import { Provider } from 'mobx-react';
+import UIStateStore from './configuration/stateStores/uiStateStore';
+import UserStateStore from './configuration/stateStores/userStateStore';
+import { AppStateStore } from './configuration/stateStores/appStateStore';
 
 export const PRIMARY = green[900];
 export const SECONDARY = green[200];
@@ -39,10 +43,12 @@ const theme = createMuiTheme({
 
 ReactDOM.render(
   <BrowserRouter>
-    <ThemeProvider theme = {theme}>
-      <LoadingPage/>
-      <App/>
-    </ThemeProvider>
+    <Provider uiState = {new UIStateStore()} userState = {new UserStateStore()} appState = {new AppStateStore()}>
+      <ThemeProvider theme = {theme}>
+        <LoadingPage/>
+        <App/>
+      </ThemeProvider>
+    </Provider>
   </BrowserRouter>,
   document.getElementById("root")
     
