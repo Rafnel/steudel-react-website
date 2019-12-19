@@ -11,12 +11,14 @@ export default class UserStatsHub extends React.Component{
             <Paper style = {{padding: 10}}>
                 <Grid container justify = "center" alignItems = "center" direction = "column" spacing = {2}>
                     <Grid item>
-                        <Typography variant = "h2">
+                        <Typography variant = "h5">
                             Your Activity Hub
                         </Typography>
-                        &nbsp;
-                        <Divider/>
                     </Grid>
+
+                    <div style = {{width: "100%"}}>
+                        <Divider/>
+                    </div>
 
                     <Grid item>
                         <WorkoutsHub/>

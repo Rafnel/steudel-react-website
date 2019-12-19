@@ -47,7 +47,7 @@ class ComponentsHub extends React.Component<RouteComponentProps<any> & Component
             <Fragment>
                 <Grid container justify = "center" alignItems = "center" spacing = {2} direction = "column">
                     <Grid item>
-                        <Typography variant = "h4">
+                        <Typography variant = "h6">
                             Components
                         </Typography>
                     </Grid>
@@ -108,9 +108,6 @@ class ComponentsHub extends React.Component<RouteComponentProps<any> & Component
                         </Grid>   
                     </Grid>
                 </Grid>  
-
-                &nbsp;
-                <Divider/>
             </Fragment>
         )
     }

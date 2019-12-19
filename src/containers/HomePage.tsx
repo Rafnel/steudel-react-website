@@ -22,11 +22,11 @@ class HomePage extends React.Component<RouteComponentProps<any> & HomePageProps>
         return(
             <Grid container justify = "center" alignItems = "center" direction = "column" spacing = {2}>
                 <Grid item>
-                    <img src = {process.env.PUBLIC_URL + "/android-chrome-192x192.png"} alt = "logo"/>
+                    {!this.appState.isLoggedIn && <img src = {process.env.PUBLIC_URL + "/android-chrome-192x192.png"} alt = "logo"/>}
 
                     <Typography>
                         <Link color = "inherit" href = "https://github.com/Rafnel/steudel-react-website">
-                            Version 1.33: 2019-12-03
+                            Version 1.41: 2019-12-18
                         </Link>
                     </Typography>
                 </Grid>

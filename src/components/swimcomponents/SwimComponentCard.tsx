@@ -1,7 +1,7 @@
 import { Card, CardActions, CardContent, CardHeader, Divider, Grid, Icon, IconButton, Typography } from "@material-ui/core";
 import { green } from "@material-ui/core/colors";
 import { observable } from "mobx";
-import { observer } from "mobx-react";
+import { observer, inject } from "mobx-react";
 import React, { Fragment } from "react";
 import updateComponentLikes from "../../api/updateComponentLikes";
 import updateUser from "../../api/updateUser";
@@ -14,6 +14,7 @@ export interface SwimComponentCardProps{
 }
 
 //updated
+@inject("userState")
 @observer
 export default class SwimComponentCard extends React.Component<SwimComponentCardProps>{
     isComponentLiked(): boolean{

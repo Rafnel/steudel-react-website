@@ -34,7 +34,7 @@ class WorkoutsHub extends React.Component<RouteComponentProps<any> & WorkoutsHub
             <Fragment>
                 <Grid container justify = "center" alignItems = "center" spacing = {2} direction = "column">
                     <Grid item>
-                        <Typography variant = "h4">
+                        <Typography variant = "h6">
                             Workouts
                         </Typography>
                     </Grid>
@@ -87,7 +87,10 @@ class WorkoutsHub extends React.Component<RouteComponentProps<any> & WorkoutsHub
 
                 &nbsp;
 
-                <Divider/>
+                <div style = {{width: "100%"}}>
+                    <Divider/>
+                </div>
+
             </Fragment>
         )
     }
