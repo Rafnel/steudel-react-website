@@ -38,6 +38,7 @@ export class SwimWorkout{
     yardage: number = 0;
     difficulty: string = "";
     date_created: string = "";
+    last_used?: string = "";
 }
 
 export class User{
