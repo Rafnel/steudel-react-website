@@ -9,6 +9,7 @@ import { observable } from "mobx";
 import updateLastUsed from "../../api/updateWorkoutUsedDate";
 import { AppStateStore } from "../../configuration/stateStores/appStateStore";
 import UserStateStore from "../../configuration/stateStores/userStateStore";
+import WorkoutActionsButton from "./WorkoutActionsButton";
 
 export interface SwimWorkoutProps extends RouteComponentProps<any>{
     workout: SwimWorkout;
@@ -16,15 +17,23 @@ export interface SwimWorkoutProps extends RouteComponentProps<any>{
     userState?: UserStateStore;
 }
 
+export interface WorkoutState{
+    workout: any;
+    downloadPressed: boolean;
+    markingComplete: boolean;
+    last_used: string;
+}
+
 //updated
 @inject("appState", "userState")
 @observer
 class SwimWorkoutComponent extends React.Component<SwimWorkoutProps>{
-    workout: any;
-    //this state variable will be used to hide the download button in the downloaded pdf.
-    @observable downloadPressed: boolean = false;
-    @observable markingComplete: boolean = false;
-    @observable last_used: string = this.props.workout.last_used ? this.props.workout.last_used : "----";
+    @observable workoutState: WorkoutState = {
+        workout: {},
+        downloadPressed: false,
+        markingComplete: false,
+        last_used: this.props.workout.last_used ? this.props.workout.last_used : "----"
+    }
 
     get userState(){
         return this.props.userState as UserStateStore;
@@ -32,22 +41,6 @@ class SwimWorkoutComponent extends React.Component<SwimWorkoutProps>{
 
     get appState(){
         return this.props.appState as AppStateStore;
-    }
-
-    //downloads the workout to user's device
-    exportWorkoutPDF = () => {
-        this.downloadPressed = true;
-        setTimeout(() => {
-            this.workout.save();
-            this.downloadPressed = false;
-        }, 50)
-    }
-
-    markWorkoutUsed = async () => {
-        this.markingComplete = true;
-        await updateLastUsed(this.props.workout.workout_id, this.userState.currentUser.username);
-        this.last_used = new Date().toLocaleString("en-US", {timeZone: "America/Chicago"}).toString();
-        this.markingComplete = false;
     }
 
     getWorkoutSections(){
@@ -79,29 +72,6 @@ class SwimWorkoutComponent extends React.Component<SwimWorkoutProps>{
         )
     }
 
-    exportButton(){
-        return(
-            <div>
-                <Button
-                    onClick = {() => this.exportWorkoutPDF()}
-                    style = {{textTransform: "initial", display: "inline-block"}}
-                >
-                    Download
-                </Button>
-
-                {this.props.workout.username === this.userState.currentUser.username && 
-                    <Button
-                        onClick = {() => this.markWorkoutUsed()}
-                        disabled = {this.markingComplete}
-                        style = {{textTransform: "initial", display: "inline-block"}}
-                    >
-                        Mark as Used
-                    </Button>
-                }
-            </div>
-        )
-    }
-
     returnWorkout(){
         return(
             <Paper
@@ -124,15 +94,15 @@ class SwimWorkoutComponent extends React.Component<SwimWorkoutProps>{
                     {this.linkButton()} 
                 </div>
 
-                {!this.downloadPressed && 
+                {!this.workoutState.downloadPressed && 
                     <div style = {{position: "absolute", bottom: 0, left: 0}}>
-                        {this.exportButton()} 
+                        <WorkoutActionsButton workout = {this.props.workout} workoutState = {this.workoutState}/>
                     </div>
                 }
 
-                {!this.downloadPressed && this.props.workout.username === this.userState.currentUser.username && 
+                {!this.workoutState.downloadPressed && this.props.workout.username === this.userState.currentUser.username && 
                     <Typography variant = "caption" style = {{position: "absolute", bottom: 10, right: 10}}>
-                        &nbsp; Last used: {this.last_used}
+                        &nbsp; Last used: {this.workoutState.last_used}
                     </Typography>
                 }
             </Paper>
@@ -147,7 +117,7 @@ class SwimWorkoutComponent extends React.Component<SwimWorkoutProps>{
                 title = ""
                 subject = ""
                 keywords = ""
-                ref = {(r) => this.workout = r}
+                ref = {(r) => this.workoutState.workout = r}
             >
                 {this.returnWorkout()}
             </PDFExport>
