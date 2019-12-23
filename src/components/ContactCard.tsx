@@ -1,5 +1,6 @@
 import React from "react";
 import { Card, CardHeader, CardContent, Icon, Typography, Grid, Button, CardMedia, CardActions } from "@material-ui/core";
+import { url } from "inspector";
 
 
 //updated
@@ -41,6 +42,11 @@ export default class ContactCard extends React.Component{
                         <Icon>code</Icon>
                         &nbsp;GitHub
                     </Button>
+
+                    <a style = {{display: "inline-block", backgroundColor: "#FC4C02", color: "#fff", padding: "5px 10px 5px 30px", fontSize: "11px", fontFamily: "Helvetica, Arial, sans-serif", whiteSpace: "nowrap", textDecoration: "none", backgroundRepeat: "no-repeat", backgroundPosition: "10px center", borderRadius: "3px", backgroundImage:"url('http://badges.strava.com/logo-strava-echelon.png')"}} href='http://strava.com/athletes/48677897' target="_clean">
+                        Follow me on
+                        <img src='http://badges.strava.com/logo-strava.png' alt='Strava' style = {{marginLeft: "2px", verticalAlign: "text-bottom"}} height = {13} width = {51} />
+                    </a>
                 </CardActions>
             </Card>
         )
