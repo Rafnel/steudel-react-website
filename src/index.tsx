@@ -12,6 +12,7 @@ import { Provider } from 'mobx-react';
 import UIStateStore from './configuration/stateStores/uiStateStore';
 import UserStateStore from './configuration/stateStores/userStateStore';
 import { AppStateStore } from './configuration/stateStores/appStateStore';
+import AddFolderModalStateStore from './configuration/stateStores/addFolderModalStateStore';
 
 export const PRIMARY = green[900];
 export const SECONDARY = green[200];
@@ -43,7 +44,12 @@ const theme = createMuiTheme({
 
 ReactDOM.render(
   <BrowserRouter>
-    <Provider uiState = {new UIStateStore()} userState = {new UserStateStore()} appState = {new AppStateStore()}>
+    <Provider 
+      uiState = {new UIStateStore()} 
+      userState = {new UserStateStore()} 
+      appState = {new AppStateStore()}
+      addFolderModalState = {new AddFolderModalStateStore()}
+    >
       <ThemeProvider theme = {theme}>
         <LoadingPage/>
         <App/>

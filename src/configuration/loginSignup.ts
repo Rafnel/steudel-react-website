@@ -29,6 +29,11 @@ Amplify.configure({
           name: "swimWorkouts",
           endpoint: config.apiGateway.URL,
           region: config.apiGateway.REGION
+        },
+        {
+          name: "swimFolders",
+          endpoint: config.apiGateway.URL,
+          region: config.apiGateway.REGION
         }
       ]
     }

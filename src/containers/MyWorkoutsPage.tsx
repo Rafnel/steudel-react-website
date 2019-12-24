@@ -5,6 +5,7 @@ import SwimWorkoutComponent from "../components/swimWorkoutsDisplay/SwimWorkout"
 import { AppStateStore } from "../configuration/stateStores/appStateStore";
 import UserStateStore from "../configuration/stateStores/userStateStore";
 import getAllWorkoutsFromUser from "../api/getAllWorkoutsFromUser";
+import FoldersContainer from "../components/swimFolders/FoldersContainer";
 
 export interface MyWorkoutsPageProps{
     appState?: AppStateStore;
@@ -40,22 +41,18 @@ export default class MyWorkoutsPage extends React.Component<MyWorkoutsPageProps>
         return(
             <Grid direction = "column" container justify = "center" alignItems = "center" spacing = {2}>
                 <Grid item>
-                    <Typography variant = "h2">
-                        Your Created Workouts
-                    </Typography>
-                </Grid>
-
-                <Grid item>
-                    <Typography variant = "body1">
-                        This page will contain all workouts that you have created.<br/>
-                        If you click a workout, you can get a direct link to it,<br/>
-                        and you can export it as a PDF.
-                    </Typography>
+                    <FoldersContainer folder = "main" username = {this.userState.currentUser.username}/>
                 </Grid>
 
                 <Grid item>
                     <Paper style = {{padding: 10}}>
                         <Grid container direction = "column" alignItems = "center" justify = "center" spacing = {2}>
+                            <Grid item>
+                                <Typography variant = "h6">
+                                    All Workouts
+                                </Typography>
+                            </Grid>
+
                             {this.appState.isLoading && <CircularProgress/>}
 
                             {!this.appState.isLoading && this.renderUserWorkouts()}

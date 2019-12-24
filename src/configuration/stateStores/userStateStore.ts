@@ -1,5 +1,5 @@
 import { observable, action } from "mobx";
-import { User, SwimWorkout, SwimComponent } from "../appState";
+import { User, SwimWorkout, SwimComponent, SwimFolder } from "../appState";
 
 
 
@@ -16,6 +16,7 @@ export default class UserStateStore{
     //swim workouts that the user has created
     @observable mySwimWorkouts: SwimWorkout[] = [];
     @observable mySwimComponents: SwimComponent[] = [];
+    @observable mySwimFolders: SwimFolder[] = [];
     @observable needToUpdateSwimWorkouts: boolean = true;
     @observable needToUpdateSwimComponents: boolean = true;
 

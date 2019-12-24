@@ -41,6 +41,14 @@ export class SwimWorkout{
     last_used?: string = "";
 }
 
+export class SwimFolder{
+    owner_username: string = "";
+    folder_name: string = "";
+    parent: string = "";
+    workouts: string[] = [];
+    folders: string[] = [];
+}
+
 export class User{
     username: string = "";
     liked_components: string[] = [];
