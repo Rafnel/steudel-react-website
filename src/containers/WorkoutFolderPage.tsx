@@ -4,35 +4,39 @@ import React from "react";
 import SwimWorkoutComponent from "../components/swimWorkoutsDisplay/SwimWorkout";
 import { AppStateStore } from "../configuration/stateStores/appStateStore";
 import UserStateStore from "../configuration/stateStores/userStateStore";
+import getAllWorkoutsFromUser from "../api/getAllWorkoutsFromUser";
 import FoldersContainer from "../components/swimFolders/FoldersContainer";
 import { SwimWorkout, SwimFolder } from "../configuration/appState";
+import { workoutInFolders } from "./MyWorkoutsPage";
+import { observable } from "mobx";
 import getSwimFolder from "../api/getSwimWorkoutFolder";
-import { getWorkoutsInFolder } from "./WorkoutFolderPage";
 import getWorkoutByID from "../api/getWorkoutByID";
 
-export interface MyWorkoutsPageProps{
+export interface WorkoutFolderPageProps{
     appState?: AppStateStore;
     userState?: UserStateStore;
+    username: string;
+    folder_name: string;
 }
 
-//function returns true if the workout is in one of the folders, false if not.
-export function workoutInFolders(folders: SwimFolder[], workout: SwimWorkout): boolean{
-    let folderKey = workout.username + "," + workout.workout_id;
-    for(let i = 0; i < folders.length; i++){
-        if(folders[i].workouts.includes(folderKey)){
-            //this workout is in a folder.
-            return true;
-        }
+export async function getWorkoutsInFolder(folder: SwimFolder): Promise<SwimWorkout[]>{
+    let workouts: SwimWorkout[] = [];
+    
+    for(let i = 0; i < folder.workouts.length; i++){
+        const uName = folder.workouts[i].split(",")[0];
+        const id = folder.workouts[i].split(",")[1];
+        workouts.push(await getWorkoutByID(uName, id));
     }
 
-    //this workout is not in a folder.
-    return false;
+    return workouts;
 }
 
 //updated
 @inject("appState", "userState")
 @observer
-export default class MyWorkoutsPage extends React.Component<MyWorkoutsPageProps>{
+export default class WorkoutFolderPage extends React.Component<WorkoutFolderPageProps>{
+    @observable loading: boolean = true;
+
     get userState(){
         return this.props.userState as UserStateStore;
     }
@@ -43,7 +47,6 @@ export default class MyWorkoutsPage extends React.Component<MyWorkoutsPageProps>
 
     renderUserWorkouts(){
         console.log(":: Creating user workout components...");
-        //filter the workouts that are in a folder out so that they don't show in the main directory.
         const workouts = this.userState.currentDirWorkouts.map(workout => <Grid item key = {workout.workout_id}> <SwimWorkoutComponent workout = {workout}/> </Grid>);
         if(workouts.length === 0){
             return <Typography variant = "body1"> No workouts! </Typography>
@@ -54,7 +57,7 @@ export default class MyWorkoutsPage extends React.Component<MyWorkoutsPageProps>
         return(
             <Grid direction = "column" container justify = "center" alignItems = "center" spacing = {2}>
                 <Grid item>
-                    <FoldersContainer folder = "main" username = {this.userState.currentUser.username}/>
+                    <FoldersContainer folder = {this.props.folder_name} username = {this.props.username}/>
                 </Grid>
 
                 <Grid item>
@@ -62,13 +65,13 @@ export default class MyWorkoutsPage extends React.Component<MyWorkoutsPageProps>
                         <Grid container direction = "column" alignItems = "center" justify = "center" spacing = {2}>
                             <Grid item>
                                 <Typography variant = "h6">
-                                    Workouts in the Main Directory ({this.userState.currentDirWorkouts.length})
+                                    Workouts in {this.props.username}'s {this.props.folder_name} Folder ({this.userState.currentFolder.workouts.length})
                                 </Typography>
                             </Grid>
 
-                            {this.renderUserWorkouts()}
+                            {!this.loading && this.renderUserWorkouts()}
 
-                            {this.appState.isLoading && <CircularProgress/>}
+                            {this.loading && <CircularProgress/>}
                         </Grid>
                     </Paper>
                 </Grid>
@@ -77,19 +80,14 @@ export default class MyWorkoutsPage extends React.Component<MyWorkoutsPageProps>
     }
 
     async componentDidMount(){
-        this.appState.isLoading = true;
         //get the folder.
-        const resp = await getSwimFolder(this.userState.currentUser.username, "main");
+        const resp = await getSwimFolder(this.props.username, this.props.folder_name);
         this.userState.currentFolder = resp[0];
         console.log(JSON.stringify(this.userState.currentFolder));
 
         //get each workout in the folder.
-        for(let i = 0; i < this.userState.currentFolder.workouts.length; i++){
-            const uName = this.userState.currentFolder.workouts[i].split(",")[0];
-            const id = this.userState.currentFolder.workouts[i].split(",")[1];
-            this.userState.currentDirWorkouts.push(await getWorkoutByID(uName, id));
-        }
+        this.userState.currentDirWorkouts = await getWorkoutsInFolder(this.userState.currentFolder);
 
-        this.appState.isLoading = false;
+        this.loading = false;
     }
 }

@@ -6,11 +6,12 @@ import UIStateStore from "../../configuration/stateStores/uiStateStore";
 import { inject, observer } from "mobx-react";
 import UserStateStore from "../../configuration/stateStores/userStateStore";
 import { AppStateStore } from "../../configuration/stateStores/appStateStore";
-import { logOut } from "../../configuration/cognitoAPI";
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { WorkoutState } from "./SwimWorkout";
 import updateLastUsed from "../../api/updateWorkoutUsedDate";
 import { SwimWorkout } from "../../configuration/appState";
+import AddWorkoutToFoldersModal from "../swimFolders/AddWorkoutToFoldersModal";
+import { observable } from "mobx";
 
 export interface WorkoutActionButtonState{
     popperOpen: boolean;
@@ -26,9 +27,13 @@ export interface WorkoutActionButtonProps{
 }
 
 //updated
-@inject("uiState", "appState", "userState")
+@inject("uiState", "appState", "userState", "addFolderModalState")
 @observer
 class WorkoutActionButton extends React.Component<RouteComponentProps<any> & WorkoutActionButtonProps, WorkoutActionButtonState>{
+    @observable modalState = {
+        open: false
+    }
+
     constructor(props: RouteComponentProps<any> & WorkoutActionButtonProps){
         super(props);
 
@@ -88,6 +93,12 @@ class WorkoutActionButton extends React.Component<RouteComponentProps<any> & Wor
                                 Mark as Used
                             </MenuItem>
                         }
+
+                        {this.props.workout.username === this.userState.currentUser.username &&
+                            <MenuItem onClick = {() => this.modalState.open = true}>
+                                Manage Folders for this Workout
+                            </MenuItem>
+                        }
                     </MenuList>
                 </ClickAwayListener>
             </Paper>
@@ -119,8 +130,9 @@ class WorkoutActionButton extends React.Component<RouteComponentProps<any> & Wor
                         </Fade>
                     )}
                 </Popper>
+
+                <AddWorkoutToFoldersModal workout = {this.props.workout} modalState = {this.modalState}/>
             </Fragment>
-            
         )
     }
 }

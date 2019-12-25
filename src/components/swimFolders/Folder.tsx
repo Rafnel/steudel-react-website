@@ -50,6 +50,10 @@ class Folder extends React.Component<FolderProps>{
         this.deleting = false;
     }
 
+    handleView = () => {
+        this.props.history.push("/folder/" + this.props.folder.owner_username + "/" + this.props.folder.folder_name);
+    }
+
     render(){
         return(
             <Paper style = {{backgroundColor: green[50]}}>
@@ -66,7 +70,7 @@ class Folder extends React.Component<FolderProps>{
 
                     <Grid style = {{paddingLeft: 10, paddingRight: 10}} container item direction = "row" spacing = {1}>
                         <Grid item>
-                            <Button variant = "outlined" style = {{textTransform: "initial"}}>
+                            <Button onClick = {this.handleView} variant = "outlined" style = {{textTransform: "initial"}}>
                                 View Folder
                             </Button>
                         </Grid>

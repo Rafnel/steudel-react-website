@@ -12,6 +12,8 @@ import AddIcon from '@material-ui/icons/Add';
 import AddFolderModalStateStore from "../../configuration/stateStores/addFolderModalStateStore";
 import UIStateStore from "../../configuration/stateStores/uiStateStore";
 import addNewSwimFolder from "../../api/addNewSwimFolder";
+import getChildFolders from "../../api/getChildFolders";
+import getSwimFoldersOfUser from "../../api/getSwimFoldersOfUser";
 
 export interface AddFolderModalProps extends RouteComponentProps<any>{
     appState?: AppStateStore;
@@ -65,7 +67,8 @@ class AddFolderModal extends React.Component<AddFolderModalProps>{
             return;
         }
         else{
-            this.userState.mySwimFolders = await getSwimFolder(this.props.username, this.props.folder);
+            this.userState.childFoldersOfCurrent = await getChildFolders(this.props.username, this.props.folder);
+            this.userState.mySwimFolders = await getSwimFoldersOfUser(this.props.username);
             this.uiState.setSuccessMessage("Successfully added your folder!");
         }
 

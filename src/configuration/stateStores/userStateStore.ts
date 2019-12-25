@@ -17,6 +17,14 @@ export default class UserStateStore{
     @observable mySwimWorkouts: SwimWorkout[] = [];
     @observable mySwimComponents: SwimComponent[] = [];
     @observable mySwimFolders: SwimFolder[] = [];
+
+    //workouts/folders in the current page the user is on.
+    @observable currentDirFolders: SwimFolder[] = [];
+    @observable currentDirWorkouts: SwimWorkout[] = [];
+    @observable currentFolder: SwimFolder = new SwimFolder();
+    @observable childFoldersOfCurrent: SwimFolder[] = [];
+
+    @observable needToUpdateFolders: boolean = true;
     @observable needToUpdateSwimWorkouts: boolean = true;
     @observable needToUpdateSwimComponents: boolean = true;
 

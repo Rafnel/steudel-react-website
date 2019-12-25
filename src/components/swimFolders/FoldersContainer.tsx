@@ -11,6 +11,7 @@ import Folder from "./Folder";
 import AddIcon from '@material-ui/icons/Add';
 import AddFolderModalStateStore from "../../configuration/stateStores/addFolderModalStateStore";
 import AddFolderModal from "./AddFolderModal";
+import getChildFolders from "../../api/getChildFolders";
 
 export interface FoldersContainerProps extends RouteComponentProps<any>{
     appState?: AppStateStore;
@@ -44,10 +45,20 @@ class FoldersContainer extends React.Component<FoldersContainerProps>{
     returnFolders = () => {
         let folders = [];
 
-        for(let i = 0; i < this.userState.mySwimFolders.length; i++){
+        for(let i = 0; i < this.userState.childFoldersOfCurrent.length; i++){
             folders.push(
-                <Grid item>
-                    <Folder folder = {this.userState.mySwimFolders[i]}/>
+                <Grid key = {this.userState.childFoldersOfCurrent[i].folder_name} item>
+                    <Folder folder = {this.userState.childFoldersOfCurrent[i]}/>
+                </Grid>
+            )
+        }
+
+        if(folders.length === 0){
+            folders.push(
+                <Grid key = {0} item>
+                    <Typography>
+                        No child folders!
+                    </Typography>
                 </Grid>
             )
         }
@@ -99,7 +110,7 @@ class FoldersContainer extends React.Component<FoldersContainerProps>{
     }
 
     async componentDidMount(){
-        this.userState.mySwimFolders = await getSwimFolder(this.props.username, this.props.folder);
+        this.userState.childFoldersOfCurrent = await getChildFolders(this.props.username, this.props.folder);
         this.loadingFolders = false;
     }
 }

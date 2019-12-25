@@ -12,6 +12,7 @@ import MyWorkoutsPage from "./MyWorkoutsPage";
 import SingleWorkoutPage from "./SingleWorkoutPage";
 import { observer, inject } from "mobx-react";
 import { AppStateStore } from "../configuration/stateStores/appStateStore";
+import WorkoutFolderPage from "./WorkoutFolderPage";
 
 export interface RoutesProps{
   appState?: AppStateStore;
@@ -35,6 +36,11 @@ export default class Routes extends React.Component<RoutesProps>{
           && 
           <Route path="/workout/:username/:id" exact render = {(props) => {
             return <SingleWorkoutPage username = {props.match.params.username} workoutID = {props.match.params.id}/>
+          }}/>}
+        {this.appState.isLoggedIn 
+          && 
+          <Route path="/folder/:username/:folder" exact render = {(props) => {
+            return <WorkoutFolderPage username = {props.match.params.username} folder_name = {props.match.params.folder}/>
           }}/>}
         {!this.appState.isLoggedIn && 
           <Route path="/workout/:username/:id" exact render = {(props) => {
