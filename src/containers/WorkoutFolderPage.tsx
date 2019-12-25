@@ -11,6 +11,7 @@ import { workoutInFolders } from "./MyWorkoutsPage";
 import { observable } from "mobx";
 import getSwimFolder from "../api/getSwimWorkoutFolder";
 import getWorkoutByID from "../api/getWorkoutByID";
+import getChildFolders from "../api/getChildFolders";
 
 export interface WorkoutFolderPageProps{
     appState?: AppStateStore;
@@ -29,6 +30,17 @@ export async function getWorkoutsInFolder(folder: SwimFolder): Promise<SwimWorko
     }
 
     return workouts;
+}
+
+export async function updateFolderPage(owner_username: string, folder_name: string, userState: UserStateStore){
+    //get the folder.
+    const resp = await getSwimFolder(owner_username, folder_name);
+    userState.currentFolder = resp[0];
+    console.log(JSON.stringify(userState.currentFolder));
+    userState.childFoldersOfCurrent = await getChildFolders(owner_username, folder_name);
+
+    //get each workout in the folder.
+    userState.currentDirWorkouts = await getWorkoutsInFolder(userState.currentFolder);
 }
 
 //updated

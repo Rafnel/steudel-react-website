@@ -12,18 +12,24 @@ import MyWorkoutsPage from "./MyWorkoutsPage";
 import SingleWorkoutPage from "./SingleWorkoutPage";
 import { observer, inject } from "mobx-react";
 import { AppStateStore } from "../configuration/stateStores/appStateStore";
-import WorkoutFolderPage from "./WorkoutFolderPage";
+import WorkoutFolderPage, { updateFolderPage } from "./WorkoutFolderPage";
+import UserStateStore from "../configuration/stateStores/userStateStore";
 
 export interface RoutesProps{
   appState?: AppStateStore;
+  userState?: UserStateStore;
 }
 
 //updated
-@inject("appState")
+@inject("appState", "userState")
 @observer
 export default class Routes extends React.Component<RoutesProps>{
   get appState(){
     return this.props.appState as AppStateStore;
+  }
+
+  get userState(){
+    return this.props.userState as UserStateStore;
   }
 
   render(){
@@ -40,6 +46,7 @@ export default class Routes extends React.Component<RoutesProps>{
         {this.appState.isLoggedIn 
           && 
           <Route path="/folder/:username/:folder" exact render = {(props) => {
+            updateFolderPage(props.match.params.username, props.match.params.folder, this.userState);
             return <WorkoutFolderPage username = {props.match.params.username} folder_name = {props.match.params.folder}/>
           }}/>}
         {!this.appState.isLoggedIn && 

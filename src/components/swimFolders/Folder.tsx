@@ -94,12 +94,6 @@ class Folder extends React.Component<FolderProps>{
                             Workouts in This Folder: {this.props.folder.workouts.length}
                         </Typography>
                     </Grid>
-
-                    <Grid style = {{padding: 10}} item>
-                        <Typography variant = "caption">
-                            Folders in This Folder: {this.props.folder.folders.length}
-                        </Typography>
-                    </Grid>
                 </Grid>
             </Paper>
         )
