@@ -9,6 +9,7 @@ import UIStateStore from "../configuration/stateStores/uiStateStore";
 import UserStateStore from "../configuration/stateStores/userStateStore";
 import { AppStateStore } from "../configuration/stateStores/appStateStore";
 import { signUserIn } from "../configuration/cognitoAPI";
+import addNewSwimFolder from "../api/addNewSwimFolder";
 
 export interface LoginPageProps{
     uiState?: UIStateStore;
@@ -56,6 +57,8 @@ class LoginPage extends React.Component<RouteComponentProps<any> & LoginPageProp
             //login succeeded, change the state
             this.uiState.setSuccessMessage("Welcome back " + loginStatusObject.user.username + "!");
             this.userState.currentUser = loginStatusObject.user;
+            //ensure that they have a main folder for workouts.
+            await addNewSwimFolder(this.userState.currentUser.username, "main", "none");
 
             if(this.appState.redirectAfterLogin !== ""){
                 //if we are to redirect the user somewhere, redirect them here.

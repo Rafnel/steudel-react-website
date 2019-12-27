@@ -12,10 +12,13 @@ import { observable } from "mobx";
 import getSwimFolder from "../api/getSwimWorkoutFolder";
 import getWorkoutByID from "../api/getWorkoutByID";
 import getChildFolders from "../api/getChildFolders";
+import UIStateStore from "../configuration/stateStores/uiStateStore";
+import { withRouter, RouteComponentProps } from "react-router-dom";
 
-export interface WorkoutFolderPageProps{
+export interface WorkoutFolderPageProps extends RouteComponentProps<any>{
     appState?: AppStateStore;
     userState?: UserStateStore;
+    uiState?: UIStateStore;
     username: string;
     folder_name: string;
 }
@@ -35,6 +38,9 @@ export async function getWorkoutsInFolder(folder: SwimFolder): Promise<SwimWorko
 export async function updateFolderPage(owner_username: string, folder_name: string, userState: UserStateStore){
     //get the folder.
     const resp = await getSwimFolder(owner_username, folder_name);
+    if(resp.length === 0){
+        return;
+    }
     userState.currentFolder = resp[0];
     console.log(JSON.stringify(userState.currentFolder));
     userState.childFoldersOfCurrent = await getChildFolders(owner_username, folder_name);
@@ -44,10 +50,11 @@ export async function updateFolderPage(owner_username: string, folder_name: stri
 }
 
 //updated
-@inject("appState", "userState")
+@inject("appState", "userState", "uiState")
 @observer
-export default class WorkoutFolderPage extends React.Component<WorkoutFolderPageProps>{
+class WorkoutFolderPage extends React.Component<WorkoutFolderPageProps>{
     @observable loading: boolean = true;
+    @observable loadingNum: boolean = true;
 
     get userState(){
         return this.props.userState as UserStateStore;
@@ -55,6 +62,10 @@ export default class WorkoutFolderPage extends React.Component<WorkoutFolderPage
 
     get appState(){
         return this.props.appState as AppStateStore;
+    }
+
+    get uiState(){
+        return this.props.uiState as UIStateStore;
     }
 
     renderUserWorkouts(){
@@ -76,9 +87,17 @@ export default class WorkoutFolderPage extends React.Component<WorkoutFolderPage
                     <Paper style = {{padding: 10}}>
                         <Grid container direction = "column" alignItems = "center" justify = "center" spacing = {2}>
                             <Grid item>
-                                <Typography variant = "h6">
-                                    Workouts in {this.props.username}'s {this.props.folder_name} Folder ({this.userState.currentFolder.workouts.length})
-                                </Typography>
+                                {!this.loadingNum && 
+                                    <Typography variant = "h6">
+                                        Workouts in {this.props.username}'s {this.props.folder_name} Folder ({this.userState.currentFolder.workouts.length})
+                                    </Typography>
+                                }
+                                {this.loadingNum && 
+                                    <Typography variant = "h6">
+                                        Workouts in {this.props.username}'s {this.props.folder_name} Folder
+                                    </Typography>
+                                }
+                                
                             </Grid>
 
                             {!this.loading && this.renderUserWorkouts()}
@@ -94,7 +113,13 @@ export default class WorkoutFolderPage extends React.Component<WorkoutFolderPage
     async componentDidMount(){
         //get the folder.
         const resp = await getSwimFolder(this.props.username, this.props.folder_name);
+        if(resp.length === 0){
+            this.uiState.setErrorMessage("A folder with this name does not exist.");
+            this.props.history.push("/");
+            return;
+        }
         this.userState.currentFolder = resp[0];
+        this.loadingNum = false;
         console.log(JSON.stringify(this.userState.currentFolder));
 
         //get each workout in the folder.
@@ -103,3 +128,5 @@ export default class WorkoutFolderPage extends React.Component<WorkoutFolderPage
         this.loading = false;
     }
 }
+
+export default withRouter<WorkoutFolderPageProps, any>(WorkoutFolderPage);

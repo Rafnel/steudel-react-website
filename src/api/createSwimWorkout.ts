@@ -2,10 +2,10 @@ import { API } from "aws-amplify";
 import { SwimWorkout } from "../configuration/appState";
 
 //adds a swim workout
-export default async function createSwimWorkout(swimWorkout: SwimWorkout): Promise<boolean>{
+export default async function createSwimWorkout(swimWorkout: SwimWorkout){
     try{
         console.log(":: adding workout from user" + swimWorkout.username + " to db...");
-        await API.post("swimWorkouts", "/workouts", {
+        const result = await API.post("swimWorkouts", "/workouts", {
             body: {
                 username: swimWorkout.username,
                 warmup: swimWorkout.warmup,
@@ -17,7 +17,8 @@ export default async function createSwimWorkout(swimWorkout: SwimWorkout): Promi
             }
         });
         console.log(":: workout from user " + swimWorkout.username + " added successfully to db.");
-        return true;
+        console.log(JSON.stringify(result));
+        return result;
     }
     catch(e){
         console.log(e.message);

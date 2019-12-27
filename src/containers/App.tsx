@@ -9,6 +9,7 @@ import UIStateStore from '../configuration/stateStores/uiStateStore';
 import { AppStateStore } from '../configuration/stateStores/appStateStore';
 import { checkUserLoggedIn } from '../configuration/cognitoAPI';
 import UserStateStore from '../configuration/stateStores/userStateStore';
+import addNewSwimFolder from '../api/addNewSwimFolder';
 
 export interface AppProps{
   uiState?: UIStateStore;
@@ -54,6 +55,8 @@ class App extends React.Component<RouteComponentProps<any> & AppProps>{
       //there is a user logged in.
       this.appState.isLoggedIn = true;
       this.userState.currentUser = sessionStatus.user;
+      //ensure that they have a main folder for workouts.
+      await addNewSwimFolder(this.userState.currentUser.username, "main", "none");
     }
 
     this.appState.isAuthenticating = false;

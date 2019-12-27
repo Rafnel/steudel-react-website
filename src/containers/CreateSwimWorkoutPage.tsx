@@ -10,6 +10,9 @@ import createSwimWorkout from "../api/createSwimWorkout";
 import { AppStateStore } from "../configuration/stateStores/appStateStore";
 import UIStateStore from "../configuration/stateStores/uiStateStore";
 import UserStateStore from "../configuration/stateStores/userStateStore";
+import addNewSwimFolder from "../api/addNewSwimFolder";
+import getSwimFolder from "../api/getSwimWorkoutFolder";
+import updateSwimWorkoutFolder from "../api/updateSwimWorkoutFolder";
 
 export class SwimWorkoutPageStore{
     //the list of swim components used by child components on this page
@@ -117,6 +120,7 @@ export default class CreateSwimWorkoutPage extends React.Component<CreateSwimWor
             if(potentialCompID === ""){
                 //this component was not a duplicate
                 //save the component
+                componentsToSave[i].username = this.userState.currentUser.username;
                 let comp: SwimComponent = await createSwimComponent(componentsToSave[i]);
                 //add it to the list for the workout.
                 componentIDs.push(comp.username + "," + comp.component_id);
@@ -150,9 +154,16 @@ export default class CreateSwimWorkoutPage extends React.Component<CreateSwimWor
         }
 
         //finally, add the swim workout to the database.
-        const success: boolean = await createSwimWorkout(workout);
+        const result = await createSwimWorkout(workout);
 
-        if(success){
+        //add this workout to main folder.
+        let folder = await getSwimFolder(this.userState.currentUser.username, "main");
+        folder = folder[0]
+        folder.workouts.push(this.userState.currentUser.username + "," + result.workout_id);
+        await updateSwimWorkoutFolder(folder);
+        
+
+        if(result){
             this.userState.needToUpdateSwimComponents = true;
             this.userState.needToUpdateSwimWorkouts = true;
             this.uiState.successMessage = "Your workout has been created successfully!";

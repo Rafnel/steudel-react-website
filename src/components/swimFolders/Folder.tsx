@@ -11,6 +11,8 @@ import { observable } from "mobx";
 import deleteSwimFolder from "../../api/deleteSwimFolder";
 import UIStateStore from "../../configuration/stateStores/uiStateStore";
 import getSwimFolder from "../../api/getSwimWorkoutFolder";
+import getSwimFoldersOfUser from "../../api/getSwimFoldersOfUser";
+import getChildFolders from "../../api/getChildFolders";
 
 export interface FolderProps extends RouteComponentProps<any>{
     appState?: AppStateStore;
@@ -39,12 +41,18 @@ class Folder extends React.Component<FolderProps>{
 
     handleDelete = async () => {
         this.deleting = true;
+        if(this.props.folder.workouts.length > 0 || this.props.folder.folders.length > 0){
+            this.uiState.setErrorMessage("Can not delete folders with other folders / workouts inside them.");
+            this.deleting = false;
+            return;
+        }
         const result = await deleteSwimFolder(this.props.folder.owner_username, this.props.folder.folder_name);
         if(!result){
             this.uiState.setErrorMessage("Folder could not be deleted.");
         }
         else{
-            this.userState.mySwimFolders = await getSwimFolder(this.props.folder.owner_username, this.props.folder.parent);
+            this.userState.mySwimFolders = await getSwimFoldersOfUser(this.props.folder.owner_username);
+            this.userState.childFoldersOfCurrent = await getChildFolders(this.props.folder.owner_username, this.props.folder.parent)
             this.uiState.setSuccessMessage("Folder deleted successfully.");
         }
         this.deleting = false;

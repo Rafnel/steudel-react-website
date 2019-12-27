@@ -9,6 +9,7 @@ import { SwimWorkout, SwimFolder } from "../configuration/appState";
 import getSwimFolder from "../api/getSwimWorkoutFolder";
 import { getWorkoutsInFolder } from "./WorkoutFolderPage";
 import getWorkoutByID from "../api/getWorkoutByID";
+import addNewSwimFolder from "../api/addNewSwimFolder";
 
 export interface MyWorkoutsPageProps{
     appState?: AppStateStore;
@@ -78,6 +79,10 @@ export default class MyWorkoutsPage extends React.Component<MyWorkoutsPageProps>
 
     async componentDidMount(){
         this.appState.isLoading = true;
+        //first, clear the current workouts so we don't get duplicates.
+        this.userState.currentDirWorkouts = [];
+        //ensure that they have a main folder for workouts.
+        await addNewSwimFolder(this.userState.currentUser.username, "main", "none");
         //get the folder.
         const resp = await getSwimFolder(this.userState.currentUser.username, "main");
         this.userState.currentFolder = resp[0];
