@@ -46,7 +46,7 @@ export async function updateFolderPage(owner_username: string, folder_name: stri
     userState.childFoldersOfCurrent = await getChildFolders(owner_username, folder_name);
 
     //get each workout in the folder.
-    userState.currentDirWorkouts = await getWorkoutsInFolder(userState.currentFolder);
+    //await getWorkoutsInFolder(userState.currentFolder);
 }
 
 //updated
@@ -89,7 +89,7 @@ class WorkoutFolderPage extends React.Component<WorkoutFolderPageProps>{
                             <Grid item>
                                 {!this.loadingNum && 
                                     <Typography variant = "h6">
-                                        Workouts in {this.props.username}'s {this.props.folder_name} Folder ({this.userState.currentFolder.workouts.length})
+                                        Workouts in {this.props.username}'s {this.props.folder_name} Folder ({this.userState.currentDirWorkouts.length})
                                     </Typography>
                                 }
                                 {this.loadingNum && 
@@ -100,7 +100,7 @@ class WorkoutFolderPage extends React.Component<WorkoutFolderPageProps>{
                                 
                             </Grid>
 
-                            {!this.loading && this.renderUserWorkouts()}
+                            {this.renderUserWorkouts()}
 
                             {this.loading && <CircularProgress/>}
                         </Grid>
@@ -123,7 +123,12 @@ class WorkoutFolderPage extends React.Component<WorkoutFolderPageProps>{
         console.log(JSON.stringify(this.userState.currentFolder));
 
         //get each workout in the folder.
-        this.userState.currentDirWorkouts = await getWorkoutsInFolder(this.userState.currentFolder);
+        this.userState.currentDirWorkouts = [];
+        for(let i = 0; i < this.userState.currentFolder.workouts.length; i++){
+            const uName = this.userState.currentFolder.workouts[i].split(",")[0];
+            const id = this.userState.currentFolder.workouts[i].split(",")[1];
+            this.userState.currentDirWorkouts.push(await getWorkoutByID(uName, id));
+        }
 
         this.loading = false;
     }

@@ -9,6 +9,7 @@ export class AppStateStore{
     @observable isLoggedIn: boolean = false;
     @observable isAuthenticating: boolean = true;
     @observable redirectAfterLogin: string = "";
+    @observable pageChanged: boolean = false;
 
     @action resetState(){
         this.signedUp = false;

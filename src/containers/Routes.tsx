@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Switch, Redirect } from "react-router-dom";
+import { Route, Switch, Redirect, RouteComponentProps, withRouter } from "react-router-dom";
 import SignupPage from "./SignupPage";
 import LoginPage from "./LoginPage";
 import HomePage from "./HomePage";
@@ -14,6 +14,7 @@ import { observer, inject } from "mobx-react";
 import { AppStateStore } from "../configuration/stateStores/appStateStore";
 import WorkoutFolderPage, { updateFolderPage } from "./WorkoutFolderPage";
 import UserStateStore from "../configuration/stateStores/userStateStore";
+import NotFoundPage from "./NotFoundPage";
 
 export interface RoutesProps{
   appState?: AppStateStore;
@@ -23,7 +24,7 @@ export interface RoutesProps{
 //updated
 @inject("appState", "userState")
 @observer
-export default class Routes extends React.Component<RoutesProps>{
+class Routes extends React.Component<RoutesProps & RouteComponentProps<any>>{
   get appState(){
     return this.props.appState as AppStateStore;
   }
@@ -46,8 +47,8 @@ export default class Routes extends React.Component<RoutesProps>{
         {this.appState.isLoggedIn 
           && 
           <Route path="/folder/:username/:folder" exact render = {(props) => {
-            updateFolderPage(props.match.params.username, props.match.params.folder, this.userState);
-            return <WorkoutFolderPage username = {props.match.params.username} folder_name = {props.match.params.folder}/>
+            //updateFolderPage(props.match.params.username, props.match.params.folder, this.userState, this.appState);
+            return <WorkoutFolderPage key = {props.match.params.username + " " + props.match.params.folder} username = {props.match.params.username} folder_name = {props.match.params.folder}/>
           }}/>}
         {!this.appState.isLoggedIn && 
           <Route path="/workout/:username/:id" exact render = {(props) => {
@@ -74,8 +75,10 @@ export default class Routes extends React.Component<RoutesProps>{
          && 
          <Route path="/swim-components" exact render={() => <SwimComponentsPage/>}/>}
         { /* Finally, catch all unmatched routes */ }
-        <Route render = {() => <Redirect to = "/"/>} />
+        <Route render = {() => { return <NotFoundPage/> }} />
       </Switch>
     )
   }
 }
+
+export default withRouter<RoutesProps & RouteComponentProps<any>, any>(Routes);

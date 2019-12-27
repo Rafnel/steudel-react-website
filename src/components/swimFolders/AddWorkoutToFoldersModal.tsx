@@ -112,7 +112,7 @@ class AddWorkoutToFolderModal extends React.Component<AddWorkoutToFolderModalPro
 
         for(let i = 0; i < this.userState.mySwimFolders.length; i++){
             boxes.push(
-                <Grid item>
+                <Grid key = {this.userState.mySwimFolders[i].folder_name} item>
                     <FormControlLabel
                         control = {
                             <Checkbox
