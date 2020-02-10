@@ -76,7 +76,7 @@ class Folder extends React.Component<FolderProps>{
                         <Divider/>
                     </Grid>
 
-                    <Grid style = {{paddingLeft: 10, paddingRight: 10}} container item direction = "row" spacing = {1}>
+                    <Grid style = {{paddingLeft: 10, paddingRight: 10}} justify = "center" alignItems = "center" container item direction = "row" spacing = {1}>
                         <Grid item>
                             <Button onClick = {this.handleView} variant = "outlined" style = {{textTransform: "initial"}}>
                                 View Folder
@@ -97,7 +97,7 @@ class Folder extends React.Component<FolderProps>{
                         }
                     </Grid>
 
-                    <Grid item>
+                    <Grid style = {{paddingLeft: 10, paddingRight: 10}} item>
                         <Typography variant = "caption">
                             Workouts in This Folder: {this.props.folder.workouts.length}
                         </Typography>

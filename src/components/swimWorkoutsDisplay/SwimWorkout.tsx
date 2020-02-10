@@ -94,6 +94,12 @@ class SwimWorkoutComponent extends React.Component<SwimWorkoutProps>{
                     {this.linkButton()} 
                 </div>
 
+                {this.props.workout.username === "Rafnel" &&
+                    <div style = {{position: "absolute", bottom: 50, left: 50}}>
+                        <img height = "50" width = "40" src = {process.env.PUBLIC_URL + "/BU-white.png"} alt = "logo"/>
+                    </div>
+                }
+
                 {!this.workoutState.downloadPressed && 
                     <div style = {{position: "absolute", bottom: 0, left: 0}}>
                         <WorkoutActionsButton workout = {this.props.workout} workoutState = {this.workoutState}/>
