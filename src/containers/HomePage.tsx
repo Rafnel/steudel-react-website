@@ -26,7 +26,7 @@ class HomePage extends React.Component<RouteComponentProps<any> & HomePageProps>
 
                     <Typography>
                         <Link color = "inherit" href = "https://github.com/Rafnel/steudel-react-website">
-                            Version 1.61: 2020-02-10
+                            Version 1.62: 2020-02-12
                         </Link>
                     </Typography>
                 </Grid>

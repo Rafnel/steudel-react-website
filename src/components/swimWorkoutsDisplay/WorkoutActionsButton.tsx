@@ -67,8 +67,11 @@ class WorkoutActionButton extends React.Component<RouteComponentProps<any> & Wor
         this.props.workoutState.downloadPressed = true;
         setTimeout(() => {
             this.props.workoutState.workout.save();
-            this.props.workoutState.downloadPressed = false;
         }, 50)
+
+        setTimeout(() => {
+            this.props.workoutState.downloadPressed = false;
+        }, 150)
     }
 
     markWorkoutUsed = async () => {

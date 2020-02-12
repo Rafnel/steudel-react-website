@@ -96,7 +96,7 @@ class SwimWorkoutComponent extends React.Component<SwimWorkoutProps>{
 
                 {this.props.workout.username === "Rafnel" &&
                     <div style = {{position: "absolute", bottom: 50, left: 50}}>
-                        <img height = "50" width = "40" src = {process.env.PUBLIC_URL + "/BU-white.png"} alt = "logo"/>
+                        <img height = "50" width = "50" src = {process.env.PUBLIC_URL + "/BU-dark.png"} alt = "logo"/>
                     </div>
                 }
 
