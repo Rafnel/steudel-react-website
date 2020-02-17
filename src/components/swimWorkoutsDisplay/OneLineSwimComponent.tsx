@@ -13,11 +13,11 @@ export default class OneLineSwimComponent extends React.Component<OneLineSwimCom
     render(){
         return(
             <div style = {{width: "100%"}}>
-                <Typography style = {{display: "inline-block"}} variant = "body1">
+                <Typography style = {{display: "inline-block"}} variant = "body2">
                     {this.props.component.component_body.split("\n").map((line) => {return <Fragment>{line}<br/></Fragment>})}
                 </Typography>
 
-                <Typography style = {{float: "right", display: "inline-block"}} variant = "body1">
+                <Typography style = {{float: "right", display: "inline-block"}} variant = "body2">
                     <b>{this.props.component.intervals.join(" / ")}</b>
                 </Typography>
             </div>
