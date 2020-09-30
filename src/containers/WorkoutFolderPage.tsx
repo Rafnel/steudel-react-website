@@ -7,7 +7,7 @@ import UserStateStore from "../configuration/stateStores/userStateStore";
 import getAllWorkoutsFromUser from "../api/getAllWorkoutsFromUser";
 import FoldersContainer from "../components/swimFolders/FoldersContainer";
 import { SwimWorkout, SwimFolder } from "../configuration/appState";
-import { workoutInFolders } from "./MyWorkoutsPage";
+import { workoutInFolders } from "./WorkoutsPage";
 import { observable } from "mobx";
 import getSwimFolder from "../api/getSwimWorkoutFolder";
 import getWorkoutByID from "../api/getWorkoutByID";
@@ -79,6 +79,13 @@ class WorkoutFolderPage extends React.Component<WorkoutFolderPageProps>{
     render(){
         return(
             <Grid direction = "column" container justify = "center" alignItems = "center" spacing = {2}>
+                {this.props.username === "Rafnel" && 
+                    <Grid item>
+                        <Typography variant = "h4">
+                            Zac's Workouts
+                        </Typography>
+                    </Grid>
+                }
                 <Grid item>
                     <FoldersContainer folder = {this.props.folder_name} username = {this.props.username}/>
                 </Grid>

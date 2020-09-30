@@ -7,11 +7,10 @@ import UserStateStore from "../configuration/stateStores/userStateStore";
 import FoldersContainer from "../components/swimFolders/FoldersContainer";
 import { SwimWorkout, SwimFolder } from "../configuration/appState";
 import getSwimFolder from "../api/getSwimWorkoutFolder";
-import { getWorkoutsInFolder } from "./WorkoutFolderPage";
 import getWorkoutByID from "../api/getWorkoutByID";
 import addNewSwimFolder from "../api/addNewSwimFolder";
 
-export interface MyWorkoutsPageProps{
+export interface WorkoutsPageProps{
     appState?: AppStateStore;
     userState?: UserStateStore;
 }
@@ -30,10 +29,9 @@ export function workoutInFolders(folders: SwimFolder[], workout: SwimWorkout): b
     return false;
 }
 
-//updated
 @inject("appState", "userState")
 @observer
-export default class MyWorkoutsPage extends React.Component<MyWorkoutsPageProps>{
+export default class WorkoutsPage extends React.Component<WorkoutsPageProps>{
     get userState(){
         return this.props.userState as UserStateStore;
     }

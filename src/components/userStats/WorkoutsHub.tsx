@@ -8,6 +8,7 @@ import BeatLoader from 'react-spinners/BeatLoader';
 import { PRIMARY } from "../..";
 import UserStateStore from "../../configuration/stateStores/userStateStore";
 import getAllWorkoutsFromUser from "../../api/getAllWorkoutsFromUser";
+import PoolIcon from '@material-ui/icons/Pool';
 
 export interface WorkoutsHubProps{
     userState?: UserStateStore;
@@ -52,7 +53,7 @@ class WorkoutsHub extends React.Component<RouteComponentProps<any> & WorkoutsHub
                     }
 
                     <Grid item>
-                        <Grid container direction = "row" spacing = {1}>
+                        <Grid container direction = "row" justify = "center" alignItems = "center" spacing = {1}>
                             <Grid item>
                                 <Button
                                     color = "primary"
@@ -78,6 +79,18 @@ class WorkoutsHub extends React.Component<RouteComponentProps<any> & WorkoutsHub
                                 >
                                     <Icon>library_books</Icon>
                                     My Workouts
+                                </Button>
+                            </Grid>
+
+                            <Grid item>
+                                <Button
+                                    color = "primary"
+                                    style = {{textTransform: "initial"}}
+                                    variant = "outlined"
+                                    href = "/folder/Rafnel/main"
+                                >
+                                    <PoolIcon/>
+                                    View Coach Zac's Workouts
                                 </Button>
                             </Grid>
                             

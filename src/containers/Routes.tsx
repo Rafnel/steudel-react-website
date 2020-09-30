@@ -8,7 +8,7 @@ import SwimComponentsPage from "./SwimComponentsPage";
 import CreateSwimWorkoutPage from "./CreateSwimWorkoutPage";
 import ContactPage from "./ContactPage";
 import AboutPage from "./AboutPage";
-import MyWorkoutsPage from "./MyWorkoutsPage";
+import WorkoutsPage from "./WorkoutsPage";
 import SingleWorkoutPage from "./SingleWorkoutPage";
 import { observer, inject } from "mobx-react";
 import { AppStateStore } from "../configuration/stateStores/appStateStore";
@@ -39,17 +39,17 @@ class Routes extends React.Component<RoutesProps & RouteComponentProps<any>>{
         <Route path="/" exact render = {() => <HomePage/>} />
         <Route path="/contact" exact render = {() => <ContactPage/>} />
         <Route path="/about" exact render = {() => <AboutPage/>} />
-        {this.appState.isLoggedIn 
-          && 
+        {this.appState.isLoggedIn && 
           <Route path="/workout/:username/:id" exact render = {(props) => {
             return <SingleWorkoutPage username = {props.match.params.username} workoutID = {props.match.params.id}/>
-          }}/>}
-        {this.appState.isLoggedIn 
-          && 
-          <Route path="/folder/:username/:folder" exact render = {(props) => {
-            //updateFolderPage(props.match.params.username, props.match.params.folder, this.userState, this.appState);
-            return <WorkoutFolderPage key = {props.match.params.username + " " + props.match.params.folder} username = {props.match.params.username} folder_name = {props.match.params.folder}/>
-          }}/>}
+          }}/>
+        }
+        {this.appState.isLoggedIn && 
+        <Route path="/folder/:username/:folder" exact render = {(props) => {
+          //updateFolderPage(props.match.params.username, props.match.params.folder, this.userState, this.appState);
+          return <WorkoutFolderPage key = {props.match.params.username + " " + props.match.params.folder} username = {props.match.params.username} folder_name = {props.match.params.folder}/>
+        }}/>
+        }
         {!this.appState.isLoggedIn && 
           <Route path="/workout/:username/:id" exact render = {(props) => {
             this.appState.redirectAfterLogin = "/workout/" + props.match.params.username + "/" + props.match.params.id;
@@ -58,7 +58,7 @@ class Routes extends React.Component<RoutesProps & RouteComponentProps<any>>{
         }
         {this.appState.isLoggedIn 
           && 
-          <Route path="/my-workouts" exact render = {() => <MyWorkoutsPage/>}/>}
+          <Route path="/my-workouts" exact render = {() => <WorkoutsPage/>}/>}
         {!this.appState.isLoggedIn 
           && 
           <Route path="/login" exact render = {() => <LoginPage/>}/>}
