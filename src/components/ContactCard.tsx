@@ -10,7 +10,7 @@ export default class ContactCard extends React.Component{
             <Card>
                 <CardHeader
                     title = "Creator: Zachary Steudel"
-                    subheader = "Junior Computer Science Student at Baylor University"
+                    subheader = "Senior Computer Science Student at Baylor University"
                 />
 
                 <CardMedia>
